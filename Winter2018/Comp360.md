@@ -1,6 +1,6 @@
 # Comp 360 
 
-## Intro 08/01/2018
+## Intro Lecture 1 08/01/2018
 
 ### Basic knowledge
 > $\log_2(n)$ => the number of bits required for an umber raised up 
@@ -19,9 +19,26 @@ Their exist a number c such that for all verteces in V the sum of its edges will
 
 > $G=(V,E)$ an undirected graph with degree of every vertex is 10 then suppose to every vertex $v \in V$ a postive integer $a_v$ is assigned. If $\sum _{v\in V} a_v=5$ then $\sum_{u \in v} \sum_{w \in V,uw \in E} a_w=50$
 
-### Max flow proble
+### Max flow problem
 > Def: a flow network is a directed grapg $G=(V,E)$
 > 1. Every edge e has a capacity $c_e \geq 0$
 > 2. There is a source $s \in V$
-> 3. The is a sink $t \in V \ t \neq s$ 
+> 3. The is a sink $t \in V \ t \neq s$ \
+> Assumption: 
+>* No edge enters the source
+>* No edge leave the sink
+>* All capacities are integers
+>* There is at least one edge incident to every vertex. (Every vertex has at least one edge connected to it)
+
+>Def: [flow] A flow is a function $f:E \rightarrow \mathbb{R}^+$ such that 
+> 1. Capacity condition $\forall e \in E \ 0 \geq f(e) \geq c_e$
+> 2. Conservation, flow is conserved $\forall u \in V \ u \neq s,t \ f(u) = \sum _{vu \in E} f^{in}(vu) = \sum_{uw \in E} f^{out}(uw)$
+> 3. Value f = $\sum_{su \in E} f(su) = f(s)$
+
+    Now Give a flow network find a flow largest possible value
+___
+
+## Max flow Probelm continue Lecture 2 10/01/2018
+
+
 
