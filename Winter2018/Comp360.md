@@ -18,3 +18,9 @@ $\exists c \ \forall u \in V \ \sum_{uv \in E} C_{uv}=c$ \
 Their exist a number c such that for all verteces in V the sum of its edges will equal c
 
 > $G=(V,E)$ an undirected graph with degree of every vertex is 10 then suppose to every vertex $v \in V$ a postive integer $a_v$ is assigned. If $\sum _{v\in V} a_v=5$ then $\sum_{u \in v} \sum_{w \in V,uw \in E} a_w=50$
+
+### Max flow proble
+> Def: a flow network is a directed grapg $G=(V,E)$
+> 1. Every edge e has a capacity $c_e \geq 0$
+> 2. There is a source $s \in V$
+> 3. The is a sink $t \in V \ t \neq s$ 
