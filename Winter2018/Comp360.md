@@ -24,3 +24,4 @@ Their exist a number c such that for all verteces in V the sum of its edges will
 > 1. Every edge e has a capacity $c_e \geq 0$
 > 2. There is a source $s \in V$
 > 3. The is a sink $t \in V \ t \neq s$ 
+d
