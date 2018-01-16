@@ -1,4 +1,4 @@
-# Comp421
+# __Comp421__ 
 ## Intro 08/01/2017
 
 ### Marking Scheme
@@ -59,7 +59,7 @@
     Similar to UML class diagram.
 
 ### Entity
-> Described as a set of attributes in an object that differentiate it from other objects. 
+> Described as a set of attributes in an object that differentiate it from other objects. No functions
 
 ### Entity set
 > Collection of similar entities, all companies registered in Quebec
@@ -78,4 +78,22 @@
 ### Relationship
     Collection of similar relationships
 
+___
+## Lecture 2 15/01/2018
 
+### Database rules
+* Rectangle is an entity
+* Circle is an attribute
+* Rombus relathionships
+* Arrow means that there can only be one
+* Bold line means that it is a nececity.
+* Partial key underlined with a dashline.
+* Owner key is underlined with a line.
+
+### Weak entities 
+    Partial key happends when an entity cannot be identified only by one of its attributes.
+    These are called week entities, the entity is then surounded by bold lines. Weak entities have to be in a constrain with the entity that makes them unique. This is an example with a team and its players that are identified by their number and team name. 
+    We are usually in a one to many relationship where the owner of the week entity can have multiple weak entities but not the otherway arround.
+
+### Relationships VS entity sets
+    Entity sets may be used when required in order to be able to keep track of different events happening such as payments that needs to be recorded instead of just updating the total amount of money transfered since the begenning. 

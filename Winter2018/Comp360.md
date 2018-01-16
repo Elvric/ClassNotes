@@ -114,6 +114,49 @@ Augment(f,p)
 >Def a cut in a flow network is a partition (A,B) of the verteces such that $s \in A$ and $t \in B$
 
 >Def Capacity of this cut is the sum of the capacities of edges going from A to B
+>Cap(AB)= $\sum_{uv \in E \ u \in A \ v \in B} C_{uv}$ 
+>
+> A network with n verteces has $2^{n-2}$ cuts
+
+---
+### MaxFlow problem continue 15/01/2018
+>Recall: For a flow $f:E \rightarrow  \mathbb{R}^+$ \
+$val(f)= \sum_{su \in E} f(su)$
+
+>Claim: for any s-t cut (A,B), $val(f)= f^{out} (A) - f^{in}(A)$
+    
+> $\sum_{u \in A} ((\sum_{uw \in E} f(uw))-(\sum_{vu \in E} f(vu)))$
+
+    If e is an edge with both endpoints in B => f(e) is not in the sum. 
+    else if e has both points in A => f(e) is in both sums so it adds up to 0.
+    else e exist in both A and B => f(e) is either added or substracted in the sums so we are only accounting for flow in and out. 
+    Why does vale(f) = f in of the sink?
+        Pick B as being just the sink then there is no f 
+        out had just f in
+
+> Claim: let (A,B) be a cut f be a flow then $val(f) \leq Cap(A,B)$ \
+> Proof: 
+> val(f) = $f^{out} (A) - f^{in} (A) \leq f^{out} (A) \leq \sum_{u \in A,v \in B, uv \in E} C_{uv} = Cap(A,B)$
+
+    So to summarize we can use cuts to check for optimality if we fined a cut that has a Cap value equal to the maxflow we have found then we cannot do better than that. 
+
+### Proof of Ford-Falkerson finds optimal flow
+    FF: starts with o flow and while we can find paths in the residual graph we augment(f,P) and update residual graph. 
+
+    Consider the point where FFF terminates. Let A* be the set of the verteces that the algorithm can reach from s in the residual graph. Note that t will alwats be in B* as if we could reach t then we would have an s-t path. 
+    If uv is an edge original network with u in A* and v in B* Cuv is saturated otherwise we would be able to include v in A. 
+$f^{out}(A^*)= \sum_{u \in A^*,v \in B^*, uv \in E} C_{uv} = Cap(A^*,B^*), f^{in} (A^*)=0$ because otherwise we would have an edge in Gf that goes from A* to B*
+
+We showed that at the end of the algorithm max flow is always found,
+$Maxflow \leq Cap(A^*,B^*)=val(f)=MaxFlow$
+
+    Problem: Given a flow network how can we find a min-cut? 
+    Just run FF and find A* and B*
+$val(f) \leq maxFlow \leq minCut \leq Cap(A^*,B^*)$ but $val(f)=Cap(A^*,B^*)$ so they are all equal.
+
+### Theorem Min-cut max flow relationship
+    For any flow network Max-Flow = min-cut
+        
 
 
 
