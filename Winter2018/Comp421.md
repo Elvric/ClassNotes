@@ -97,3 +97,72 @@ ___
 
 ### Relationships VS entity sets
     Entity sets may be used when required in order to be able to keep track of different events happening such as payments that needs to be recorded instead of just updating the total amount of money transfered since the begenning. 
+
+---
+## 17-01-2018
+### First airline model
+#### Airline entity sets
+* Flights
+    * arr_time
+    * dept_time
+    * dept_apt
+    * arr_apt
+    * date
+    * **flight_no**
+* Passenger
+    * **Name**
+    * **Addr**
+#### Airline Relationship
+* Flight,Passenger --BookFlight (price)
+
+### Second airline model
+
+#### Entity sets:
+* Flight_rout
+    * __Flight number__
+    * arr_time
+    * dep_time
+    * dep_apt
+    * arr_apt
+* Flights
+    * _date_ (weak entity)
+
+#### Airline Relationship
+* Flight_rout, Flight --has 
+    * Flight,Passenger --BookFlight (price)
+
+### Definition
+Relation: Made of 2 parts \
+Schema: specifies name of relation plus a set of attribute plus the domain type of each attribute (column header=attribute). \
+Instance: set of distinct tupples. \
+Data Definition Language DDL: defines the schema of the database \
+Data manipulation Language (DML): manipulates the data
+
+### SQL data Types
+* Syntax
+    * CHAR(n) character string up to n with blanks
+    * VARCHAR(n) denotes strup up to n
+    * INT,INTEGER names are synonym
+    * FLOAT, REAL
+    * Decimal(n,d) value consist of n digits with decimal point d position from the right
+    * DATE (YYYY-MM-DD)
+    * TIME (00:00:00)
+``` SQL
+    CREATE TABLE Students
+    (
+        sid INTEGER PRIMARY KEY /*Primary key is sid*/,
+        name VARCHAR(30) NOT NULL UNIQUE, /*forces value to not be null and have a different name*/
+        login VARCHAR(30),
+        faculty VARCHAR(30),
+        major VARCHAR(30) 
+        DEFAULT 'undefined'
+        PRIMARY KEY (sid,name) /*Says that the primary key is these two columns*/
+    )
+    INSERT INTO Students
+    VALUES (5366,'Bartoli',...)
+    INSERT INTO Students (sid,name,faculty)
+    SET major = 'sdfwdf'
+    SELECT name 
+    FROM Students
+    DROP TABLE Students /*removes the table*/
+``` 

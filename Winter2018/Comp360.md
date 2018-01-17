@@ -156,7 +156,60 @@ $val(f) \leq maxFlow \leq minCut \leq Cap(A^*,B^*)$ but $val(f)=Cap(A^*,B^*)$ so
 
 ### Theorem Min-cut max flow relationship
     For any flow network Max-Flow = min-cut
-        
+
+---
+## 17-01-2018
+
+### Is it possible to have a max-flow that assigns non-integer values to some edges? 
+Yes it is possible to find a max-flow not only with full integers such as using 0.5 through the edges although all the edges have an integer max capacity. 
+
+### Is there always an all integer max-flow? 
+FF only works with integer values hence yes it is possible to find the answer with only integers. 
+
+### Running time $O(m^2K)$
+Can be ineficient when K is large so it is not consider polynomial time.\
+Imput size is $\Theta(m\log k)$ so not too big compare to the algorithm. \
+
+### A faster FF
+Possible aproach:
+1. Always pick the shortest path from s to t
+    * Leads to an efficient algorithm that we will not discuss here.
+2. Fattest path approach, find the path with the largest bottleneck. \
+    Not very easy to find the largest bottleneck 
+3. Same as above but: 
+    *  Initialy set $\Delta = 2^{log(K)}$ so that it is now rounded to a power of 2.
+    *  While there are augmenting paths with bottleneck greater than $\Delta$ use them to augment the flow.
+    *  When we run out of these we set reset $\frac{\Delta}{2}$
+    *  When $\Delta$ is less than 1 then we stop.
+### How can we check of there are augmenting paths with bottleneck greater than $\Delta$   
+Remove any edge that are less than $\Delta$ from our graph so we create a subgraph with edges that can be exploited. 
+
+```
+    while Delata ≥ 1
+        while exist path Gf(Delta) ≥ Delta
+            Augment(f,P)
+            update Gf
+        Endwhile
+        Delta <- Delta/2
+    Endwhile
+```
+### Running time:
+Finding the path,Augmenting and update Gf $O(m)$, The bigger while loop is $\log(K)$ 
+The inner loop now or the $\Delta$ phase. \
+Claim: Let f be the flow at the end of the $\Delta$ phase there is a cut (A,B) such that max-flow $\leq cap (A,B) \leq val(f) + m \Delta$
+
+#### Proof:
+A are all the nodes that can be reached from s in the $G_f(\Delta)$ B is the rest. \
+If e is an edge from A to B in the original network we know that $C_e-f(e) < \Delta$ \
+If e is an edge from B to A then $f(e) < \Delta$ \
+$val(f) = f^{out}(A)-f^{in} (A) = \sum_{e from A to B} f(e) - \sum_{e from B to A} \Delta \leq \sum_{e from A to B} (C_e-\Delta) - \sum_{e from A to B or B to A} \Delta$ which gives us capacity of the cut minus m$\Delta$ \
+Let's look at the flow at the end of the previous phas $val(f_{prev})\geq maxflow -2\Delta m$. \
+How many augmentations can we have in the Delta-phase? \
+We can have at most 2m augmentations in this phase because each one increases the value by at most $\Delta$ and starting from max-flow $-2m\Delta$. \ 
+So the running time is $O(m*2 \log K)$ \
+It finds the max flow because it is a special instance of maxflow.
+
+---
 
 
 
