@@ -108,7 +108,56 @@
 ### System:
 * Bash system
     * Runs every program from begenning to end so there is no process
+---
+## 18-01-2018
 
+### Process diagram:
+| ready | stopped | active| exiting | blocked |
+|---: |---:|---:|---:|---:|
+| dispatch (active)|resume (active) |time out (active)||resources availalbe (active)|
+||kill (exit)|suspended (stopped)|
+|||event or resources awayts (blocked)|
+* Ready: preocesses are prepared to execute when given the opportunity
+* Active: the process is being executed by the CPU
+* Blocked: process cannot execute until some event occur
+* Stopped: a special case of blocked where the process is suspended by the operator or the user
+* Exiting: process that is about to be removed from pool of executable.
 
+### Tiny shell
+We wait for commands to be entered by the user, then we fork and execute the command in a chid process using the exec(line) or execvp(line) replacing the memory copy of the parent changing the memory image of the parent for a new one.
 
+### Implementing process
+Create a loop run a process for some time, save its state then repeat with a new process. 
+
+1. Hardware stack program counter
+2. Hardway loads new program count from interupted vector
+3. Assembly language save the registers
+4. Assembly language sets up a new stack
+5. C interrupt service runs
+6. Scheduler decides which process is to run next
+7. C procedure returns to assembly code
+8. Assembly language precedure starts up new current process
+
+### Dispatcher working:
+Selects from a list of ready processes which one is to run next. \
+The dispatcher trust the process to wake up the dispatcher when done. \
+The dispatcher can wake up the dispatcher after a certain amount of clock ticks. \
+The alarm clock is better as it forces processes to give up the CPU after a certain time. 
+
+### Information to be saved:
+While saving the OS should mask all interrupts
+* Program counter
+* Program status
+* CPU registers 
+* FIle access pointers
+    * What files are open and could be access by the process?
+* Memory 
+    * Save it all on a disk
+        * Slows down the system a lot
+    * Do not save memory trust the next process
+        * If memory is overwritten it can be bad
+    * Isolate (protect) memory from next process
+        * This is the approach taken currently called memory managment. 
+
+## Processes and threads
 
