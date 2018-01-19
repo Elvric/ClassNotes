@@ -159,5 +159,50 @@ While saving the OS should mask all interrupts
     * Isolate (protect) memory from next process
         * This is the approach taken currently called memory managment. 
 
-## Processes and threads
+### Processes and threads
+Processes have an array of handles. \
+Handles corresponds to an external device and is used to access it. \
+To print somthing on screen we call handle 1 \
+To read from the keyboard we use handle 0 \
+Handles are henced abstract indicators used to access external resources. \
+An array structure maintains by the kernel for each processs holds the handles. They can be modified through syscalls. 
 
+---
+## 19-01-2018
+### Writing to the screen
+```C
+char *p="hello\n"
+write(1,p,6)
+// stdout: 1, source, 6 bytes
+int fd = open()
+// the value returned is the file descripter pointing to the given file.
+```
+### Process creation
+\#0 stdin and \#1 stdout \#2 is stderr by default are set on the array
+
+### Output redirection
+If we close(1) and open(file.txt) the file descriptor value will take the spot of 1 and so all the STDOUT will go to the file now.
+
+### Memory in processes
+Memory is viewed as a large array. \
+Logical view of process: looks like it has all the memory required dividing into 2 parts: half is held by the kernel the other half is held by the process (user space). \
+Part of the memory is mapped to the kernel and using the piece of memory processes can comunicate with other process.
+
+### Address space of User
+1. Stack
+2. Dynamic alocation
+3. bss
+4. data
+5. text \
+The handles of each process is maintained in the kernel memory, each child recieves a duplicate of the file descriptor. 
+
+### Communication between processes
+Can be achieve through the kernel space. \
+First we create a pipe() system call, a pipe contains a read end and a write end. \
+Second we fork knowing that the array of file handles is the same between child and parent. \
+We can also use the dup(fildes) duplicates an existing file descriptor. \
+So now in one process we close(1) and dup(Writtingpipe) in the other we close(0) and dup(Readingpipe)
+
+### Concurrency vs Parallelism
+Concurency: executing multiple processes on a single core processes. \
+Parallelism: 2 processes running at the same time using dual core processor for instance.
