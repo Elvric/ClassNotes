@@ -1,4 +1,4 @@
-
+ 
 
 # Comp 360 
 
@@ -202,15 +202,49 @@ Claim: Let f be the flow at the end of the $\Delta$ phase there is a cut (A,B) s
 A are all the nodes that can be reached from s in the $G_f(\Delta)$ B is the rest. \
 If e is an edge from A to B in the original network we know that $C_e-f(e) < \Delta$ \
 If e is an edge from B to A then $f(e) < \Delta$ \
-$val(f) = f^{out}(A)-f^{in} (A) = \sum_{e from A to B} f(e) - \sum_{e from B to A} \Delta \leq \sum_{e from A to B} (C_e-\Delta) - \sum_{e from A to B or B to A} \Delta$ which gives us capacity of the cut minus m$\Delta$ \
+$val(f) = f^{out}(A)-f^{in} (A) = \sum_{e from A to B} f(e) - \sum_{e from B to A} \Delta \leq \sum_{e from A to B} (C_e-\Delta) -$ 
+$\sum_{e from A to B or B to A} \Delta$ which gives us capacity of the cut minus m$\Delta$ \
 Let's look at the flow at the end of the previous phas $val(f_{prev})\geq maxflow -2\Delta m$. \
 How many augmentations can we have in the Delta-phase? \
 We can have at most 2m augmentations in this phase because each one increases the value by at most $\Delta$ and starting from max-flow $-2m\Delta$. \ 
-So the running time is $O(m*2 \log K)$ \
+So the running time is $O(m^2 \log K)$ \
 It finds the max flow because it is a special instance of maxflow.
 
 ---
+## Largest matching problem 22-01-2018
+Def: Bipartite graph: is a graph such that we can partition its verteces into 2 parts such that there exist no edge within the parts, the edges only exist between the parts. Also known as the 2 coloring problem. \
+note part of the course: A graph is bipartite if and only if it does not have any odd cycle. \
+Trivialy a bipartite graph does not have an odd cycle because there always exist a node that is adjacent to nodes that are in A and in B. 
 
+### Largest matching problem:
+Def: A matching is a set of edges such that no 2 of them share any end-points/node. \
+Def: A perfect matching is a matching that has all of its verteces matched with an edge (includes all the verteces).
+#### Given a bipartite graph with parts x and y how can we find the largest matching?
+We construct a flow network in the following manner.
+1. We direct all th edges from X to Y.
+2. We add 2 new verteces called s and t.
+3. We put edges from s to all verteces in X and edges from all verteces in Y to t.
+4. Assign capacity 1 to all the edges.
+
+Claim: Max flow in this network = max matching in G. 
+
+### Proof
+First we show max matching is at least max-flow *M*. We assign a flow of 1 to all edges in M and 0 to all other edges between X and Y. \
+For the edges starting from s or ending at t, the ones that go to verteces in M get a value of 1 and the rest 0. \
+Note that this is a valid flow with flow of M. This is because there are M vertices in X involved in M and we assign 1 to the edges from s to those verteces. \
+Next we need to show that there is a matchingof size Max-Flow \
+There is a max-flow with integer values. Thus all edges will have a flow of 0 or 1. The edges between X and Y with 1 unit of flow on them form a matching.  \
+To summerize we showed max-flow is at least M and max-flow=some matching that is smaller or equal to max matching which implies that M = max-flow \
+Remark: Note that in the above proof we could assign infinit capacities to edges between X and Y. The incoming flow in all verteces in X will be at most 1 so the edges between X and Y will never have any flow > 1. \
+We know max-flow = min cut what does this min in this contest? 
+
+Def: A vertex cover is a set of verteces such that removing them will remove all the edges from the graph. 
+
+#### Thm: In every bipartite graph Max Matching = Min vertex cover (Note that the graph needs to be bipartite, a triangle for example violate that rule)
+
+Remark: Note that if a graph has a matching of size k, then every vertex caver needs to pick at least one vertex from each of these k edges so ≥ k. 
+
+Proof: Lets look at the min cut (A,B). Let's now split the X 2 parts $A_1,B_1$ and for Y $A_2,B_2$ where $A=\{s\}\lor A_1 \lor A_2$ and similarly for B. We know that there are no edge going from $A_1$ to $B_2$ because that would make my cut value be infinity. So we can just remove all the verteces $B_1$ and $A_2$ so $B_1 \lor A_2$ is the vertex cover.  
 
 
 

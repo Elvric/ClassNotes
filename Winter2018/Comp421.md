@@ -166,3 +166,75 @@ Data manipulation Language (DML): manipulates the data
     FROM Students
     DROP TABLE Students /*removes the table*/
 ``` 
+---
+## 22-01-2018
+### Foreign key
+Set of attributes in one relation R that is used to refer to a tuple in another relation Q. Represents a logical pointer. \
+The foreign key must exit in the real Q table that is assigned to it so we have a constraint.
+
+Ex:
+Refering back to the table above sid can be use as a foreign key to detect the enrolment relationship. 
+```SQL
+CREATE TABLE Enrolled
+{
+FOREIGN KEY (sid) REFERENCES Students /* The database will automatically check if the sid we enter exist in Students
+Also prevents when a student is removed to be removed when (sid) is used in the other table
+*/
+}
+```
+It is important to be carefull with that and children there is a way that we can cascade down the deletion to the children but it is not recommended. If we know that something is a primary key declare it as not null as good practice.
+
+### Many-Many relationship set
+* Companies can have primary key as cname.
+* Parties can have primary key as pname.
+    * cname and pname are used as the primary key for lobbying. These two attributes must be labbled as foreign key. 
+```SQL
+CREATE TABLE Sponsorship
+{
+    PRIMARY KEY (cname,pname),
+    FOREIGN KEY cname REFERENCE Companies,
+    FOREIGN KEY pname REFERENCE Parties
+}
+```
+* Member
+    * Can only belong to one party hence we must note link the member unique key with party name we have to find a unique key for the member. So the foreign key of a membership would be the the primary key of this table.
+```SQL
+    CREATE TABLE Membership
+    {
+        PRIMARY KEY (mname),
+        FOREIGN KEY (mname) REFERENCES Members,
+        FOREIGN KEY (pname) REFERENCES Parties
+    }
+```
+Note: If we put a **null** as the foreign key it will be exepcted but we can fix that by putting not null in the table created where the key will be stored.
+
+### Participation constraints
+If we have a participation constraints for one instance we must not create an extra table for the relationship as we want to enfore the participation hence every time an instances of the constraint is made we must have a field for that constrain. 
+
+If we have a participation constraints for multiple instances this is not possible because we cannot create an independent table nor can we have this stored directly on the instance hence we have to keep a note saying that we cannot implement this relationship in the relational model and it is the responsibility of the entries to make sure that the participation constraints are respected.
+
+### Renaming
+ When for example we create a spinoff company that has a parent company we must be careful with the way we implement these models ensuring that the keys and foreign keys constraint are well placed and resepcted. 
+
+### Weak Entity Sets
+* Team (**tname**,ranking)
+* Playes (**tname,shirtN**,pname)
+```SQL
+    CREATE TABLE Players
+    {
+        PRIMARY KEY (tname,shirtN),
+        FOREIGN KEY (tname) REFERENCES (Teams) /* making sure that the entity we are related to actually exist*/
+    }
+```
+### Translating ISA Hierarchy
+* Companies(name,addr,empl)
+    * Sole(name,owner)
+    * Partnership(name)
+    * Corporation(name,level)
+```SQL
+    CREATE TABLE Corporation
+    {
+        FOREIGN KEY (name) REFERENCES Companies
+    }
+```
+We do this this way because Companies have their own table so when we create a subset like Corporation we create a new table with new data but we must make sure that the table it is attached to for Companies in order to know the number of employees hence we use a foreign key. 
