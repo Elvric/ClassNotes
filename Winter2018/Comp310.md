@@ -206,3 +206,103 @@ So now in one process we close(1) and dup(Writtingpipe) in the other we close(0)
 ### Concurrency vs Parallelism
 Concurency: executing multiple processes on a single core processes. \
 Parallelism: 2 processes running at the same time using dual core processor for instance.
+
+---
+## 23-01-2018
+### Modeling Multiprogramming
+1. $p^n$ is the probability that all processes are waiting on an IO operation. 
+2. The Higher the IO wait the lower CPU utilization. 
+### Parallelism
+It is used to run computation faster by allowing us to run processes simultaneously. Applications are not always fully parallel, they are made of a parallel part and a series part.
+```
+int a[5]={...}
+int b[5]={...}
+int c[[5]={...}
+for (i=0;i<5;i++)
+{
+    a[i]=b[i]*c[i]; //Parallisable
+}
+prod=a[3]+2*a[2]+a[0] //Not parallisable
+```
+### Amdhal's law
+Performance improvements by applying an enhancement on an application is limited to the time the enhancement can be applied.
+
+### Speed up for an application
+$speedup \leq \frac{1}{s+\frac{1-s}{N}}$ \
+Here S is the serial portion of the application and N is the number of cores available.
+
+### Motivation for threads
+Threads can happen at the "same" time, most modern application are multithreaded. Used when we want to perform different not so tightly coupled activities. \
+Note that threads are not processes. Process is what actually holds the threads. We have one process and within that process we have multiple threads. 
+
+Also used in multithreaded web servers. We have multiple threads to handle different requests at the same time.  
+1. Connection is established
+2. The web looks to see if the web page information already exists in the cache.
+3. Cache hit is kick and cash miss forces us to go to the disk
+4. While waiting for I/O another thread can access the cache
+
+### Why use processes rather than thread on their own
+Processes contain data that needs to be loaded and handled but threads do not have these properties. So processes are heavy weight compare to thread that are light weight. Thus threads are used because they are easier to create, threads that run in a process also need access to the same memory so making them exist in the same memory space makes it easier to implement and use them. \
+Disadvantage of the method is that threads are are less fault tolerant. \
+Sharing memory we do not want two threads to access and update a memory location at the same time. 
+
+### Process creation
+1. Needs to setu up not address space update resources
+2. Kernel per process data structures need to be allocated and initialized.
+
+### Dif mult vs single threaded process
+#### single
+If the code runs that thread is always executed and contains a single stack that tells us where the process is executing, and a single line of registers.
+#### multi
+We have multiple thread of execution swapping between each other. Registers,stack are different for all threads. The code, file and data is the same for all otherwise.
+
+### User vs Kernel threads
+#### User threads
+Managed in the user space (user-level threads library)
+Three primary library
+1. Pthreads
+2. Windows threads
+3. Java threads
+
+Many user level thread are linked to one kernel thread, when one thread is executing the Kernel thread is locked and the other threads cannot execute. (only one maybe in the kernel at a time). This is used by older systems, few systems use it today.
+#### Kernel threads 
+Supported by the kernel.
+Each user level thread maps to kernel thread
+A user created kernel thread creates a kernel thread. \
+Number of threads per process maybe restricted because of overheads.  
+
+### Implementing threads
+In user space the thread reside in a process with a thread table in the process but the kernel only knows about the Process table. \
+In kernel level threads the Kernel can see the thread table. 
+
+### Hybrid threads
+Many user level threads mapping to several kernel threads. 
+
+### Thread libraries 
+Provide programming with an interface that allows user to create threads.
+#### In Linux
+
+* Kernel level threads
+* Thread have specific stacks
+* They are all executing the same program but at different location so they have their own program counter.
+
+#### Pthreads
+* Can be user level or kernel level threads
+* Specification not implementation
+```C
+#include <pthread.h>
+int pthread_create(pthread_t *thread, pass attributesm void, *(*strart)(void *), void *args); //Here at start we pass in the method that we want the thread to execute.
+
+pthread_t pthread_self(void); //ID too fast in class help us get the ID of the threads.
+
+int pthread_equals(thread1,thread2); //Used to see if two threads are equal
+
+void pthread_exit(void *retval);
+
+int pthread_join(pthread_t thread, void **retval); //Here we when a thread wait for another thread, 0 success or a positive error number
+
+pthread_cancel();
+
+//Detached threads cannot be joinable.
+int pthread_detach(pthread_t thread); //Use to stop for the waiting I assume
+``` 

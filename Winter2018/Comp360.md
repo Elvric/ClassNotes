@@ -37,27 +37,27 @@ Their exist a number c such that for all verteces in V the sum of its edges will
 > 2. Conservation, flow is conserved $\forall u \in V \ u \neq s,t \ f(u) = \sum _{vu \in E} f^{in}(vu) = \sum_{uw \in E} f^{out}(uw)$
 > 3. Value f = $\sum_{su \in E} f(su) = f(s)$
 
-    Now Give a flow network find a flow largest possible value
+ Now Give a flow network find a flow largest possible value
 ___
 
-## Max flow Probelm continue Lecture 2 10/01/2018
+## Max flow Problem continue Lecture 2 10/01/2018
 
 ### Ford_Fulkerson Algorithm
-    Try to find s-t path that have not used their full capacity and push more flow.
-    We must however make sure that the path we are going to 
-    optimize can actually make use of the added flow down the line. 
-    Idea is that for the edges that go in the opposit direction
-    we substract the flow that is going in the opposit direction
+Try to find s-t path that have not used their full capacity and push more flow. \
+We must however make sure that the path we are going to 
+optimize can actually make use of the added flow down the line. 
+Idea is that for the edges that go in the opposite direction
+we subtract the flow that is going in the opposite direction
 
 
 1. Start from all zero flow
-2. Find a path firm s-t such that the edges that are in the forward direction have unused capacity. The backward edges have strictly positive flow on them. Add one unit to the forward edges and substract one unit to the backward edges.
+2. Find a path firm s-t such that the edges that are in the forward direction have unused capacity. The backward edges have strictly positive flow on them. Add one unit to the forward edges and subtract one unit to the backward edges.
 
-> Def: [Residual graph] given a flow netwok (G,s,t,{$C_e$})
+> Def: [Residual graph] given a flow network (G,s,t,{$C_e$})
 >and a flow f on G, the residua graph $G_f$ is as follows
 >1. Nodes are the same as G
 >2. $\forall uv \in G \ f(u,v) < C_{uv}$ add the edge uv with residual capacity $C_{uv}-f(uv)$to $G_f$
->3. $\forall uv \in G$ with $f(uv)>0$ add the opposit edge vu with residual capacity $f(uv)$
+>3. $\forall uv \in G$ with $f(uv)>0$ add the opposite edge vu with residual capacity $f(uv)$
  
 ```
 Initially set f(e)=0 on every edge
@@ -100,16 +100,16 @@ Augment(f,p)
 > We remove flow from both side so the $f^{in}$ decreases so does $f^{out}$
 
 #### Terminate
-    At every iteration the flow increases by at least one unit. It can never exceed the total sum of all the capacities.
+At every iteration the flow increases by at least one unit. It can never exceed the total sum of all the capacities.
 
 #### Running Time
-    Let K be the largest capacity n the number of verteces and m
-    the number of edges.
+Let K be the largest capacity n the number of vertices and m
+the number of edges.
 
-    At most Km iterations for the while loop 
-    Each iteration requires DFS so m+n
-    Since we assumed that the graph is connected and every vertex is adjecent to at least one edge m is at least n/2 so we can just change it to n.
-    Final running time is: O(Km^2)
+At most Km iterations for the while loop 
+Each iteration requires DFS so m+n
+Since we assumed that the graph is connected and every vertex is adjacent to at least one edge m is at least n/2 so we can just change it to n.
+Final running time is: O(Km^2)
 
 >Def a cut in a flow network is a partition (A,B) of the verteces such that $s \in A$ and $t \in B$
 
@@ -127,23 +127,23 @@ $val(f)= \sum_{su \in E} f(su)$
     
 > $\sum_{u \in A} ((\sum_{uw \in E} f(uw))-(\sum_{vu \in E} f(vu)))$
 
-    If e is an edge with both endpoints in B => f(e) is not in the sum. 
-    else if e has both points in A => f(e) is in both sums so it adds up to 0.
-    else e exist in both A and B => f(e) is either added or substracted in the sums so we are only accounting for flow in and out. 
-    Why does vale(f) = f in of the sink?
-        Pick B as being just the sink then there is no f 
-        out had just f in
+If e is an edge with both endpoints in B => f(e) is not in the sum. \
+else if e has both points in A => f(e) is in both sums so it adds up to 0. \
+else e exist in both A and B => f(e) is either added or subtracted in the sums so we are only accounting for flow in and out. 
+Why does vale(f) = f in of the sink?
+    Pick B as being just the sink then there is no f 
+    out had just f in
 
 > Claim: let (A,B) be a cut f be a flow then $val(f) \leq Cap(A,B)$ \
 > Proof: 
 > val(f) = $f^{out} (A) - f^{in} (A) \leq f^{out} (A) \leq \sum_{u \in A,v \in B, uv \in E} C_{uv} = Cap(A,B)$
 
-    So to summarize we can use cuts to check for optimality if we fined a cut that has a Cap value equal to the maxflow we have found then we cannot do better than that. 
+So to summarize we can use cuts to check for optimality if we fined a cut that has a Cap value equal to the maxflow we have found then we cannot do better than that. 
 
 ### Proof of Ford-Falkerson finds optimal flow
-    FF: starts with o flow and while we can find paths in the residual graph we augment(f,P) and update residual graph. 
+FF: starts with o flow and while we can find paths in the residual graph we augment(f,P) and update residual graph. 
 
-    Consider the point where FFF terminates. Let A* be the set of the verteces that the algorithm can reach from s in the residual graph. Note that t will alwats be in B* as if we could reach t then we would have an s-t path. 
+  Consider the point where FFF terminates. Let A* be the set of the vertices that the algorithm can reach from s in the residual graph. Note that t will always be in B* as if we could reach t then we would have an s-t path. 
     If uv is an edge original network with u in A* and v in B* Cuv is saturated otherwise we would be able to include v in A. 
 $f^{out}(A^*)= \sum_{u \in A^*,v \in B^*, uv \in E} C_{uv} = Cap(A^*,B^*), f^{in} (A^*)=0$ because otherwise we would have an edge in Gf that goes from A* to B*
 
@@ -206,7 +206,8 @@ $val(f) = f^{out}(A)-f^{in} (A) = \sum_{e from A to B} f(e) - \sum_{e from B to 
 $\sum_{e from A to B or B to A} \Delta$ which gives us capacity of the cut minus m$\Delta$ \
 Let's look at the flow at the end of the previous phas $val(f_{prev})\geq maxflow -2\Delta m$. \
 How many augmentations can we have in the Delta-phase? \
-We can have at most 2m augmentations in this phase because each one increases the value by at most $\Delta$ and starting from max-flow $-2m\Delta$. \ 
+We can have at most 2m augmentations in this phase because each one increases the value by at least $\Delta$ and starting from max-flow $-2m\Delta$. 
+ 
 So the running time is $O(m^2 \log K)$ \
 It finds the max flow because it is a special instance of maxflow.
 
