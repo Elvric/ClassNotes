@@ -238,3 +238,59 @@ If we have a participation constraints for multiple instances this is not possib
     }
 ```
 We do this this way because Companies have their own table so when we create a subset like Corporation we create a new table with new data but we must make sure that the table it is attached to for Companies in order to know the number of employees hence we use a foreign key. 
+
+---
+## 24-01-2018
+Remark: For one to one enforced relationship only use 1 table unless one of the entities also has other relationship which in this case makes the model impossible.
+
+## Relational Algebra
+### Relational query languages
+They allow manipulation and retrieval of data from a data base
+* Relation algebra
+    * Operational 
+    * Very useful for representing execution plan
+* Relational Calculus
+    * Descriptive - a query describes how the data to be retrieve looks like. 
+* SQL,PigLatin,OGL,Xquery
+
+Ra Consists of two basic operators.
+1. Input: one or two relations
+    * schema of relation is know
+    * Instance can be arbitrary 
+2. Output: a relation
+    * Schema of output relation depends on operator and input relation 
+
+Relation algebra on its own does not look and care what the keys are. \
+It also requires each record to be unique we cannot have 2 records that are exactly the same. 
+#### Single relation as input
+* Selection sigma : selects a subset of tuples from a relation
+    * Only want specific instances of the data
+* Projection Pi: projects to a subset of attributes from a 
+relation.
+    * Only want certain columns of the Table
+* Renaming ro: of relations or attributes useful when combining several operators
+    * Temporary variable for operators.
+
+#### Two relation as input
+* Cross product X: Combine 2 relations
+* Join BowTie ⋈: Combination of cross product and selection
+* (Division): not covered in class
+
+#### Set operators with two relations as input
+The relation we work on must be set compatible: same column types not title in the same order, same number of attributes.
+* Intersection
+* Union
+* Set Difference
+
+#### Example
+* PI_sname,rating (Skaters)= |sname|rating| (Columns)
+* PI_age (Skaters)= |age| (Columns) Note that if two ages are the same they will not be output.
+* sigma_rating>8(Skaters) = |Skaters > 8|
+* Pi_sname,rating (sigma_rating>8(Skaters)) = |sname|rating>8|
+    * Stepwise one operator at a time (Build temporary relations)
+    * Consecutve operators on the fly on scan through one relation (Not always possible)
+    * *Note to be known but cool*: **Depending on the database systems these two ways may be more optimized, today we use mostly column based data base systems**
+* Skaters union OurSkaters = |Skaters union OurSkaters| (No duplicates)
+* Skaters and OurSkaters = |Skaters and OurSkaters| (No duplicates)
+* Skaters - OurSkaters = |Skaters - OurSkaters| (No duplicates)
+* Pi_sname,rating,age (Skaters) union Pi_sname,rating,age (OurSkaters) 

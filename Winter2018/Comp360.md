@@ -233,19 +233,46 @@ Claim: Max flow in this network = max matching in G.
 First we show max matching is at least max-flow *M*. We assign a flow of 1 to all edges in M and 0 to all other edges between X and Y. \
 For the edges starting from s or ending at t, the ones that go to verteces in M get a value of 1 and the rest 0. \
 Note that this is a valid flow with flow of M. This is because there are M vertices in X involved in M and we assign 1 to the edges from s to those verteces. \
-Next we need to show that there is a matchingof size Max-Flow \
+Next we need to show that there is a matching of size Max-Flow \
 There is a max-flow with integer values. Thus all edges will have a flow of 0 or 1. The edges between X and Y with 1 unit of flow on them form a matching.  \
-To summerize we showed max-flow is at least M and max-flow=some matching that is smaller or equal to max matching which implies that M = max-flow \
-Remark: Note that in the above proof we could assign infinit capacities to edges between X and Y. The incoming flow in all verteces in X will be at most 1 so the edges between X and Y will never have any flow > 1. \
+To summarize we showed max-flow is at least M and max-flow=some matching that is smaller or equal to max matching which implies that M = max-flow \
+Remark: Note that in the above proof we could assign infinity capacities to edges between X and Y. The incoming flow in all verteces in X will be at most 1 so the edges between X and Y will never have any flow > 1. \
 We know max-flow = min cut what does this min in this contest? 
 
-Def: A vertex cover is a set of verteces such that removing them will remove all the edges from the graph. 
+#### Def: A vertex cover is a set of verteces such that removing them will remove all the edges from the graph. 
 
-#### Thm: In every bipartite graph Max Matching = Min vertex cover (Note that the graph needs to be bipartite, a triangle for example violate that rule)
+#### Thm: In every bipartite graph G, Max Matching = Min vertex cover (Note that the graph needs to be bipartite, a triangle for example violate that rule)
 
 Remark: Note that if a graph has a matching of size k, then every vertex caver needs to pick at least one vertex from each of these k edges so ≥ k. 
 
-Proof: Lets look at the min cut (A,B). Let's now split the X 2 parts $A_1,B_1$ and for Y $A_2,B_2$ where $A=\{s\}\lor A_1 \lor A_2$ and similarly for B. We know that there are no edge going from $A_1$ to $B_2$ because that would make my cut value be infinity. So we can just remove all the verteces $B_1$ and $A_2$ so $B_1 \lor A_2$ is the vertex cover.  
+Proof: Lets look at the min cut (A,B). Let's now split the X 2 parts $A_1,B_1$ and for Y $A_2,B_2$ where $A=\{s\}\lor A_1 \lor A_2$ and similarly for B. We know that there are no edge going from $A_1$ to $B_2$ because that would make my cut value be infinity. So we can just remove all the verteces $B_1$ and $A_2$ so $B_1 \cup A_2$ is the vertex cover.  
 
+---
+## 24-01-2018
+Proof continue: Obviously min cut < $\infty$ (({s},V-{s}) is a cut < $\infty$. Thus $B_1 \lor A_2$ is a vertex cover in the original graph. \
+On the other hand $Cap(A,B)= \sum_{e: s \ to \ B_1} C_e + \sum_{e: A_2 \ to \ t} C_e$ which is $= \mid A_2 \mid + \mid B_1 \mid$ \
+Now we have show that there is a vertex cover that is equal to the min-cut (A,B). 
+
+Next we will show that $min-cut \leq min-vertexCover$ \
+Let S the the smallest vertex cover. $S_1$ is the part in X and $S_2$ is the part in Y. \
+Let $A= X-S_1 \cup S_2 \cup \{s\}$, $B=A^c=S_1 \cup Y-S_2 \cup \{t\}$. So cap(A,B)= $\mid S_1 \mid + \mid S_2 \mid$. There are no edges between $X-S_1 \land Y-S_2$ because the S is a vertex cover. \
+Conclusion: in such a model min-cut = min-vertexCover = max=matching.
+
+#### Thm: (Konig) In a bipartite graph Max-Matching = Min-Cut proven
+
+### Disjoint Paths in directed graphs
+Input: A directed graph G and two distinct nodes are marked as s and t.   
+Goal: find the maximum number of edge-disjoint paths from s to t. (paths that do not share any edges). 
+* Just running DFS/BFS does not work
+    * Issue: we might have a path that kills other paths. Even taking the shortest path will not work as we can have a path that goes around a lot yet is optimal to take rather than a small 1.
+* FF can work we put a capacity of 1 on all the edges.  
+    * **Personal thought:** \
+    Then remove edges with 0 capacity then run DFS until finding t, if we ever encounter the same node in a path we have a loop so we remove the edges that are part of that loop at the end we remove or mark the edges as part of a path and carry on until no path are valid. Then we have found exactly the number of max flow.
+
+Proof: Consider a flow of 1, we start from s and trace with one unit of flow. Every time we enter an internal node we can liver it as $f^{in}=f^{out}$ for such nodes. So the only place to stop in the sink. \
+For now K units of flow: \
+We can start from s and trace a path to t as above. Then if we remove this path we get k-1 path and we can apply induction hypothesis/continue in this manner until we have a flow of 0. \
+So far we have shown that given a max-flow k $max-dij \geq k$  \
+Now we will prove that k is the max number of disjoint path. Note that if we have r edge-disj paths then max-flow is at least r. So we can assign 1 unit of flow to every edge in these path, whatever is not in the paths assign 0 so $max-flo \geq r$. Hence $max-flow=max-dij$.
 
 
