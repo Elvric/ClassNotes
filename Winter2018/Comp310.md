@@ -10,16 +10,16 @@
 
 ### Evolution
 * first generation
-    * computer cost milions
+    * computer cost millions
     * hard to operate and program
     * No need for OS just one operation at a time
     * Idle was very expensive
 * Second generation
-    * Operators fetche compilers and card decks to get job reade
+    * Operators fetch compilers and card decks to get job read
     * Batch systems came up then to optimize processes.
-    * Program where executed in batches and programing could now be done onfline allowing us to start subroutines that can be used
+    * Program where executed in batches and programing could now be done offline allowing us to start subroutines that can be used
 * Third Generation
-    * Memory partition used so that we can run multiple jobs together. Seeming paralellism, the CPU swaps between jobs. 
+    * Memory partition used so that we can run multiple jobs together. Seeming parallelism, the CPU swaps between jobs. 
 * How
     * Move from maximizing computer utilisation using 100% of CPU at a time to ensure that no power is wasted
     * Personal computers have lead to user wait time to be low as user activity must be spread out leaving CPU iddle more
@@ -305,4 +305,95 @@ pthread_cancel();
 
 //Detached threads cannot be joinable.
 int pthread_detach(pthread_t thread); //Use to stop for the waiting I assume
-``` 
+```
+---
+
+## 25-01-2018
+
+### Thread continue
+Detached thread clears its resources when finishing we pass this as the attributes can be passed for that. 
+``` C
+int pthread_mutex_lock(pthread_mutext_t *mutex); 
+//Use to lock shared variables in all threads.
+int s = pthread_mutex_unlock(...);
+if(s !=0)
+{
+    ErrExitEN(s, "pthread_mutex_unlock");
+}
+
+    
+```
+This is important when we deal with share variables that we do not want modified or used by multiple threads.
+
+### Thread cancelation
+1. Do it imidiatly
+2. Do it after some code was run 
+
+```C
+int threadfun(void *args)
+{
+     ...
+}
+int main()
+{
+    int pthread_testcancel(thread);
+    int pthread_cancel(); 
+    //invoke cancelation requests cancelation but actual cancelation depends on thread state.
+    p_tread_t thr;
+    p_thread_attr_t attr;
+    int s;
+
+    s = p_tread_attr_init(&attr); //Here the attribute is initialized so now it exists
+
+    if(s !=0)
+    {
+        errExitEn(s,"p_tread_attr_init");
+    }
+
+    s = p_tread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED); //Here we set the detached state of the attribute to detached
+    if(s !=0)
+    {
+        errExitEn(s,"p_tread_attr_setdetachstate");
+    }
+
+    s=pthread_create(&thr,&attr,threadfunc,(void *) 1); //When we create the thread we give it the detached attribute so it gets detached.
+    if(s != 0)
+    {
+        ...
+    }
+}
+```
+
+### Sychronization 
+
+#### Concurrent process
+* Compete for shared resources.
+* Any process can run at any given time.
+* Cooperate with each other in sharing global resources.
+* Competing (no need for sycrcho)
+    * Do not work together.
+    * Ex 2 independent process running no matter the order the output will remain the same. 
+    * It is deterministic, reproducible (can stop and restart);
+* Cooperating
+    * Ex Transaction process in airline reservation system
+    * Share a common object or exchange messages, may be irreproducible, subject to **race conditions**.
+    * For some of these process the order of some instruction is irrelevant however certain instruction combination must be avoided.
+* purpose of Cooperation
+    * Share resources
+    * things faster
+    * Solve problem modularly 
+        * Output of one process is the used by another one.
+
+### Race condition
+When 2 or more process are reading or writing some shared data and final result depends on who runs precisely when in a race condition. 
+#### Mutual exclusion:
+For cooperation to occur we need no processes to be in their critical section at the same time. We cannot make any assumption about the speed and the number of CPU that we have. No process running outside of its critical section may block other processes. No process should wait forever to enter its critical section. 
+
+#### Critical section
+Should be atomic it runs all at the same time or not we do not switch process while a process is running its critical section. So it is important to minimize the size of the critical section.
+
+##### Solution
+Simplest: disable all interrupts, no process can interrupt while the process is running. Works for a single CPU. But it is not practical as the OS operation will be hindered and it will not work on multiple CPU.
+
+---
+p thread test cancel and cancellation points?
