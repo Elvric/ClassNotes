@@ -397,3 +397,78 @@ Simplest: disable all interrupts, no process can interrupt while the process is 
 
 ---
 p thread test cancel and cancellation points?
+Go back to first slide?
+## 26-01-2018
+
+#### Solutions continued
+Use a variable lock:
+```
+if lock == 0 set lock=1 and enter_region
+if lock ==  1 wait until lock becomes 0
+
+    Process 0
+    {
+    while(TRUE)
+    while (turn !=0);
+    critical_section();
+    trun=1;
+    non_critical section;
+    }
+
+     Process 1
+    {
+    while(TRUE)
+    while (turn !=1);
+    critical_section();
+    trun=0;
+    non_critical section();
+    }
+```
+But starvation can occur: one of the two processes will wait for a long time starve to enter the critical section but the other process will not give it the turn. \
+The second problem is that we are contineously checking the term variable until the process is available just like I/O which is a problem. \
+Example: \
+Kernel level multi threads are used for concurrent processing. Each thread has 2 second for the critical section and 8 seconds for the non-critical section. If we have to thread what is the runtime? If the thread keeps changing every second we get (nc=non critical, c= critical).
+|1|2|
+|:--:|:--:|
+| nc | nc |
+| cs | cs (so blocked) |
+| cs | waiting |
+| nc | cs |
+Here we can see the Process 2 will wait for some time while not performing any operations. 
+
+**Def: Busy waiting is a terminology that implies that there will be some cpu runtime where a process will just idle and not perform any operations. (Passed midterm)** \
+**Def: no parllelization overhead: means that there when processes switch on CPU they do not take any time.** 
+
+Use own key to critical section:
+```
+ Process 0
+    {
+    while(TRUE)
+    {
+        while (flag[1]);
+        flag[0]=true
+        critical_section();
+        flag[1]=false;
+        non_critical section;
+    }
+
+    }
+
+     Process 1
+    {
+      while(TRUE)
+      {
+        while (flag[0]);
+        flag[1]=true
+        critical_section();
+        flag[1]=false;
+        non_critical section;
+      }
+    }
+```
+
+
+
+
+
+
