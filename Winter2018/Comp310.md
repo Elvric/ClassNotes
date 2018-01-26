@@ -408,21 +408,25 @@ if lock ==  1 wait until lock becomes 0
 
     Process 0
     {
-    while(TRUE)
-    while (turn !=0);
-    critical_section();
-    trun=1;
-    non_critical section;
+        while(TRUE)
+        {
+            while (turn !=0);
+            critical_section();
+            turn=1;
+            non_critical section;
+        }
     }
 
      Process 1
     {
-    while(TRUE)
-    while (turn !=1);
-    critical_section();
-    trun=0;
-    non_critical section();
-    }
+        while(TRUE);
+        {
+            while (turn !=1);
+            critical_section();
+            turn=0;
+            non_critical section();
+        }
+}
 ```
 But starvation can occur: one of the two processes will wait for a long time starve to enter the critical section but the other process will not give it the turn. \
 The second problem is that we are contineously checking the term variable until the process is available just like I/O which is a problem. \
