@@ -294,3 +294,57 @@ The relation we work on must be set compatible: same column types not title in t
 * Skaters and OurSkaters = |Skaters and OurSkaters| (No duplicates)
 * Skaters - OurSkaters = |Skaters - OurSkaters| (No duplicates)
 * Pi_sname,rating,age (Skaters) union Pi_sname,rating,age (OurSkaters) 
+---
+# 29-01-2018
+
+## Relation algebra continued
+* Cross-Product X
+    * {a,b} X {c,d,e}={ (a,c) , (a,d) , (b,c) , (b,d) , (a,e) , (b,e)}
+* ⋈ Joins Cross-Product + 
+    * Acts like sigma for simple algebra and perform the cross product afterwards
+* Equi Join same as join but we do equal relation more often.
+    * We link relationship tables with certain instance of entities which is very important when wanting to see what relationships are present.
+* Natural Join is a type of equi join
+    * We do not every single time the equality simple
+    * It builds a join with columns with exactly the same name so if we have multiple columns with the same name it will have an equality condition for both of them. These columns only appear once in the table
+* Renaming
+    * Important when we want to join table with itself
+    * Hard if they have the same column names.
+    * Creates one more alias just like when we create a new variable tha holds the address of an object that already exists we just have created one more pointer nothing more
+    * row(Temp,Skaters) Now skater is aliased with Temp
+    * row((Temp1(sidI,ratingI)),Skaters(sid,rating))
+#### Example
+* Pairs all the information on one side with the one on the left
+* Join Skaters ⋈_(Skaters.rating > OurSkaters.rating) OurSkaters
+
+#### In Class examples
+S skater table, P competitions result and C competition dates and details. 
+
+S
+| sid | sname | rating | age
+| --- | --- | --| --|
+
+C 
+| cid | date |type|
+| --- | --- | --|
+
+P
+| sid | cid | rank|
+| --- | --- | --| 
+
+1. Find the name of Skaters that have participated in competition 101
+$\Pi{sname}(\sigma_{cid=101}(P) \bowtie S)$
+2. Find name of skaters who have participated in a local competition
+$\Pi_sname(\sigma_{type='local'}(C) \bowtie P \bowtie S)$
+3. Find sids of skaters who have participated in regional or local competitions. \
+$\Pi_{sid}(\sigma_{type='local' \ \lor \ type='regional'}(C) \bowtie P)$
+4. Find sids of skaters who have participated in a regional or local competition \
+$\Pi_{sid}(\sigma_{type='local'}(C) \bowtie P) \cap \Pi_{sid}(\sigma_{type='regional'}(C) \bowtie P)$
+5. sdsd
+6. sdsdss
+7. dsds
+
+### Equivalence
+As long as the projection keeps the column names as that the operator needs to work on we can switch them. \
+Joining multiple tables as well can be done in any order. \
+The and operator for sigma can be used if they work on different columns.
