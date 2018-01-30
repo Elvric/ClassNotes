@@ -323,14 +323,16 @@ S skater table, P competitions result and C competition dates and details.
 S
 | sid | sname | rating | age
 | --- | --- | --| --|
+| | | |
 
 C 
 | cid | date |type|
 | --- | --- | --|
-
+| | |
 P
 | sid | cid | rank|
 | --- | --- | --| 
+| | |
 
 1. Find the name of Skaters that have participated in competition 101
 $\Pi{sname}(\sigma_{cid=101}(P) \bowtie S)$
@@ -340,9 +342,7 @@ $\Pi_sname(\sigma_{type='local'}(C) \bowtie P \bowtie S)$
 $\Pi_{sid}(\sigma_{type='local' \ \lor \ type='regional'}(C) \bowtie P)$
 4. Find sids of skaters who have participated in a regional or local competition \
 $\Pi_{sid}(\sigma_{type='local'}(C) \bowtie P) \cap \Pi_{sid}(\sigma_{type='regional'}(C) \bowtie P)$
-5. sdsd
-6. sdsdss
-7. dsds
+
 
 ### Equivalence
 As long as the projection keeps the column names as that the operator needs to work on we can switch them. \

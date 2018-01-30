@@ -400,8 +400,8 @@ p thread test cancel and cancellation points?
 Go back to first slide?
 ## 26-01-2018
 
-#### Solutions continued
-Use a variable lock:
+## Solutions continued
+### Use a variable lock:
 ```
 if lock == 0 set lock=1 and enter_region
 if lock ==  1 wait until lock becomes 0
@@ -426,7 +426,7 @@ if lock ==  1 wait until lock becomes 0
             turn=0;
             non_critical section();
         }
-}
+    }
 ```
 But starvation can occur: one of the two processes will wait for a long time starve to enter the critical section but the other process will not give it the turn. \
 The second problem is that we are contineously checking the term variable until the process is available just like I/O which is a problem. \
@@ -443,36 +443,196 @@ Here we can see the Process 2 will wait for some time while not performing any o
 **Def: Busy waiting is a terminology that implies that there will be some cpu runtime where a process will just idle and not perform any operations. (Passed midterm)** \
 **Def: no parllelization overhead: means that there when processes switch on CPU they do not take any time.** 
 
-Use own key to critical section:
+### Use own key to critical section:
+This removes starvation as they do not have to wait on each other.
 ```
  Process 0
-    {
+{
     while(TRUE)
     {
         while (flag[1]);
         flag[0]=true
         critical_section();
-        flag[1]=false;
+        flag[0]=false;
         non_critical section;
     }
+}
 
-    }
-
-     Process 1
+Process 1
+{
+    while(TRUE)
     {
-      while(TRUE)
-      {
-        while (flag[0]);
+        while(flag[0]);
         flag[1]=true
         critical_section();
         flag[1]=false;
         non_critical section;
-      }
     }
+}
 ```
 
+---
+## 30-01-2018
+Continued: \
+Problem occurs when both flags are set to false P1 executes the while loop and enters critical section. Then process swap so P2 also enters the critical section which defeats the purpose as both program are now both in the critical section. 
 
+### Mutal exclusion deadlock
+Set the flag to true before entering the critical section then executes the while loop.
+```
+ Process 0
+{
+    while(TRUE)
+    {
+        flag[0]=true
+        while (flag[1]);
+        critical_section();
+        flag[0]=false;
+        non_critical section;
+    }
+}
 
+Process 1
+{
+    while(TRUE)
+    {
+        flag[1]=true
+        while (flag[0]);
+        critical_section();
+        flag[1]=false;
+        non_critical section;
+    }
+}
+```
+Problem they both turn on their flag and then they both execute the while loop due to processor time swap causing them to both be locked and never entering their critical section.
 
+### Live lock 
+```
+ Process 0
+{
+    while(TRUE)
+    {
+        flag[0]=true
+        while (flag[1])
+        {
+            flag[0]=false;
+            // random delay
+            flag[0]=true;
+        }
+        critical_section();
+        flag[0]=false;
+        non_critical section;
+    }
+}
 
+Process 1
+{
+    while(TRUE)
+    {
+        flag[1]=true
+        while (flag[0])
+        {
+            flag[1]=false;
+            // random delay
+            flag[1]=true;
+        }
+        critical_section();
+        flag[1]=false;
+        non_critical section;
+    }
+}
+```
+Works because both program give a time to the other just in case to enter its critical section before them.
 
+## Decker's Algorithm
+Each process has its own flag to enter the critical section and another flag for arbitration the turn flag. \
+Works in 2 steps we have interest with the flag and an arbitration with the turn.
+```
+ Process 0
+{
+    while(TRUE)
+    {
+        flag[0]=true
+        while (flag[1])
+        {
+            if(turn==1)
+            {
+                flag[0]=false;
+                while(turn==1);
+                flag[0]=true;
+            }
+        }
+        critical_section();
+        turn=1;
+        flag[0]=false;
+        non_critical section;
+    }
+}
+
+Process 1
+{
+    while(TRUE)
+    {
+        flag[1]=true
+        while (flag[0])
+        {
+            if(turn==0)
+            {
+                flag[1]=false;
+                while(turn==0);
+                flag[1]=true;
+            }
+        }
+        critical_section();
+        turn=0;
+        flag[1]=false;
+        non_critical section;
+    }
+}
+```
+## Peterson's algorithm
+Decker's is hard to prove and this one is much simpler. It is however based on the same idea than above.
+
+```
+ Process 0
+{
+    while(TRUE)
+    {
+        flag[0]=true
+        turn=1;
+        while (flag[1]&&turn==1);
+        critical_section();
+        flag[0]=false;
+        non_critical section;
+    }
+}
+
+Process 1
+{
+    while(TRUE)
+    {
+        flag[1]=true
+        turn=0
+        while (flag[0]&&turn==0);
+        critical_section();
+        flag[1]=false;
+        non_critical section;
+    }
+}
+```
+## Hardware implementations?
+The solutions seen are just software solutions and it is very hard to extend that to more processes. \
+Current hardware today have microprocessor that allows for that. 
+### Test and lock
+LOCK is the shared variable in memory so that all processes can see it. \
+Read the content of memory location LOCK into register RX and stores a non-zero value at memory LOCK if RX is equal to 0. RX is local and used by processes to check the value of LOCK. \
+Advantage we can have a single LOCK variable for multiple process. \
+Disadvantage, busy waiting and starvation are possible outcomes of the hardware.
+
+## Busy Waiting Approaches Problems
+Priority inversion problem is a problem: lower priorities can run before higher priorities. 
+
+### Alternative
+Sleep wake up approach: used so that a process never gets CPU time when it is busy waiting.
+
+## Semaphores
+Two or more processes can cooperate by sending simple messages. This allow a process to be stopped until it recieves a messages the variable used for messages is Semaphore. If we want to transfer a message we use **signal** otherwise we use **wait**.
