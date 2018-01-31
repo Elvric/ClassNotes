@@ -348,3 +348,133 @@ $\Pi_{sid}(\sigma_{type='local'}(C) \bowtie P) \cap \Pi_{sid}(\sigma_{type='regi
 As long as the projection keeps the column names as that the operator needs to work on we can switch them. \
 Joining multiple tables as well can be done in any order. \
 The and operator for sigma can be used if they work on different columns.
+
+----
+# 31-01-2018
+? When we have a table relationship do we show the keys
+? Can we break down statments
+## SQL introduction
+
+```
+psql cs21
+// in data base
+SELECT *
+FROM skaters;
+//Do not send the command to database unless ; is added
+
+```
+We can also use SQuirreLSQL that can be used as a more user friendly AI to access the database. \
+For psql we can use pgAdmin 4
+
+Note that SQL does not eliminates duplicate
+``` SQL
+SELECT columns  /*what columns we want*/
+
+FROM list of relations /*Gives you the tables we are inte
+rested in*/
+
+WHERE qualifications /*uses to see the conditions*/
+
+AND /*is the general and attribute */
+
+SELECT DISTINCT columns FROM table /*in this case we remove
+duplcated data in the columns */
+
+WHERE age BETWEEN 13 AND 17 /*useful*/
+
+WHERE NOT /*reverses the condition */
+
+WHERE age <> 9 /*not equal*/
+
+SELECT sid,rating+1 FROM skaters
+/* modifies data on the output but not in the data
+base */
+
+SELECT sid, rating, rating+1 as newrating FROM skaters
+/* creats an output with an extra columns with newrating containing 
+rating+1 note that as long as SELECT is used there is no
+data changed in the database nore added
+*/
+
+SELECT * FROM skaters where sname LIKE 'de%y'
+/* starts with de end with y */
+
+LIKE '_d%y'
+/* second character is a e and last a y */
+
+SELECT * FROM skaters ORDER BY age
+/* order the age from smallest to largest */
+
+ORDER BY age,rating
+
+ORDER BY age, rating DESC
+/* DESC from highest to lowest only for the imidiate right*/
+
+15 as maxrating
+/* creates a variable that is in front of all the output */
+```
+
+## Multirelational Queries Join
+
+```SQL
+SELECT * FROM skaters,participates
+/*mixes both the record combination between skaters and participate table */
+
+SELECT * FROM skaters,participates WHERE skaters.sid=
+participates.sid
+/* equi join query in this case but some columns may be repeated*/
+
+SELECT skaters.sid, sname FROM skaters,participates WHERE skaters.sid=participates.sid
+/*now columns of interest only */
+
+SELECT * FROM skaters s,participates  p WHERE s.sid=
+p.sid
+
+/*renaming */
+```
+
+## Union, Intersection, Difference
+```SQL
+SELECT psid FROM participates p, competition c 
+WHERE pcid=c.cidAND c.type= 'local'
+/*all the skaters in local competition */
+
+SELECT psid FROM participates p, competition c 
+WHERE pcid=c.cidAND c.type= 'local'
+UNION SELECT psid FROM participates p, competition c 
+WHERE pcid=c.cidAND c.type= 'regional'
+/* Here we are uniting regional and local competitions SQl 
+removes duplicate using SET opperators like union intersect and difference*/
+
+UNION ALL /*keeps duplicates in this case */
+
+SELECT psid FROM participates p, competition c 
+WHERE pcid=c.cidAND c.type= 'local'
+INTERSECT SELECT psid FROM participates p, competition c 
+WHERE pcid=c.cidAND c.type= 'regional'
+
+SELECT psid FROM participates p, competition c 
+WHERE pcid=c.cidAND c.type= 'local'
+EXCEPT SELECT psid FROM participates p, competition c 
+WHERE pcid=c.cidAND c.type= 'regional'
+
+WHERE sid IN(31,58)
+/*just like an array true if the element is in the array */
+/*IN can also just accept a table of values from SELECT 
+the selection column size must be greater or match the IN "tuple" size */
+/* in does not always have duplicates but it still may depending on the IN statement used like a key*/
+
+SUBQUERY /* used as condition statement in IN for example*/
+
+EXISTS(SELECT…) /*Check if the statement inside produces an output for each row in the other table*/
+
+SELECT sname FROM skaters s WHERE EXISTS( SELECT * FROM Participates p WHERE p.cid =101 AND p.sid=58)
+
+rating >=ALL /*Looks at all the data so all the ratings */
+
+rating > ANY /*lokks at all the data and removes the person with
+the lowest rating */
+
+LIMIT 2 /*only consider 2 records but do not use this in 
+exam*/
+```
