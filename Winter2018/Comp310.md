@@ -634,5 +634,115 @@ Priority inversion problem is a problem: lower priorities can run before higher 
 ### Alternative
 Sleep wake up approach: used so that a process never gets CPU time when it is busy waiting.
 
-## Semaphores
-Two or more processes can cooperate by sending simple messages. This allow a process to be stopped until it recieves a messages the variable used for messages is Semaphore. If we want to transfer a message we use **signal** otherwise we use **wait**.
+## Semaphores (sleep and wake up)
+Two or more processes can cooperate by sending simple messages. This allow a process to be stopped until it recieves a messages the variable used for messages is Semaphore. If we want to transfer a message we use **signal** otherwise we use **wait**. s is the messaging variable uses: signal(s), wait(s).\
+* can be initializedd to a non-negative values
+* wait decrement the semaphore value by 1 if it becomes negative then the process that is executing that wait is blocked
+* signal increment the semaphore value if value is not positive a process is unblocked since that means that a process was waiting. \
+    * Not that 0 is taken into account
+
+---
+# 01-02-2018
+
+```C
+struct semaphore
+{
+    int count;
+    queutType queue
+}
+void wait(semaphores s) //wait is atomic
+{
+    s.count--;
+    if(s.count<0)
+    {
+        place process in 
+        s.queue;
+        block this process
+    }
+}
+
+void signal(semaphore s) //atomic
+{
+    s.count++;
+    if (s.count <= 0)
+    {
+        remove a process P from s.queue;
+        place P on ready list
+    }
+}
+```
+#### How process removed?
+FIFO: strong semaphore. \
+Random: weak semaphore
+
+### Using semaphores
+binary- is a semaphore initialize to 1 because first program make it go to 0 so it can execute the other programs then will make it negative and hence will not enter. \
+Counting is a semaphore with an integer value ranging between 0 
+and an arbitrarily large number of units \
+ of the critical resrouces that are available. -Also known as general semaphores
+
+```C
+semaphore mutex =1;
+semaphore empty =N; //all slots are empty N is an int
+semaphore full =0; //no slots are full
+
+//*First run*
+producer()
+{
+    int item;
+    while(1)
+    {
+        item=produce_item();
+        wait(&empty); //decrement N by 1 so can enter
+        wait(&mutex); //ensures no other process enters
+        insert_item(item);
+        signal(&mutex); //give other processes a chance
+        singal(&full); //adds 1 to the full list
+    }
+}
+consumer()
+{
+    int item;
+    while(1)
+    {
+        wait(&full); 
+        wait(&mutex); 
+        item = remove_item();
+        signal(&mutex);
+        signal(&empty);
+        consume_item(item);
+    }
+}
+```
+## Primitives revisited Monitors (more at the end of semester)
+Monitor is a high-level language abstraction that combines shared data operations on the data synchronization using condition variables. \
+Monitor can automate semaphores to reduce chances of error. Protects data from unstructured access.
+
+# Deadlocks
+Permanent blocking of a set of processes that compete for the system resources. \
+Hard to fine an efficient solution for that. \
+A set of processes are in a wait state because each process is waiting for the resources that the other one has. (two children each having a toy, they want the other toy but will not give theirs away)
+1. P1 holds the disk needs the printer
+2. P2 holds the printer but needs the disk
+3. Neither give their resources away
+
+## Classification of resources
+### Reusable
+Something can be safely used by one process at a time ans is not depleted by that use.
+### Consumable
+When a resource is aquired by a process it ceases to exist. (messages, signals)
+### Preemptable: 
+these can be take away form the process owning it with no ill effects (save restore) i.e CPU
+
+### Non-Preemptable:
+Cannot be taken away from its owner with without causing the computation to fail. (printer or floppy disk)
+
+## Condition for deadlocks
+* Mutual exclusion
+    * process requires exclusive usage control of its resources 
+* Hold and wait
+    * process may wait for resources while holding others
+* No preemption
+    * Process will not give up a resource until it is done with it
+* Circular wait
+    * each process in the chain holds a resource requested by another.

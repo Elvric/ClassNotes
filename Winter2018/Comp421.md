@@ -351,8 +351,7 @@ The and operator for sigma can be used if they work on different columns.
 
 ----
 # 31-01-2018
-? When we have a table relationship do we show the keys
-? Can we break down statments
+
 ## SQL introduction
 
 ```
