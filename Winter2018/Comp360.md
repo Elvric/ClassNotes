@@ -275,4 +275,5 @@ We can start from s and trace a path to t as above. Then if we remove this path 
 So far we have shown that given a max-flow k $max-dij \geq k$  \
 Now we will prove that k is the max number of disjoint path. Note that if we have r edge-disj paths then max-flow is at least r. So we can assign 1 unit of flow to every edge in these path, whatever is not in the paths assign 0 so $max-flo \geq r$. Hence $max-flow=max-dij$.
 
-
+---
+# 29-01-2018

@@ -730,7 +730,7 @@ A set of processes are in a wait state because each process is waiting for the r
 ### Reusable
 Something can be safely used by one process at a time ans is not depleted by that use.
 ### Consumable
-When a resource is aquired by a process it ceases to exist. (messages, signals)
+When a resource is acquired by a process it ceases to exist. (messages, signals)
 ### Preemptable: 
 these can be take away form the process owning it with no ill effects (save restore) i.e CPU
 
