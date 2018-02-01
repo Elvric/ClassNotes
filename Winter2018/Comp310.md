@@ -745,4 +745,4 @@ Cannot be taken away from its owner with without causing the computation to fail
 * No preemption
     * Process will not give up a resource until it is done with it
 * Circular wait
-    * each process in the chain holds a resource requested by another.
+    * each process in the chain holds a resource requested by another. (chain of processes)
