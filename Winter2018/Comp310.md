@@ -738,6 +738,7 @@ these can be take away form the process owning it with no ill effects (save rest
 Cannot be taken away from its owner with without causing the computation to fail. (printer or floppy disk)
 
 ## Condition for deadlocks
+All these conditions are necessary but not sufficient all 4 are needed for deadlock to occur
 * Mutual exclusion
     * process requires exclusive usage control of its resources 
 * Hold and wait
@@ -746,3 +747,62 @@ Cannot be taken away from its owner with without causing the computation to fail
     * Process will not give up a resource until it is done with it
 * Circular wait
     * each process in the chain holds a resource requested by another. (chain of processes)
+* Process cannot be reset to an earlier state where the resources are not held
+
+
+---
+# 02-02-2018
+
+## Solving deadlock
+* Preemptions -> make sure a process does use any resources until it has acquired all it needs
+* System that prevents and avoid deadlocks -> prevents cycles.
+* Transaction give check point so that processes can move move back to the checkpoints -> negates irreversible processes.
+
+## Resource allocation graphs
+
+Set of processes {P1,P2,..,Pn} depicted as circles\
+Set of resources {R1,R2,..,Rn} depicted as squares \
+Dots inside a resource show how many units are available \
+Pi->Rj Pi waits for ( has requested ) Rj \
+Pi<-Rj Resource Rj has been allocated to Pi 
+
+## No deadlock
+* If there is a cycle but at least one process is still active and moving forward no deadlock 
+* If resources contains multiple units a circle is necessary but not sufficient for deadlock, we must have a knot meaning that no resources are allocated to processes that are outside of the circle. (No processes that can run)
+
+## Strategies for deadlock
+1. Ignorance: pretend there is no problem (restart your system)
+2. Prevention: design a system in such a way that deadlock is excluded a priori
+3. Avoidance: make a decision dynamically checking whether a request will, if granted, potentially lead to a deadlock or not.
+4. Detection: le the deadlock occur and detect when it happens, and take some action to recover after the fact.
+
+## Reaction to deadlock
+#### People
+Mathematicians find it not acceptable
+Engineers ask hw serious it is and do not want to pay a penalty of performance.
+
+#### UNIX
+Ignore the problem as prevention price is hight
+
+## Deadlock prevention
+Design a system that excludes the possibility of deadlock.
+* indirect method
+    * Prevent the occurrence of one of the necessary conditions
+* direct method
+    * prevent the occurrence of a circular wait condition \
+Deadlock prevention strategies are ...
+
+## How to set it in action
+#### Mutual exclusion
+In general this cannot be disallowed
+#### Hold-and-wait
+Require a process to request all of its required resources at a time making it block otherwise only activating it when all the resources are available. This prohibits resources from being use optimally. Sometimes it is hard to know in advance all the resources that a process will need. The programmer will have to give all the possible resources required by the process note that these are possible not required.
+#### No preemption
+If a process holding resources is denied a further request that process must release all its unused resources and request them again.
+#### Circular wait
+Can be prevented by defining a linear ordering of resource type. 
+If a process ahs been allocated resource of type R, then it may subsequently request only those resources of types following R in the ordering. So P1 holds are R1 so it can only request Ri>1, P2 holds R2 so it can only request Ri>2. 
+
+## Deadlock avoidance
+Make judicious resources allocation choices to ensure a deadlock-free system. However we might get to a state where a process can still run but deadlock is still unavoidable. 
+* Evaluate current request and see if it will need to deadlock we need to have knowledge of future request. \
