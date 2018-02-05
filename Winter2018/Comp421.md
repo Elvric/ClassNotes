@@ -369,6 +369,8 @@ Note that SQL does not eliminates duplicate
 ``` SQL
 SELECT columns  /*what columns we want*/
 
+INSERT INTO skaters VALUES(...,...)
+
 FROM list of relations /*Gives you the tables we are inte
 rested in*/
 
@@ -471,9 +473,95 @@ SELECT sname FROM skaters s WHERE EXISTS( SELECT * FROM Participates p WHERE p.c
 
 rating >=ALL /*Looks at all the data so all the ratings */
 
-rating > ANY /*lokks at all the data and removes the person with
+rating > ANY /*looks at all the data and removes the person with
 the lowest rating */
 
 LIMIT 2 /*only consider 2 records but do not use this in 
 exam*/
 ```
+---
+# 05-02-2018
+## Aggregations
+```SQL
+SELECT rating FROM skaters;
+/*gives all the ratings*/
+
+SELECT count(rating) FROM skaters;
+/*counts all the ratings even if they are the same*/
+
+SELECT count(DISTINCT ratings) FROM skaters;
+/*count all the distinct rating */
+
+SELECT AVG(age) FROM skaters WHERE rating=9; 
+/*gives us the average we can use casting to convert
+to integers and so on */
+```
+Derive tables are tables made temporarily for calculations.
+```SQL
+(SELECT age
+FROM skaters
+WHERE rating =9)t;
+```
+```SQL
+SELECT MAX(age) FROM skaters;
+
+SELECT AVG(age) FROM skaters GROUP BY rating;
+/* return the average age for each rating category
+But it will not tell us what rating the AVG 
+is associate with*/
+
+SELECT rating,AVG(age) FROM skaters GROUP BY rating;
+
+SELECT rating,AVG(age),COUNT(*) FROM skaters GROUP BY rating;
+/*count(*) means count the records*/
+```
+Carful with group by for example aggregating a column of Strings is not possible.
+```SQL
+SELECT rating, AVG(age)
+FROM skaters
+GROUP BY rating
+WHERE AVG(age) >10
+/*this will fail as the where operation happens before the grouping. */
+
+HAVING AVG(age) >10
+/* this is the correct way of doing it*/
+
+SELECT MIN(AVG(S2.age))
+FROM Skaters S2
+GROUP BY rating
+--Wrong nested AGG operators.
+--Use derive table instead.
+
+CREATE VIEW activeSkaters (sid,skatername) AS
+SELECT DISTINCT s.sid, s.sname
+FROM skaters s, participates p 
+WHERE s.sid = p.sid ;
+-- Adds a new table to the database 
+
+DROP VIEW activeSkaters
+-- Removes it from the database 
+```
+
+## NULL Values
+* Unknown/Missing
+* Inapplicable
+### Comparing NULL to values
+If something is NULL the incrementing it in a table will fail, when we compare NULL with normal operators just like = NULL will not work. 
+| A | NOT A|
+|:-:|:-:|
+|true|false|
+|false|true|
+|unknown|unknown|
+We must use a special operator doing unknow or true =true
+```SQL
+IS NULL
+IS NOT NULL
+```
+In real world we might want to do operations with it so 
+```SQL
+COALESCE(rating,0)+1 moderating 
+--or we can do the following
+CASE WHEN rating is NULL THEN 0 ELSE rating END +1
+-- remember case and when it will be useful.
+```
+In this case it replaces every NULL with 0 and adds 1 to the 0, if it is not null we just add 1. 

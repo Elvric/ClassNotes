@@ -357,3 +357,85 @@ $= M-\sum_{x\in A: P_x>0} P_x+\sum_{x \in A: P_x<0} - P_x$ \
 $M-\sum_{x\in A} P_x$ \
 This works because M is the sum of all positive projects If a positive project exist in A then all its prerequ exist in A hence if we do M -all of the positive projects in A we are left with the sum of all the positive projects that are in B.\
 We know that the projects in A respect the prerequ conditions hence the total profit we can make is the sum of all positive projects in A minus the sum of all negative projects in A. And this is maximize as we have M-that sum in order to get the lowest min cut.
+
+---
+# 05-02-2018
+## Linear programming
+Special case of optimization problems: optimizing a linear function with a certain number of variables over a set of linear constrains.
+* Many optimization problems can be modelled as Linear Programs.
+* 40's: A very practical algorithm (called simplex) discovered for solving LP's. Theoretically it is not an efficient algorithm. (exponential time) but in practice it's almost always very fast.
+* 79 (Leonid Khachiyan) proved that LP's can be solved in polynomial time. Elipsoid algorithm.
+
+A linear program has:
+1. A set of variables: $x_1,x_2,...,x_n$ that can take real values.
+2. A set of linear constrains each of the form of $\alpha_1x_1+\alpha_2x_2+...+\alpha_nx_n$, $= \beta$, $\leq \beta$, $\geq \beta$ Where $\alpha$ are real numbers and the strictly less than or greater than are not allowed.
+3. A linear objective function that we want to minimize or maximize. $c_1x_1+c_2x_2+...+c_nx_n$ where the c are real numbers.
+
+### Examples:
+Variables $x_1,x_2,x_3$ max $2x_1+5x_2-x_3$ subject to $x_1+x_2+x_3 \leq 5$, $2x_1+6x_2-x_3 \leq 1$ and $x_1-2x_2-x_3 = 3$
+
+Variables $x_1,x_2,x_3$ max $x_1+x_2+x_3$ subject to $x_1+2x_2\leq 1$, $2x_1+x_2\leq 1$, $x_1 \leq 0$, $x_2 \leq 0$ and $x_3 = 1$ \
+Ans= $x_1 = \frac{1}{3}$, $x_2=\frac{1}{3}$ and $x_3=1$ gives $\frac{5}{3}$. 
+If we combine the 3 equations so that we get the initial condition is leq or equal to something then we know that we cannot do better than that. 
+
+### Applied example
+We have a small firm the produces 2 things, book cases and tables. \
+||cutting time|Assembly|Finishing time|
+|:--:|:--:|:--:|:--:|:--:|
+|Bookcase| 6/5 hr | 1 hr | 3/2 hr |
+|Table|1 hr | 1/2 hr | 2 hr|
+We have 
+|hours|domain|
+|:--:|:--:|
+|72|cutting time|
+|50| Assembly|
+|120|finishing time|
+We can sell a book case 80$ and table 55$ \
+We can have 2 variables book case and table \
+Maximize: $80b+55t$ \
+Constrains: \
+$\frac{6}{5}b+t\leq72$ \
+$b+\frac{1}{2}t\leq50$ \
+$\frac{3}{2}b+2t\leq120$ \
+$b \geq 0$ \
+$t \geq 0$ \
+Remark: we wish to add that b ant t are integers but adding that is not allowed in linear programs.(We cannot solve such optimization problems efficiently). \
+If we solve the LP we will get $t=30 \ x_2=35$ so fortunately in this case the optimal solutions are integers. 
+
+Two factories $P_1 \ P_2$ four products A,B,C,D
+||$P_1$ per day|$P_2$ per day|Demand Total|
+|:--:|:--:|:--:|:--:|:--:|
+|A|200| 100 | 1000 |
+|B|60 | 200 | 800|
+|C|90 | 150 | 900|
+|D|130| 80 | 1500|
+Cost of $P_1$= $800/day \
+Cost of $P_2$=$1100/day 
+
+Minimize function:
+$800x_1+1100x_2$ \
+Constrains: \
+$200x_1+100x_2 \leq 1000$ \
+$60x_1+200x_2 \leq 800$ \
+$90x_1+150x_2 \leq 900$ \
+$130x_1+80x_2 \leq 1500$ \
+$x_1 \geq 0$ \ 
+$x_2 \geq 0$
+
+Solution: $x_1=11.132 \ x_2 = 0.66$ \
+
+#### We are expected to model the problem as a linear program not to actually solve it. 
+
+### Model the problems:
+Find the max flow on this network:
+* We have as many variables as they are edges representing the flow in each one of them.
+* Objective maximize flow coming out of s
+* Constrains:
+    * The flow must be ≥ for every edge
+    * The flow must be ≥ to the capacity of every edge
+    * fin of a node must be equal to fout of that node (incoming variables - outcoming variables flow equals 0) 
+
+Max flow is a special case of linear programs
+
+
+
