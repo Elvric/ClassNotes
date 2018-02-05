@@ -277,3 +277,83 @@ Now we will prove that k is the max number of disjoint path. Note that if we hav
 
 ---
 # 29-01-2018
+
+## Same problem but this time with undirected graph
+
+#### Goal
+Find the maximum number of edge disjoint s t paths.
+
+### Ideas
+An undirected edge is an edge that can go in both directions.\
+Hence we can replace every edge with two undirected edge going in opposite directions. 
+> Personal thought: Can cause an issue if we run in both of them through our path as in reality it is only one edge.
+> Maybe removing cycles can then be a solution.
+
+My personal thought turned out to be correct. So we just run FF then remove all cycles including cycles of length 2.
+
+## Multi Source-Multi-Sink flow
+Similar to the original max-flow except that now we can have more than just 1 source and 1 flow. \
+Just as before we want to generate the max unit of flow. \
+The way of solving this is to create a source that has directed edges going to all of the sources in the graph with infinite capacity. \
+We do the same thing for the sink a sink that only has edges directed towards it connected to all the other sink with infinite capacity. \
+Now we can just run FF on the new graph using the new source and sink as the source and sink.
+
+## Baseball Elimination problem
+We have a tournament and every match the winning team gets 1 point.\
+We are in the middle and each team has some points and some remaining matches.\
+We are given a specific team A and we want to check if A has any chance of ending with the highest score (a tie is acceptable). \
+Ex:
+|Team|Matches 1 | Matches 2|Matches 3|points|
+|:--:|:--:|:--:|:--:|:--:|
+|A|B|C|-|68|
+|B|A|C|D|69|
+|C|A|B|D|70|
+|D|C|B|-|69|
+In this scenario at least one team ends up with > 70 
+
+If we look at the 3 teams B,C,D they have 70+69*3+3=211 they will have all these points to share and 211/3>70 at least 1 team will have >70 points.
+
+This does not always work however if we add a team into the mix that has lets say 10 points then the average technic does not work yet A is still eliminated.
+
+Let M be the total points A will have if it wins all of its remaining matches. \
+If A is eliminated then is it true that we can find a set T of teams such that if $\sum_{x \in T} \frac{P_x+k}{\mid T \mid}>M$ ? \
+Where k is the number of remaining matches between teams in T and $P_x$ is the points of x. 
+
+### Algorithm:
+1. Let M be the max number of points that A can collect if it wins all the remaining matches. $M=P_a +deg(a)$ 
+2. Remove A and its edges from the graph
+3. Construct the following flow network: for every edge uv put a vertex (uv) in the network. Also for every team add a node. 
+4. We add a source and sink. We connect the source to each node uv with capacity 1. To ensure that each node get at most one unit of flow. 
+5. We want the flow to be distributed between the two teams u and v. So we add 2 edges of capacity 1 or infinity does not matter going from (uv) and to independently u and v. So now either u or v gets the 1 unit of flow/ one point.
+6. We do not want any team to have more points than A so the capacity of each edge going from u to t must be $M-P_u$. If any of the team is already larger than M then we know that A is eliminated.
+7. Then we solve the max flow. If the max flow is equal to the capacity of S then A can win. If the max flow is less than the capacity of S then A is eliminated.
+
+---
+# 31-01-2018
+We know tha maxflow=min-cut what does the mean-cut tell us?
+
+## What can we say about mean-cut from the example above
+* $Mean-cut \neq \infty, A=\{s\},B=\{s\}^c$ 
+* Consider min-cut (A,B). If $(XY) \in A \rightarrow X \in A, \ Y \in B$
+* Let T be the set of teams in A from cut (A,B). $cap(A,B)= \sum_{X \in T} (M-P_x)+\sum_{s(xy) \in B} 1 = \sum_{X \in T} (M-P_x)-K= max-flow$.  If max flow is < # edges of S. 
+
+
+ Max-flow=$cap(A,B) = M* \mid T \mid - \sum_{X \in T} P_X + K <=> M* \mid T \mid - \sum_{X \in T} P_X + K <  \# of edges$ \
+$M* \mid T \mid < \# edges \ in \ T + \sum_{X \in T} P_x$ \
+With this we get the formula that we saw above. \
+#### Theorem: If our team is eliminated => There exists a set of teams T that provides a proof that the sum of their points plus the points they are sharing divided by the number of team gives an answer greater than the max score of A.
+
+## Project Selection:
+Problem: We are given a set of projects each project x has a revenue $P_x$ : if $P_x>0$ => it provides some positive revenue. If $P_x < 0$ it provides a loss. Some project are required to be done for other projects to be accessible. An edge x -> y means that y is a prerequisite for x. (if we choose x then we also have to choose y. Just like class prereq ). \
+Goal: Select a subset of projects that respects all the prerequisite and maximizes the total revenue. 
+
+1. Assign a capacity of infinity to all the edges so that they all fall in part A of the subset in order to use min-cut.
+2. Add a source s and a sink t. Add edges from the source to project with positive profit and add edges going from nodes to t for the one with negative profit. for su edge Csu=Vu and for vt edges Cvt= -Vv (value of v is negative so we multiply it by -1 to make the capacity positive.).
+3. Then we look at the min-cut
+
+Let (A,B) be a min-cut and let $M=\sum_{x: P_x>0} P_x$. 
+min-cut$= \sum_{x\in B: P_x>0} P_x+\sum_{x \in A: P_x<0} -P_x$ \
+$= M-\sum_{x\in A: P_x>0} P_x+\sum_{x \in A: P_x<0} - P_x$ \
+$M-\sum_{x\in A} P_x$ \
+This works because M is the sum of all positive projects If a positive project exist in A then all its prerequ exist in A hence if we do M -all of the positive projects in A we are left with the sum of all the positive projects that are in B.\
+We know that the projects in A respect the prerequ conditions hence the total profit we can make is the sum of all positive projects in A minus the sum of all negative projects in A. And this is maximize as we have M-that sum in order to get the lowest min cut.
