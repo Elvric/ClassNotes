@@ -805,4 +805,95 @@ If a process ahs been allocated resource of type R, then it may subsequently req
 
 ## Deadlock avoidance
 Make judicious resources allocation choices to ensure a deadlock-free system. However we might get to a state where a process can still run but deadlock is still unavoidable. 
-* Evaluate current request and see if it will need to deadlock we need to have knowledge of future request. \
+* Evaluate current request and see if it will need to deadlock
+* we need to have knowledge of future request. 
+
+---
+# 06-02-2018
+## Deadlock avoidance continued
+* Simple model require that all processes declare the maximum number of resources of each type that it may need
+* The algorithm dynamically examines the resource-allocation state to ensure that there can never be a circular wait.
+* The resource allocation state is defined by the number of available and allocated resources, and the maximum demands of the process.
+
+### Safe state
+If there exists a sequence of <P1,P2,...,Pn> such that each Pi can get its resources for currently available resources plus resources held by all the Pj with j<i. Basically saying that there is an order of execution lowest process first followed by the second lowest and so on. So all the resources are available when a process has to execute. \
+If a system is in an unsafe state there is a possibility for deadlock. Hence deadlock is a subset of the unsafe state. 
+
+### Avoidance algorithm
+* Single instance of resource type
+    * Simply use a resource allocation graph
+* If we have multiple instance 
+    * Use banker's algorithm
+
+#### Resource allocation graph
+* Claimed edge is represented this way Pi --> Rj with a dash line
+* Claim edges convert to request edge when the request is made.
+* Request edge is converted to an assignment edge when the resource is allocated to the process
+* When the resource is released by the process then the edge goes back to a claim edge
+* **Draw back is that the resources must be claimed a priori**
+* Suppose that Pi->Rj then we only allow Rj to be assigned to Pi if the resulting graph does not lead into a cycle with claimed edges included. 
+
+#### Banker's algorithm
+* Each process must claim maximum use of every resource
+* When a process request a resource it may have to wait
+* When a process gets all its resources it must return them in a finite amount of time. \
+Assume N processes and M resources \
+Availability vector Availj units of each resource (init to maximum, changes dynamically)
+```
+Let [Maxij] be an N x M matrix
+Maxij=L means Processes Pi will request at most L units of Rj
+[Holdij] Units of Rj currently held by Pi
+[Needij] Remaining need by Pi for units of Rj
+Needij=Maxij-Holdij for all i & j
+```
+1. Initilize 
+```
+if REGj > Needij abbort--error
+```
+2. Check if the requested amount is available
+```
+if REQj > Availj got to Step 1 Pi must wait
+```
+3. Provisional location
+```
+Availj=Availj-REQj
+Holdij=Holdij + REQj
+Needij=Needij-REGj
+if isSafe() then grent resource
+else cancel allocation got to step 1 Pi must wait and revert back the operations done.
+```
+This allows the algorithm to see what the new system will look like if the resources are allocated if.
+
+#### safeState()
+1. Initilize
+```
+Workj =  Availj for all j; Finishi false for all i
+```
+2. Find a process Pi such that
+```
+Finish = false and Need ij ≤ Workj
+```
+if no such process go to step 4 \
+3. Simulates the idea of a process getting all the resources that it needs.
+```
+Workj = Workj + Holdij
+Finish = true
+```
+4. 
+```
+if Finishi = true for all i then return true //sytem safe
+else return false no the system is not safe
+```
+### What is safe
+* very safe
+    * NEEDi <= Avail for all Pi so processes can run in any order
+* safe (but take care)
+    * NEEDi > Avail for some Pi
+    * NEEDi <= Avail for at least one Pi such theat there is at least one correct order in whihc the processes may complete their resources
+* Unsafe 
+    * Need i > Avail for some Pi
+    * Need <= Avail for at least 1 Pi
+* Deadlock
+    * Needi > Avail for all Pi
+
+
