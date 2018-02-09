@@ -431,11 +431,58 @@ Find the max flow on this network:
 * We have as many variables as they are edges representing the flow in each one of them.
 * Objective maximize flow coming out of s
 * Constrains:
-    * The flow must be ≥ for every edge
+    * The flow must be ≥ 0 for every edge
     * The flow must be ≥ to the capacity of every edge
     * fin of a node must be equal to fout of that node (incoming variables - outcoming variables flow equals 0) 
 
 Max flow is a special case of linear programs
 
+---
+# 07-02-2018
+### Examples linear continue 
+suppose some edges have also lower bounds. That is an edge e with lower bounds le requires that the flow on e has to be at least le. \
+In this case it is very easy to solve as we can just add some limits with. e ≤ Ce and e ≥ le.
 
+We can add costs to edges. Every edge e has a cost de that is passing fe unit of flow through the edge costs de*fe. \
+What is max flow if we have a flow cost at most d. 
+* Max all the edges going away from s
+* Constrains are all the same than regular max flow
+* We add the sum of every edge cost times its flow must be less or equal to d.
 
+We have a network of road's between cities, given to us as an undirected graph. We are also given a positive number alpha ≥ 0. We want to store some amount of supply in each city so that the sym supply in each city and its neighboring cities is at least alpha. What is the minimum amount of supply that we need to meet this condition.
+* Variable represent each city.
+* When we add each variable we want to get the minimum value
+* Constrains:
+    * Each city and the city it can reach through roads sum of supply must be at least alpha.
+    * The supplies must all be greater or equal to 0.
+
+For a general graph G we can write this as: \
+variables: $\forall v \in V$ we have a variable $x_v$ and we are minimize $\sum_{v \in V} x_v$ subject to the following: 
+* $x_v + \sum_{u: uv \in E} x_u \geq \alpha$
+* $x_v \geq 0$
+
+## Geometric Interpretations of linear programs
+Consider the following LP.
+* max x1+x2
+* Constrains
+    * x1+2x2 ≤ 1
+    * 2x1+x2 ≤ 1
+    * x1, x2 ≥ 0
+Every potential solution x1,x2 gives us a point (x1,x2) on the plane. Then we can graph the constrains as lines. 
+* Everything bellow the line x1+2x2=1 will solve the first constrain.
+* Same thing for 2x1+x2=1
+* For the x1,x2 ≥ 0 every point in the positive quadrant.
+
+The set of points that satisfy the constrains can then be identified using the space where the 4 areas exists. \
+This is called feasible region: it is the set of all points that satisfy all the constrains.
+
+Remark: here every constrains with inequality gives us a half space. Which is the set of points that satisfy that constrains. The feasibility region is the intersection of them.
+
+If we just draw lines such that x1+x2=x3. Where each line falls in the feasible region. The line in our case that crosses the region and has the highest possible x3 is what we look for. So we can draw a line above the region
+
+Some regions may be unbounded. Or there may be cases where the regions never cross hence there will be no solutions. 
+
+So there are 3 possible cases overall:
+1. Bounded
+2. Unbounded
+3. Empty

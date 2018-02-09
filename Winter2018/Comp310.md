@@ -896,4 +896,177 @@ else return false no the system is not safe
 * Deadlock
     * Needi > Avail for all Pi
 
+---
+# 08-2-2018
+#### Example
+P1 wants 1 resource
+| | max| hold | need | finish |
+|--|--|--|--|--|
+|P1| 5| 1+1| 4-1|F |
+|P2| 5| 2| 3| F|
+|P3| 2| 1| 1| F|
+avail=2
+work=2-1\
+P1 cannot finish so it is not good good \
+P2 connot finish so not good. \
+P3 connot finish so we stop. \
+We will go mutliple time through the same process as resources may be allocated with time.
 
+## Deadlock detection
+This does not prevent deadlock, it let them happen and then deals with it. \
+It detects deadlock by running a periodically running an algorithm to detect a circular wait condition. Then we take some action to recover after the fact. \
+With this method resources are granted whenever possible. \
+We check for deadlock everytime there is a resource request or based on how likely it is for a deadlock to occur. \
+Checking every time a resource is granted leads to early detection and the algorithm is simple because it is based on incemental changes to the state of the system. \
+On the other hand such frequent checks consume a lot of processor time. 
+
+### After detection the recovery
+* Recovery through Preemption
+    * Take resources away from its owner temporarily
+* Reovery through Rollback
+    * If it s known that deadlocks are likely we can have checkpoint for processes, ie undo transcation and free lock on table database records
+* Recovery through terminal
+    * Kills some processes in the cycle, irrocverable loss may occur
+
+# Secondary Storage
+It is a non-volitile repository for both user and systems. This means that when power is turned off the data remains in the repo. \
+It is managed by the opperating system as part of the file System. \
+It can store programs (source, objects), temporary storage and virtual memory. 
+
+## Requierments 
+* large memory to handly large information
+* Concurrent access
+* Persistent storage (resources are not dependent on power)
+
+### users requierments
+* file naming protection and operations are allowed on files
+* How storage appear to the user
+
+## File concept
+All the data in the file are not stored in the same space it is fragmented. \
+* Logical view is the way the user sees it a file is a continuous sequence of data
+* Physical view, as it actually resides on secondary storage as a sequence of bits.
+* Files are non volitile they should be long lasting
+* Files aer intended to be moved arround and accessed by different programs.
+
+#### File system takes a file and breaks it down into bits of data ready to be stored on the disk it is the abstraction of the OS
+
+## Elements of storage managment
+Logical view: user -> file Structure -> access method -> records
+Pysical view: Buffering -> block caches <-> File alocation, free space managment -> Controller chacnes <-> disk scheduling
+
+* A file is a sequence of fix-length record
+* read/write: one record at a time
+* buffer cache data blocks 
+* Block caches (hold the changes in the files)
+* controller cache is in hardware space (This is for quickly sending the data close to the hard drive)
+* disk controller allows the CPU to communicate with the disk, holds data while being read to disk.
+
+---
+# 09-02-2018
+## File attibutes:
+* NAME,owner,creator
+* Type of file (source code. binary type)
+* Location (I-nodo or disk address)
+* Organiziation (sequential, indexed and random)
+* access permissions (sequrity purposes)
+* time and date (creation, modification and last accessed)
+* Size
+* variety of others (maintenance, when was the file last saved)
+
+### File name
+Provides a way to store and retrieve data from backing storage using file names. \
+Many OSs support two or more parts separated by a period in names. \
+In unix file conventions are not enforced. \
+Every os must recogonize its own executables.
+
+## Directory
+It is a table that can be searched for information about files implemeneted as a file. It is a file that contain a list of files it contains. \
+Give a name space for the objects to be saved \
+Driectory entry contains information about the file. 
+
+### Type of directory
+
+#### Single-level (flat)
+Shared by all users CDC 6600 world's first computer
+
+#### Two-level:
+One level for each user, they should have some form of user login to identify the user and located the user's files.
+
+#### Tree
+Arbitrary (sub-tree) for each user login required. 
+
+### Tree structure
+We have a root directory parent to bin, usr, lib, tmp. If we want to go to user we go through the file that tells us where user location is, we move their and then go through the user file. \
+Note that it is a directed acycled graph but 2 directory can point to the same file. 
+### Name space
+Is a set of symboles used to identify files.
+
+## File systems
+* Keep track of files (knowing the location)
+* I/O support, especially the transimission mechanism to and from main memory.
+* management of secondary storage
+* sharing of I\O services
+* providing protection mechanisms for information held on the system.
+### Abstraction layers of file system
+1. Shell the provides access to files open, close
+2. Application and system programs c codes once a file is open go to a specific location in that file
+3. File system: translating to specific actions on the disk what needs to be read ensuring the c programs read what it wants. 
+
+
+### Unix file system
+We have a tree structure with the root directory. Each subdirectory can map to a different physical disk. They allow us to view the system as a tree and abstract the actuall location of the data on disks. 
+
+### File system layout (disk partition)
+MBR is a sector 0 and used to boot the computer when starting. \
+Parition table: load a specific partition (windows or unix partition)\
+Go to the bootlock of the partition loading it. \
+Superblock: holds the key parameters about the file system (number of block in the file system). 
+I nodes (file info), free space mgt (what is free) and files and directory (actulal files and directory).
+
+#### I-nodes
+Gives us information about the blocks in our data and where they are stored. 
+
+### File sharing
+Brings up the issue of protection. One approached is to provide controlled access to files through a set of operations such as read, write, delete, ,list and append. \
+One popular mechanism is: 
+
+## Files operations
+ * create
+    * file created with no data
+        * read and EOF pointer points to the same place.
+    * sets of some attributes
+* Delete
+    * File is no longer needed
+    * storage released to free pool
+* Open
+    * fetch the attributes and list of disk addresses into main memory.
+* Close
+    * free the internal table space
+    * OSs enforce by limiting the number of open files.
+
+### Read, Seek, Write
+* read
+    * start to where the read pointer is 
+    * specified by the number of bytes that need to be read
+* seek
+    * Repositions the pointer for random access
+    * after seeking data can be read or writen
+* write
+    * Write from the current position of the write pointer
+    * If current position is at the end of file then we are appending.
+* Truckate/append:
+    * If we want to append to the file we go to the end of file pointer.
+    * If we want to trunckate it brings back the end of the file so that less characters are read.
+
+## Open a file
+Look into the directory structure to see where the file is which in turns points to where the file is stored. \
+When reading the file it points to the per-process open-file table that in turns points to the system-wide table (placed in faster memory) open file table that in turns points to the file location along with the file attributes. 
+
+## File access methods
+#### Sequential
+in order, one record after another. Convenient with sequential access devices (magnetic tape).
+#### Direct (randome)
+in any order, skipping the previous recordes
+#### Indexed:
+In any order, but accessed using a particular key(s); eg hash table, dictionary, database access. 

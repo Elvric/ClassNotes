@@ -524,7 +524,7 @@ WHERE AVG(age) >10
 /*this will fail as the where operation happens before the grouping. */
 
 HAVING AVG(age) >10
-/* this is the correct way of doing it*/
+/* this is the correct way of doing it only works by group*/
 
 SELECT MIN(AVG(S2.age))
 FROM Skaters S2
@@ -552,7 +552,7 @@ If something is NULL the incrementing it in a table will fail, when we compare N
 |true|false|
 |false|true|
 |unknown|unknown|
-We must use a special operator doing unknow or true =true
+With and unknown and false gives us false. With or unknown or true is true.
 ```SQL
 IS NULL
 IS NOT NULL
@@ -565,3 +565,104 @@ CASE WHEN rating is NULL THEN 0 ELSE rating END +1
 -- remember case and when it will be useful.
 ```
 In this case it replaces every NULL with 0 and adds 1 to the 0, if it is not null we just add 1. 
+
+---
+# 07-02-2018
+## Query when considering NULL
+```SQL
+SELECT rating,count(*) FROM skaters --gives us 7 outputs with 2 NULLs as records
+SELECT distinct rating FROM skaters --here the 2 nulls are considered the same as a record.
+```
+Usually unknowns of the same type are considered to be the same.
+```SQL
+SELECT count(*) rating FROM skaters;
+SELECT count(rating) rating FROM skaters;
+-- First gives us 
+
+SELECT distinct count(rating) rating FROM skaters;
+--Nulls are not considered at all.
+SELECT AVG(rating),
+AVG(age),SUM(rating),COUNT(*),count(rating) FROM skaters;
+--AVG divides by the number of records use to compute the sum, --if we have 2 nulls and 5 not null entries then that means that 
+-- sum/5 removing the nulls
+```
+
+## Joins
+```SQL
+SELECT sname
+FROM skaters s (INNER) JOIN participates p 
+ON s.sid=p.sid
+--Inner word is optional it implies that the records
+-- should be matching
+
+SELECT sname
+FROM skaters s LEFT OUTER JOIN participates p 
+ON s.sid=p.sid
+-- All the record on the left side should make it to the output
+-- Even if they do not match on the right.
+FULL OUTER JOIN 
+--Used to put every records from both tables in the output
+--No matter if there are equals. 
+```
+
+## Level of abstraction
+* Conceptual schema defines logical structure
+* Physical schema describes the files and indexes used
+* Different views describe how users see the data
+* Physical data dependance
+    * Protect from changes in the physical diagram 
+* Logical data dependance 
+    * Protect from changes in the logical data
+
+## Insert values
+```SQL
+INSERT INTO ActiveSkaters (
+    SELECT Skaters.sid Skaters.name FROM Skaters
+)
+--Here the data is just being inserted into a table and displayed
+DELETE FROM Competitions 
+--The Competitions table is done
+UPDATE Skaters
+SET ranking=10, age = age+1 WHERE
+name = 'debby' or name = 'lilly'
+-- here we are updating the rows
+```
+Good practice is instead of doing the above first run a select query and update the select afterwards.
+
+## SQl integrity constraints
+Is an entry in the table legal, type and information. Insert,deletes and updates that violates IC's are disallowed.
+Covered so far:
+* Data types (name must be a String)
+* NOT NULL
+* For relation as a whole
+    * Primary key and Unique constraints
+* Across relations
+    * Relationship such that any instance in one table must exist in another table.
+    * Referential integrity through foreign key constraint
+
+## Attribute-based Checks
+```SQL
+rating INTEGER CHECK (rating > 0 AND rating <11)
+```
+The system checks the conditions set by the table. 
+If the check checks multiple attributes we write it at the end after we have set all the columns in our table. \
+What if a constrain changes: 
+``` SQL
+CONSTRAIN rat CHECK ...
+ALTER TABLE skaters DROP CONSTRAINT ratage
+ALTER TABLE skaters ADD CONSTRAINT ratage CHECK ...
+```
+Here we have given a name to the constrains so we can remove and insert it. If when we add a constrain some data in the table violates the new constraint SQL will give us an error and will not add the constrain to the table.
+
+## SQL and Code
+* SQL commands can be called from within a host language
+    * Python, C++ and Java
+* Two main approaches
+    * Embed SQL in host language (C with embeded SQL)
+    * Create special API to call SQL command 
+* Program DB interaction
+    * Application program executes at client side
+    * Each SQl statement is sent to the server, execute there and the result is sent to the client.
+
+### Java
+Java.sql package and then we can connect it to drivers JDBC Driver DB2 for DB2.cs.mcgill.ca this is done by the driver that test what kind of connection it is and then load the correct driver. 
