@@ -381,12 +381,12 @@ If we combine the 3 equations so that we get the initial condition is leq or equ
 ### Applied example
 We have a small firm the produces 2 things, book cases and tables. \
 ||cutting time|Assembly|Finishing time|
-|:--:|:--:|:--:|:--:|:--:|
+|:---:|:---:|:---:|:---:|:---:|
 |Bookcase| 6/5 hr | 1 hr | 3/2 hr |
 |Table|1 hr | 1/2 hr | 2 hr|
 We have 
 |hours|domain|
-|:--:|:--:|
+|:---:|:---:|
 |72|cutting time|
 |50| Assembly|
 |120|finishing time|
@@ -404,7 +404,7 @@ If we solve the LP we will get $t=30 \ x_2=35$ so fortunately in this case the o
 
 Two factories $P_1 \ P_2$ four products A,B,C,D
 ||$P_1$ per day|$P_2$ per day|Demand Total|
-|:--:|:--:|:--:|:--:|:--:|
+|:---:|:---:|:---:|:---:|:---:|
 |A|200| 100 | 1000 |
 |B|60 | 200 | 800|
 |C|90 | 150 | 900|

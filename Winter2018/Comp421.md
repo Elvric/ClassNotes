@@ -666,3 +666,49 @@ Here we have given a name to the constrains so we can remove and insert it. If w
 
 ### Java
 Java.sql package and then we can connect it to drivers JDBC Driver DB2 for DB2.cs.mcgill.ca this is done by the driver that test what kind of connection it is and then load the correct driver. 
+
+---
+# 12-02-2018
+```java
+import java.sql.*;
+class connectExample
+{
+    public static void main(String[] args)
+    {
+        Drivermanager.registerDriver (new com.ib.db2.jcc.DB@Dreiver());
+        Connection conn= DriverManager.getConnection
+        ("jdbc:db2://comp421.cs.mcgill.ca:50000/cs421",
+        "user_name:","user_password");
+
+        conn.close();
+    }
+}
+```
+
+## After the connection
+```java
+Statement stmt=con.createStatement();
+stmt.closee();
+stmt.executeUpdate(sqlString);
+//Insert/update return number of affected tupples
+```
+* result of query is usual a SET of tuples with no a priori bound on the number of records.
+* No support for such a data structure in conventional programming.
+* We can result tuples step by step.
+    * Cursor Concept:
+        * Point to successive tples in the result realtion at a given moment when we getNextRecor() the cursor moves to the next row.
+```Java
+public class getQuer
+{
+    ResultSet rs = stmt.executeQuery("SELECT * FROM skaters");
+    //must call next to get first record
+    while(rs.next())
+    {
+        int sid= rs.getInt("sid");
+        String sname = rs.getString("name");
+        int age = rs.getInt(3); //bad we get to 3rd column
+    }
+    rs.close();
+}
+```
+#### Use docs.oracle for the libriary of GDBC 
