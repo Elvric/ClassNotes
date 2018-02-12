@@ -384,12 +384,12 @@ We have a small firm the produces 2 things, book cases and tables. \
 |:---:|:---:|:---:|:---:|:---:|
 |Bookcase| 6/5 hr | 1 hr | 3/2 hr |
 |Table|1 hr | 1/2 hr | 2 hr|
-We have 
+We have \
 |hours|domain|
 |:---:|:---:|
 |72|cutting time|
 |50| Assembly|
-|120|finishing time|
+|120|finishing time| \
 We can sell a book case 80$ and table 55$ \
 We can have 2 variables book case and table \
 Maximize: $80b+55t$ \
