@@ -712,3 +712,84 @@ public class getQuer
 }
 ```
 #### Use docs.oracle for the libriary of GDBC 
+
+```java
+PreparedStatment prepareCid= 
+    con.prepareStatment("SELECT sid 
+                        FROM participates where sid = ?");
+while()
+{
+    //get cid input from user into variable x;
+    
+    //provide values for input parameter
+    prepareCid.setInt(1,x); //replaces the ?
+    ResultSet rs= preparedCid.executreQuery();
+}
+```
+## Error Handling
+2 levels SQLException and SQLWarning. \
+Let say we update entries in the table and no entries get updated,
+then the database will send a warning to tell us that no record where changed. 
+
+```java
+catch(SQLException e)
+{
+    e.getMessage(); 
+    e.getErrorCode();
+    e.getSQLState();
+    System.err.println(alsjfsjlafjl);
+}
+finally 
+{
+    //Check if connection is not null.
+    //Close all connections when we can.
+}
+```
+### More complex query
+Procedural extension to SQL. \
+Certain database Systems allow the use of standard programming languages (with extensions). \
+```SQL
+CREATE PROCEDURE MIN_SALARY(IN deptNumber, SMALLINT, IN minsal DOUBLE)
+LANGUAGE SQL
+BEGIN 
+    DECLARE v_salary DOUBLE;
+    DECLARE v_id SMALLINT;
+    DECLARE at_end INT DEFAULT 0;
+    DECLARE C1 CURSOR FOR
+    SELECT id,salary FROM staff WHERE did=depnumber;
+    DECLARE CONTINUE HANDLER FOR not_found SET at_end =1;
+    OPEN C1;
+```
+```java
+con.prepareCall("{call min-salary(?,?)}");
+cs.setInt(1,5); cs.setInt(2,2000);
+//So the first num is the index the rest is the answer 
+```
+## Two tier model
+We have the application and the database. Java communicates with SQL.  Java program can take space and must be shipped to all the user. The clients must execute the program with user id and password. It may not be usefull to have a user id per user for the program. And if we use the same user ID and password is not secure as anyone getting the program can access the data.
+
+## Three tier model
+When we connect to the database first we connect to the application server, the application cheks the user name and password by going into the database using its own private userid and password. \
+User connect to an application server that has the program that itself connects with the database. So the client uses a webbrowser to access the database. \
+Now looking at Amazon we are not going to create a userid for every user. So we use connection polling, it uses a commun user id for all user. Application server opens 50 connections let say. When client logs in it will check if it has a connection available and give it to the client.
+
+# Application design choices
+Should we check if the data_of_birth is valud at the webpage or at DB?
+Better to do it at the webpage.
+If we have to increment the rating of all skaters it is more efficient to do it in the database directly. .
+* Trapping user error better to do it at the webpage
+* Complex process over data shall be done in the database
+* For the assignment do most of the constrains in the database rather than in the cl
+
+# Internals of a DBS I 
+## Memory Hiarchy
+* The lower we go towards the disk it gets slower and slower
+* Bits cost more the higher we go
+* As we go down the number of space increases
+* Top is random accessed but in the disk it is sequential. We cannot access what we want just like that.
+* Lower end the data is saved but higher end when there is no power there is no data.
+* Lower layers have blocks that are large but in higher level we can just read 1 bite. 
+
+### Fun fact
+* A sector is the most basic unit that the harddrive allows you to write. 
+* A block is used at the higher level and a block size can have more than 1 sector.
