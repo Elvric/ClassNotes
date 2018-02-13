@@ -486,3 +486,135 @@ So there are 3 possible cases overall:
 1. Bounded
 2. Unbounded
 3. Empty
+
+---
+# 12-02-2018
+## Feasible region: 
+Is the set of all solutions that satisfy all the constrains. \
+It can be:
+* Empty
+* Unbounded 
+* Bounded. Inside a convex polygon.
+
+#### Convex: the line segment between any two points in the region falls into the region. 
+
+## Getting to simplex algorithm idea
+Associate every equations with each other to get points on the feasible region. \
+Then we can move to points on the graph by still respecting the other conditions by going along lines from these points. \
+Then we check if these new points made our optimizing equation better. We avoid the local minimum due to the fact that the shape is convex there is no local min. If we hence get to a point where changing it will decrease the value then we can stop. \
+Personal thoughts: Can we say the same if we can move yet not improve our function?
+
+## Linear programs standard forms
+A linear program is in a standard form if it is in one of the following forms:
+1. Max $c_1x_1+...+c_nx_n$ \
+    $a_1x_1+...a_nx_n \leq b_1$ \
+    $x_1,x_2,x_n \geq 0$
+2. min $c_1x_1+...+c_nx_n$ \
+    $a_1x_1+...+a_nx_n \geq b_1$ \
+    $x_1,x_2,x_n \geq 0$
+
+#### Ex:
+    max x1+x2
+    x1+2x2 ≤ 1
+    2x1+x2 ≤ 1
+    x1,x2 ≥ 0 
+### Can we convert every linear program to standard form?
+    max x1+x2+2x3
+    x1+6x2+x3 ≤ a
+    x1-x2+x3 ≥ 1
+    x1+2x2-x3=-2
+    x1 ≥ 0
+    x3 ≤ 0
+So the bad lines are:   
+
+    x1-x2+x3 ≥ 1 -> * -1 -x1+x2-x3 ≤ -1 
+    x1+2x2-x3=-2 -> x1+2x2-x3 ≤ -2, -x1-2x2+x3 ≤ 2
+    x1 ≥ 0
+    x3 ≤ 0 -> x3=-x4 x4 ≥ 0
+So we must rewrite everything now
+
+    max x1+x2-2x4
+    x1+6x2-x4 ≤ a
+    x-x1+x2+x4 ≤ -1 
+    x1+2x2+x4 ≤ -2, -x1-2x2-x4 ≤ 2
+    x1 ≥ 0
+    x4 ≥ 0
+    x2 -> x2=x5-x6
+    x5 ≥ 0
+    x6 ≥ 0
+so rewriting gives us:
+
+    max x1+x6-x5-2x4
+    x1+6(x5-x6)-x4 ≤ a
+    x-x1+x5-x6+x4 ≤ -1 
+    x1+2(x5-x6)+x4 ≤ -2, -x1-2(x5-x6)-x4 ≤ 2
+    x1 ≥ 0
+    x4 ≥ 0
+    x5 ≥ 0
+    x6 ≥ 0
+
+This was a very generic example and we saw how to deal with all of them. 
+### Why do we care about standard form?
+c= 
+|v| 
+|---:|
+|c1|
+|c2|
+|...|
+|cn|
+
+a = Matrix of constrains \
+b = represent the expected results \
+x = to an other vector \
+So we can take the dot product of c and x to get the max/min equation. \
+For the constrains in the matrix we just need to multiply the matrix by x transpose. And the vector b gives us there lesseq or greateq values. So we can hence write everything in a very compact way with just 3 vectors and a matrix.
+
+## Duality
+Consider the following LP (in standard form). 
+
+    max x1+2x2+x3+x4
+    x1+2x2+x3 ≤ 2
+    x2+x4 ≤ 1
+    x1 + 2x3 ≤ 1
+    x1,x2,x3,x4 ≥ 0
+Suppose the LP solver finds the solution
+
+    x1=1
+    x2-1/2
+    x3=0
+    x4=1/2
+    max = 5/2
+How can we convince ourselves that this is optimal (without solving lP ourselves). \
+So can we use these constrains to show that 
+
+    x1+2x2+x3+x4 ≥ 5/2
+We can multiply the constraints by positive numbers y and add them up. 
+
+    (y1+y3)x1+(2yi+y2)x2+(y1+2y3)x3+y2x4 ≤ 2y1+y2+y3
+we want
+
+    x1+2x2+x3+x4 ≤ (y1+y3)x1+(2y1+y2)x2+(y1+2y3)3+y2x4
+    ≤2y1+y2+y3
+What do we need to know about y1,y2,y3? to guarantee the first inequality? We already assumed y1,y2,y3 ≥ 0 (otherwise we could not multiply the constrains by them). \
+We also need:
+
+    y1+y3≥1
+    2y1+y2≥2
+    y1+2y3≥1
+    y2 ≥ 1
+If these are satisfied then we will have the upper bound 
+
+    2y1+y2+y3
+So to get the best upper bound we need to solve
+    
+    min 2y1+y2+y3 = 5/2
+    y1+y3≥1
+    2y1+y2≥2
+    y1+2y3≥1
+    y2 ≥ 1
+    y1,y2,y3 ≥ 0
+    y1=1/2
+    y2=1
+    y3=1/2
+
+This only works when we are in standard form  that are the dual of each other. 
