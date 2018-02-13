@@ -2,7 +2,7 @@
 
 ## Intro
 ### Operating system history
-* vaccum tubes
+* vacuum tubes
 * trensitors and batch system
 * ICs and multiprogramming
 * Pesonal computer
@@ -859,7 +859,7 @@ if REQj > Availj got to Step 1 Pi must wait
 Availj=Availj-REQj
 Holdij=Holdij + REQj
 Needij=Needij-REGj
-if isSafe() then grent resource
+if isSafe() then grant resource
 else cancel allocation got to step 1 Pi must wait and revert back the operations done.
 ```
 This allows the algorithm to see what the new system will look like if the resources are allocated if.
@@ -889,7 +889,7 @@ else return false no the system is not safe
     * NEEDi <= Avail for all Pi so processes can run in any order
 * safe (but take care)
     * NEEDi > Avail for some Pi
-    * NEEDi <= Avail for at least one Pi such theat there is at least one correct order in whihc the processes may complete their resources
+    * NEEDi <= Avail for at least one Pi such theat there is at least one correct order in which the processes may complete their resources
 * Unsafe 
     * Need i > Avail for some Pi
     * Need <= Avail for at least 1 Pi
@@ -901,7 +901,7 @@ else return false no the system is not safe
 #### Example
 P1 wants 1 resource
 | | max| hold | need | finish |
-|--|--|--|--|--|
+|----|----|----|----|----|
 |P1| 5| 1+1| 4-1|F |
 |P2| 5| 2| 3| F|
 |P3| 2| 1| 1| F|
@@ -1069,4 +1069,71 @@ in order, one record after another. Convenient with sequential access devices (m
 #### Direct (randome)
 in any order, skipping the previous recordes
 #### Indexed:
-In any order, but accessed using a particular key(s); eg hash table, dictionary, database access. 
+In any order, but accessed using a particular key(s); eg hash table, dictionary, database access. }
+
+---
+# 13-02-2018
+## Tips for the test
+* Ends at the section for deadlock.
+* Theory either we know it or we do not
+* Numerical questions
+* Format
+    * 12 short answers 6% each
+        * deadlock more understanding rather than numerical
+        * State banker algorithm 
+        * What is safe unsafe
+        * Look at the system and see if it is unsafe.
+    * 2 long answer 14% each
+* Have a calculator
+
+## What is the File alocation problem?
+* Contiguous
+    * All next to each other
+* Chained (linked)
+    * Places all over the disk with links
+    * We do not need to bother weather there are enough contigous space.
+* Indexed 
+
+Disk space is allocated on a block basis. If the block are small then we will access a lot of blocks per program which will take time. \
+If we store blocks of a very large size then we can read a block faster yet the wasted space increases. \
+As our disk get larger we might want to favor large blocks of data.
+
+## File system layout
+They are stored on partitions with their own file system. Always keep Sector 0 of the disk is called the master boot record. This locates the active partition which has a boot block to load the system. \
+Maste Boot block tells us the active partition, go to it. \
+The active partition has its own boot block, next is the super block that has information about the layout of the system (how much space for system, inodes and the data). Free space mgmt is a strcuture that tells us where in the system can I store my files. Then we have I-nodes that gives us information about the file, I-node number indentifies the file. Then we have the files and directory where the I-nodes will be pointing to.
+
+## Contigous allocation
+Alocate space in the file in a contiguous way. 
+Advantage: simple, few seeks, easy access, both sequential and random. 
+#### random access means getting block number 10 lets say of the file. 
+Disadvantages: external fragmentationn may not know the size of the file in advance. 
+
+## Chained linked allocation
+Mark a block as in use and one block points to the other block. \
+Advantages: No external fragmentation and the file can get bigger. \
+Lot of seeking between blocks and random access is difficult.\
+Enhancment: Use a in memory table that will tell us where the file is directly on ram known as file allocation table.
+
+### File allocation table
+Follow the links in memory (RAM) but not on disk to speed up the process. So when I look for let say the 3 block I will go at the table and look for it using the addresses in the file table then once I found the 3 address I go to that on my disk and retrieve the data. 
+
+## Indexed allocation
+Allocate an array of pointers during file creation, the array tells me where my blocks are. This limits the size, if I have an array of 10 then I can only have 10 blocks. \
+Advantages: small internal fragmentation, easy sequential and random access. \
+Disadvantage: lots of seeks if the file is big. maximum file size is limited by the size of the block since the array size of a block at most.
+
+## Free space managment
+Disk space is fixed everytime a file is deleted we must make use of that space. We must hence keep track of the free space.
+* Bit vectores
+* Linked Lists or chains
+* Indexing
+
+### Bit vectores
+Use 1 bit per fixed size free area, reserving 1 bit of data to tell if the block is free or not. The bitmap is stored in a disk at a well known address. 1 is free and 0 is allocated. We waste space if the system is almost full. It is easy to use however. 
+
+### Chain/link pointers
+The pointer at the start of the list is at a specific location and the list holds the path to all the free blocks. 
+
+### Index pointers
+Here we can have sequence of free blocks. An index tells us the size of the sequence it is associated with. 
