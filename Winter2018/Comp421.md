@@ -792,4 +792,123 @@ If we have to increment the rating of all skaters it is more efficient to do it 
 
 ### Fun fact
 * A sector is the most basic unit that the harddrive allows you to write. 
-* A block is used at the higher level and a block size can have more than 1 sector.
+* A block is used at the higher level and a block size can have more than 1 sector. A block is the smallest unit of data defined by the system that the OS defines.
+
+---
+# 14-01-2018
+
+### Distribution
+We have a buffer that is use so that we can access the data as a memory variable. Then we can write the changes back to the secondary storage that is stable. 
+
+#### memory database: we have the entire database residing in memory with these systems. The data is still stored in secondary storage for security. 
+
+### Writing data the the disk 
+Appending is easy I just need to keep writting where the last inforamtion is. \
+So regarding the memory data base let say we change the address of the student. We can use loging (log file) Which is being written onto.
+
+Properties of login, we write to the file the information at the end of the log file, such as student id had address changed. The next way is also to backup the database every couple of days.
+
+Now we can restore the database copy that we had from the last hour and then use the log file and change that onto the memory database. 
+
+The issue though is that as the database size increase the memory data base will be too small. 
+
+## Large scale distribution
+Same concept as above except that we split into segments the secondary memory and the memory (RAM). So now we can use memory based database in segments. If we then want to increase the size we can just add a segment (buy a new drive and a new ram). It is also faster as it allows parallel search quieries compare to the previous system.
+
+## Final arachiteture
+* Secondary storage
+* Buffer
+* Cache buffer
+* Upper layer
+
+These are abstracts but it is the one will use for the course although different databases have different architechtures.
+
+## Buffer managment
+Page size and fram side must be the same size. Table of fram# and pageid pairs is maintained. 
+
+### Loading a page from the disk
+First we have an empty fram in our RAM, if they are all taken we can use another fram, if fram is dirty (page was modified), write it to the disk. \
+We choose usualy the least recently used frame to be replaced. 
+
+#### Page Pins
+When we load we must have a pin counter to 0. \
+After new page is loaded we set the pin counter to 1. \
+Counter could be more than 1. \
+After we are done with the operations we decrement the counter and set the dirty bit if the page has been modified. \
+Hence the only time we load a pages we check that the pin counter is at 0 and then check the dirty bit. 
+
+## DBMS vs OS File System
+### Why not use OS?
+All the OS are different and the way they manage it may differ hence portability issue. \
+Some limitations, e.g., files can't span disks. \
+### Why use DBMS?
+pin a page in buffer pool, force a page to disk. \
+Adjust replacement policy, and pre-frech pags based on access patterns in typical DB operations. 
+
+## Record format in DBS
+Record is fixed such that we know that every record will have a fixed amount of bites. sid in skaters will be fixed. 
+
+### Variable length
+So here we store the address rather than the data that tells us where to read from. We can even use the address value to know the length of the field, by doing next address - previous address.
+
+## Page format
+Used and free space pointer in order to start writting new data. Then we can write variables length field for that data. Redcord id (rid) is the internal indetifier of a record <page id, slot#>.
+/ If we do not have enough space in a page we may have to move the information to another page. However we do not change the record idea, that brings us to an area on the page that was the same as before but now we have the new page and slot number of the data there. Note that this means the the minimum alocated space on a page must be at least the size of record id. 
+
+## A relation in file
+Pages hold records of one relation.
+* Insert record (return rid)
+
+### Heap implementation
+Each record is added we add it to the heap, each pages contains 2 pointers plus data to allow for easy removal. 
+
+### Sorted file
+Record are sorted by 1 of the attribute. Each page contains 2 pointes plus data as before but the structure looks more like a list.
+
+# Indexing
+## Cost Model for Execution
+* What is the cost of the request depending on the different implementations.
+    * Number of IO
+    * CPU Cost 
+    * Network Cost 
+* Assumption
+    * IO >>> CPU 
+* Simplification
+    * Ony consider disk read
+
+## Typical operations
+``` SQL
+SELECT * FROM students
+```
+Point query
+```SQL
+SELECT * FROM students WHERE sid =100
+```
+Equality Query
+```SQL
+SELECT * FROM students WHERE sid>120
+```
+Range Query
+``` SQL
+SELECT * FROM students WHERE 20>sid >120
+```
+Insert Query
+``` SQL
+INSERT INTO students VALUES (...)
+```
+Delete query
+``` SQL
+DELETE FROM students WHERE 20>sid >120
+```
+Update -> insert,delete
+
+## File organization
+With n pages
+* Heap file
+    * Select * we must read n pages
+    * Unique attribute we must read on average n/2
+    * range search we must read n pages
+* Sort file
+    * Select * we must read n pages
+    * Unique attribute use binary search log(n)
+    * rang search we must read, low range so log(n)

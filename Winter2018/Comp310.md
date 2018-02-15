@@ -27,7 +27,7 @@
 ### Design Concerns:
 | Personal/Embedded system        | Security, space management, power consumption |
 |---------------------------------|-----------------------------------------------|
-| Time-Sharing systemss           | Security, Response time, CPU scheduling       |
+| Time-Sharing systems           | Security, Response time, CPU scheduling       |
 | Batch Systems (Super computers) | Maximize CPU usage                            |
 ---
 
@@ -432,12 +432,14 @@ But starvation can occur: one of the two processes will wait for a long time sta
 The second problem is that we are contineously checking the term variable until the process is available just like I/O which is a problem. \
 Example: \
 Kernel level multi threads are used for concurrent processing. Each thread has 2 second for the critical section and 8 seconds for the non-critical section. If we have to thread what is the runtime? If the thread keeps changing every second we get (nc=non critical, c= critical).
+
 |1|2|
 |:--:|:--:|
 | nc | nc |
 | cs | cs (so blocked) |
 | cs | waiting |
 | nc | cs |
+
 Here we can see the Process 2 will wait for some time while not performing any operations. 
 
 **Def: Busy waiting is a terminology that implies that there will be some cpu runtime where a process will just idle and not perform any operations. (Passed midterm)** \
@@ -900,11 +902,13 @@ else return false no the system is not safe
 # 08-2-2018
 #### Example
 P1 wants 1 resource
+
 | | max| hold | need | finish |
 |----|----|----|----|----|
 |P1| 5| 1+1| 4-1|F |
 |P2| 5| 2| 3| F|
 |P3| 2| 1| 1| F|
+
 avail=2
 work=2-1\
 P1 cannot finish so it is not good good \
