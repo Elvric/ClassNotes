@@ -932,7 +932,7 @@ On the other hand such frequent checks consume a lot of processor time.
 * Recovery through terminal
     * Kills some processes in the cycle, irrocverable loss may occur
 
-# Secondary Storage
+# Secondary Storage After midterm
 It is a non-volitile repository for both user and systems. This means that when power is turned off the data remains in the repo. \
 It is managed by the opperating system as part of the file System. \
 It can store programs (source, objects), temporary storage and virtual memory. 
@@ -1141,3 +1141,51 @@ The pointer at the start of the list is at a specific location and the list hold
 
 ### Index pointers
 Here we can have sequence of free blocks. An index tells us the size of the sequence it is associated with. 
+
+---
+# 15-02-2018
+## Finding free space
+We want to find space of specific size and the way it is done depend on the free space managment technique used. 
+* Bitmaps search for bitmap that contains a large enough sequence of 1 bit.
+* Index: store the number of available blocks in each entry
+* Chained
+    * First fit that is big enough to accomodate the request (fastest)
+    * Best fit find the region on the chest that is nearest in size but at least as large as the request (leave smallest amount of holes)
+    * Worst fit: allocate from the largest region on the chain
+    * Next fit: like the first fit but we continue from where the pointer was last time.
+
+## Unix file system
+1. There is the boot block that is used to boot the system
+2. The super block contains critical information about the layout of the file system, how to connect to I-nodes telling us where they start and stop so we know where the data starts. It gives us a layout of the system
+3. Each I-node entry has the file attribute excetp the name the name of the file is actually stored in the directory. The first I-node number is what points to the root directory. Each files are indentified by there unique I-node number. 
+
+This is the structure of every partition in the disk.
+
+## Inner working of I-nodes in UNIX
+So we have the file text.txt. The directory has first the I-node number followed by the filename. Hence the directory is just a list of I-nodes number and names. \
+ I-nodes gives me
+* Mode
+* Link count (keeps track of how many directories contain a name number mapping for that I node)
+* Uid (user identifiers)
+* Gid (group identifiers)
+* Size
+* Time
+* Disk block (direct pointer)
+    * We go to the first address of the I-node we go there and read the entire block at that address.
+    * Then we go to the second block and so on.
+    * The I-node contains 12 blocks it is a standard
+* Indirect pointer to extend the size of the file
+    * Single indirect
+        * Points to a block that itself points to addresses
+        * The block stores pointers that themselves lead to data.
+    * Double indirect
+        * points to a block that contains addresses that themselves point to a block that itself contains addresses
+    * Triple indirect
+        * Same as above with three levels of addresses.
+
+## Access file UNIX
+1. File descriptor table (one per process, keeping track of open files)
+2. Open File Tables: one per system that points to all the files in the system currently open
+3. I-node table: one per system that keeps track of all the files open or close. 
+
+So First we have the file descriptor table that maps to a index in the open file descriptor table. Then the open file mapes to the Inode in memory that also points to disk. When a file is close then we update the file that the Inodes point to on disk.
