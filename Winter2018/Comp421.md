@@ -852,8 +852,8 @@ Record is fixed such that we know that every record will have a fixed amount of 
 So here we store the address rather than the data that tells us where to read from. We can even use the address value to know the length of the field, by doing next address - previous address.
 
 ## Page format
-Used and free space pointer in order to start writting new data. Then we can write variables length field for that data. Redcord id (rid) is the internal indetifier of a record <page id, slot#>.
-/ If we do not have enough space in a page we may have to move the information to another page. However we do not change the record idea, that brings us to an area on the page that was the same as before but now we have the new page and slot number of the data there. Note that this means the the minimum alocated space on a page must be at least the size of record id. 
+Used and free space pointer in order to start writting new data. Then we can write variables length field for that data. Record id (rid) is the internal indetifier of a record <page id, slot#>.
+/ If we do not have enough space in a page we may have to move the information to another page. However we do not change the record idea, that brings us to an area on the page that was the same as before but now we have the new page and slot number of the data there. Note that this means the the minimum alocated space on a page must be at least the size of record id. Note that what is store in a page everytime is an entire ensitance of an entity (a row everytime)
 
 ## A relation in file
 Pages hold records of one relation.
@@ -912,3 +912,50 @@ With n pages
     * Select * we must read n pages
     * Unique attribute use binary search log(n)
     * rang search we must read, low range so log(n)
+
+---
+# 19-02-2018
+
+## Indexes
+```SQL
+CREATE INDEX ind1 ON Studentds(sid);
+DROP INDEX ind1;
+```
+### B+ Tree structure used for Indexes
+This is used in order to get the sid faster from an index rather than from the entire table. \
+Leaf node: store a leafpage consists of data entries value like sid and the rid. (rid tells us the page number and slot where the actal data is located) so it is a tupple per index. Each leafnode are connected between each other in case we want to do a range search. 
+
+Root: has pointer and value as well the pointe points to leaf or another node that is in the range disired. So we look at the value if the value is greater than sid we want then we go to its pointer else we move on. 
+
+#### B+ tree Rules
+F= fannout = number of children per nodes
+N = # leaf pages\
+Insert/Delete at logf(N)\
+Keep each node at least 50% full
+1. Index entries in root 
+2. Data entries in index leaves
+3. date records in data pages
+
+**Assume that the root is in memory so we do not need to calculate its IO and intermediate nodes** unless asked \
+So assume we have a leaf of 5 data entry and we want to get the last 1 then we would do 2 ios over all because we would fetch in ID 
+
+#### Insertion into the tree
+When we add an sid, if it is on the edge of the address we go back to the root and update the previous value of the tupple to that sid./
+If at some point we do not have enough space in intermediate node we just push the new value up to the layer above it.
+
+#### Having values that are not unique
+Put these values in the data entry and this is linked to a list of pointers that point to record with the same value.
+
+### Direct indexing
+Instead of instead of storing just the address of the record we store the entire record there. 
+
+## Index classificiation
+#### Primary vs Secondary
+* Primary index created on the primary key
+    * Always unique
+* Secondary index done on other attributes
+    * Must mention it unique to make it unique 
+
+#### Cluster vs uncluster
+* Cluster means that the data file is also sorted in the same way than the root is, no cross over. So when we limit the number of pages we have to read from therefore less cost. **There can only exist on cluster data file per data file.**
+* Uncluster when fetching data the arrows cross over. So we must read more pages which is more costly.

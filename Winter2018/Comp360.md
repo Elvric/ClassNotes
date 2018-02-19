@@ -618,3 +618,97 @@ So to get the best upper bound we need to solve
     y3=1/2
 
 This only works when we are in standard form  that are the dual of each other. 
+
+---
+# 19-02-2018
+### From last time
+We already know that the optimal is 5/2 ≥.\
+We want to show that x1+2x2+x3+x4 ≤ 5/2\
+We can deduce new constrains from the constrains above ex;\
+* x1+x2+x3≤2
+* x2+x4≤4
+
+Then x1+3x2+x3+x4 ≤ 3
+
+* x2+x4≤1
+* x1+2x3≤1
+
+Then 3x1+x2+6x3+x4≤4
+
+So in our case we will modifiy the constrains like this:
+*   x1+2x2+x3 ≤ 2 * y1
+*   x2+x4 ≤ 1 * y2
+*   x1 + 2x3 ≤ 1 *y3
+*   x1,x2,x3,x4 ≥ 0
+
+*   (y1+y3)(x1)+(2y1+y2)x2+(y1+2y2)x3+y2x4≤ 2y1+y2+y3
+
+Given that the y's are positive. If we find y1,y2,y3 positive so that the coefficient are:
+* y1+y3 ≥ 1
+* 2y1+y2≥ 2
+* y1+2y3≥1
+* y2≥1
+
+In that case we get:
+* x1+2x2+x3+x4 ≤ (y1+y3)(x1)+(2y1+y2)x2+(y1+2y2)x3+y2x4 ≤ 2y1+y2+y3
+
+So the best upper bound here because we are interested in getting it the lowest possible to show that the original equation cannot be greater than a certain number:
+min 2y1+y2+y3
+* y1+y3 ≥ 1
+* 2y1+y2≥ 2
+* y1+2y3≥1
+* y2≥1
+* y1,y2,y3≥ 0
+
+These is called the dual LP because we are doing the opposite of the original which is the primal LP. OPT(Primal LP)≤OPT(Dual LP)\
+In this case we can set y1=1/2, y2=1 and y2=1/2 gives us 5/2 which makes opt(Primal LP)≤5/2. \
+Hence remark if we find something for both dual and primal that works for both of them then this is the optimal solution for both of them. 
+
+### Dual for standard LP:
+max c1x1+c2x2+...+cnxn \
+a11x1+a12+...a1m ≤ b1\
+. \
+. \
+. \
+am1x1+am2x2+...ammxmm ≤ bm
+
+#### so now Dual is:
+min b1y1+...+bmym\
+a11x1+a12+...am1 ≤ c1\
+.\
+.\
+.\
+a1mx1+am2+...amm ≤ c2\
+all y≥0
+
+Remark: Value of every feasible solutions in primal is upper bounded by the value of every feasible solutions in dual
+
+If primal is unbounded then the dual is infeasible/ has no solutions and vice versa.
+
+Thm(Weak duality)
+1. If primal is unbounded then dual is unsatisfiable. 
+2. If the dual is unbounded then the primal is unsatisfiable
+3. If both primal and dual are feasible then opt(primal) ≤ opt(Dual) for maximization. 
+
+This similar to max-flow ≤ min-cut
+
+#### Writting the dual without converting to STD form
+max x1+2x2+3x3
+* x1-x2-x3 ≤ 1
+* 5x1+x2+2x3 ≥ 4
+* 3x1+2x3-x3 = 3
+* x1 ≥ 0
+* x2 ≤ 0
+* x3 free
+
+min y1+4y2+3y3
+* y1+5y2+3y3 ≥ 1
+* -y1+y2+2y3 ≤ 2
+* -y1+2y2-y3 = 3
+* y1 ≥ 0
+* y2 ≤ 0
+* y3 free
+
+### Thm(Strong duality):
+If primal and dual are both feasible then opt(primal) = opt(dual)
+

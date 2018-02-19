@@ -29,6 +29,11 @@
 |---------------------------------|-----------------------------------------------|
 | Time-Sharing systems           | Security, Response time, CPU scheduling       |
 | Batch Systems (Super computers) | Maximize CPU usage                            |
+
+## System calls
+Happen when we want to open a file, first system service is requested, goes to the system call in memory then that goes to the system call table return from service function.
+
+
 ---
 
 ## 16-01-2018
