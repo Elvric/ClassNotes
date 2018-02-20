@@ -1194,3 +1194,61 @@ So we have the file text.txt. The directory has first the I-node number followed
 3. I-node table: one per system that keeps track of all the files open or close. 
 
 So First we have the file descriptor table that maps to a index in the open file descriptor table. Then the open file mapes to the Inode in memory that also points to disk. When a file is close then we update the file that the Inodes point to on disk.
+
+---
+# 20-02-2018
+Reading data from sector grid?
+
+## Disk memory basics
+Disk are made of rotors and for every surface we have a recording data. Each disk/rotor is split into sectors ex 63 sectors per track. Reading data from disk is long because we have to locate the right track and right sector with finally the time taken to read the data.
+
+#### Sector is defined by an angle leaving the center of the disk. So they are wider in length the further away from the disk therefore we are going to assume that closer tracks have more dense information.
+
+Over time disk got better but the access time has not improve by much. 
+
+### Organize data on a disk
+Keep all the sectors on tracks that are close to minimize the seek time. It takes on everage half the rotation speed to get to the right sector.
+
+### Read data
+When OS gets data request place them in such a way that we can get minimum seek time regardless of the order in which the requests have been sent.
+
+### Disk caching
+Once there is one sector that needs to be access, we read the next 100 free and place it in the cache so if we are asked for the data we can retrieve it fast.
+
+### Disk Scheduling
+Maxiimize the throughput with concurrent I/O requests from. The Disk driver see which requests get serviced first.
+
+### Strategies
+* Random
+    * select pool randomely 
+    * worst performer
+    * sometimes usefull as a benchmark for analysis and simulation
+* First Come Fiirst Served
+    * No Starvation and is the fairest of all of them.
+    * Works well for few processes
+    * Approaches to random as number of processes competing with each other.
+* Priority
+    * Not controled by disk managment
+    * Based on process execution priority 
+    * Design to meet job throughout put
+* Last in First out
+    * Service the most recently arriving request
+    * Useful for sequential file
+    * Issue of starvation
+* Shortest Service Time First
+    * select the item requiring the shortest seek time
+    * In general better that FIFO
+    * Randome breaker if required
+    * No garentee that the time is actually better.
+* Scan back and forth
+    * Scan until you reach the end of the disk only reversed when reaching the end.
+    * Bad if a new request arrives and it on the opposit side of the disk
+* C-SCAN
+    * Scins in only one direction to the last track and then returns heands quickly to the begenning
+    * redcues the maximum delay
+    * We do not count the track when we go back because we are just moving not reading so we can do that fast.
+* LOOK
+    * LOOK for requests before moving in that direction.
+    * When there are no more request we look for requests in the other direction.
+* C-LOOK
+    * LOOK for requests in the same direction and then go back to the begining when we are done
