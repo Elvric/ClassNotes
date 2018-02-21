@@ -3,7 +3,7 @@
 
 ### Marking Scheme
 * 3 individual assignments 4% each
-* Map-reduce Exercis
+* Map-reduce Exercise
 * 3 Projects 5% each
 * Midterm 10%
 * Final 58%
@@ -14,19 +14,19 @@
 1. Requirement Analysis
     
     Identify the data that needs to be stored
-    Identify the operation that need to be exectuted
+    Identify the operation that need to be executed
     on the data
 
 2. Conceptual Database Design
     
-    Sementic data model to develop semantic schema
+    Semantic data model to develop semantic schema
 3. Map semantic schema to relational schema
 
 ### Requirement Analysis
     Identify the entities and relationships in the company
-    Store the relevent information that we are looking for in the database
+    Store the relevant information that we are looking for in the database
     Ensure that all rules and regulation are respected
-    Make sure that the operations we want to perform on the database can be done optimaly. 
+    Make sure that the operations we want to perform on the database can be done optimally. 
 
 #### Student database
 * Student ID
@@ -37,7 +37,7 @@
         * Can teach a course
         * Can enter grades
     * Course registration
-    * Course cancelation
+    * Course cancellation
 
 #### Course database
 * Term
@@ -51,11 +51,11 @@
 
 ### Semantic Data Model (ER)
 
-    E/R model allos for pictorially description of the data.
+    E/R model allows for pictorially description of the data.
         An E/R diagram is a representation of the data model of
         the application
         It should be understandable by non-computer scientist
-    Main concepts are entitites and relationships
+    Main concepts are entities and relationships
     Similar to UML class diagram.
 
 ### Entity
@@ -920,6 +920,12 @@ With n pages
 ```SQL
 CREATE INDEX ind1 ON Studentds(sid);
 DROP INDEX ind1;
+CREATE UNIQUE INDEX indemail ON Students (email)
+CREATE UNIQUE INDEX ind ON Students (sid) INCLUDE (name)
+/* 
+    Usefull when wanting to just get the name from and sid so it
+    reduceses the IO by 1
+*/ 
 ```
 ### B+ Tree structure used for Indexes
 This is used in order to get the sid faster from an index rather than from the entire table. \
@@ -959,3 +965,79 @@ Instead of instead of storing just the address of the record we store the entire
 #### Cluster vs uncluster
 * Cluster means that the data file is also sorted in the same way than the root is, no cross over. So when we limit the number of pages we have to read from therefore less cost. **There can only exist on cluster data file per data file.**
 * Uncluster when fetching data the arrows cross over. So we must read more pages which is more costly.
+
+---
+# 21-02-2018   
+## B+ Tries capacities
+* Height
+    1. 17689 records
+    2. 2352637 records
+    3. 312900721 records
+* Levels
+    1. 1 pages 4 Kbytes
+    2. 133 pages 0.5 Mbyte
+    3. 17689 pages 70 Mbyte
+
+## Multi-attribute index
+Index on Skaters(age, rating). Here it will sort the index on age first then on rating in the index. 
+
+## Static Hashing
+Hash the record based on its sid for example to get a pages then we store that data entry in that page. Multiple sid can map to the same page but this is not a problem, if the page becomes full then we add a page and the previous page will point to the new page.
+
+Issues: Some pages maybe half empty, if the Hash function is not that good we can get a lot of records to the same pages. So we must find a balance between too little and too many pages.
+
+## File organization
+For hashing we cannot do range queries. 
+
+# Query evaluation
+
+### Processing SQL queries
+Parser translatees into query representation. \
+Checking syntax, checks existence of relations and attributes.
+The query optimizer translates the query into an efficient execution plan. 
+
+## Query decomposition
+* Operators
+    * Selection
+    * Projection
+    * Order by
+    * Join
+    * Group by
+    * Intersection
+    * … 
+
+Several alternative algorithms for implementing each relation operator. One could be better in certain situations others are not.
+
+#### Access path is the method used to retrieve a set of tupples from a relation.
+* Basice file scan
+* Index plus matching selection
+* Partition
+    * Store data in multiple files. Used so that we can store all the data enter on a specific date on one page and so on. 
+
+## Cost model
+We must be able to estimate how expensive a specific execution is:
+* Input cost model
+    * the query
+    * database statistics (distribution, values)
+    * Resource availablility and costs: buffer size, I/O delay, disk bandwidth, CPU costs, network bandwidth.
+* Our cost model:
+    * I/O = page retrieve from disk
+        * Root and intermediate nodes are in main memory
+        * A page P may be retrieve several times if many pages are accessed between 2 P accesses.
+
+### Basic query processing operations
+* Selection sigma
+* Projection pie
+* Sorting
+* Joining
+* Grouping and duplicate elimination
+
+## Concatenation of Operators
+Execution tree: shows us the order in which each operations in the query are going to be executed.
+
+## Reduction factor
+The number of records that will make it to the output. |
+CARD(X) gives us the number of outputs. \
+We can also make assumptions let say we know a query for a certain number represents 5% of the data we can assume that any other number in the range given will have the same reduction factor. The range can be determined if the data base keeps track of the max and min values entered. 
+
+#### Reduction factor is the ratio of output/input
