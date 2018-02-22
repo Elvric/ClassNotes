@@ -1252,3 +1252,113 @@ Maxiimize the throughput with concurrent I/O requests from. The Disk driver see 
     * When there are no more request we look for requests in the other direction.
 * C-LOOK
     * LOOK for requests in the same direction and then go back to the begining when we are done
+
+---
+# 22-02-2018
+## Grouped arrivals
+Even if we do something specific when taking care of the reading method we do so in groups as we do not know what will be requested in the future.
+
+# CPU Scheduling
+
+## Scheduling
+Finding the sequence of jobs that optimize the goodness of RAM.
+Ex: if we have 4 jobs then we schedule them in an order to reduce the average response time. \
+Scheduling itself is the set of policies and mechanisms to control the sequence of jobs to be performed.
+
+### Allocation
+Determines what job get to use which resources.
+
+### Our goals for this course
+* Single CPU
+    * Maximize CPU utilization
+        * CPU over head
+        * Idling
+    * Minimuze job response times
+    * Maximize throughput
+
+### Information required
+* Resources
+    * only one CPU
+    * I/O resources
+    * Memory used in shared manner
+* Jobs
+    * Number of process
+    * Process creation rate
+    * How long process runs
+    * How long process uses CPU versus I/O
+* Other issues
+    * Scheduling policies, priorities.
+
+## Nature of processes
+* CPU burst which is the time the CPU is used
+* I\O burst waiting for I\O while not using the CPU 
+
+Some processes may require the processes more frequently than others. \
+Some crunching program may do a lot of computation and minimal I/O so it is CPU bound. \
+Data processes job may do little computation and a lot of I/O so it is more I/O bound.
+
+### CPU bound process
+We look at how long each CPU burst is
+
+## Scheduling approches
+When to schedule:
+1. Switches from running to waiting state
+2. running to ready state
+3. waiting to ready state
+4. Terminates
+5. Process gets created
+
+Here 1 and 4 are non preemptive.
+### Preemptive
+Scheduler forces a process to release the CPU at a clock interrupt or I\O interrupt. 
+* Cosider access to share data
+* Consider preemption while in kernel mode
+* Consider interupt occuring during crucial operations
+s
+### Non-Preemptive 
+Scheduler does not interupt a running process. The process runs until it is done.
+
+#### Short-term Scheduler:
+Selects from among the processes in ready queue and allocates the CPU to one of them.
+
+## Evaluation schedulers
+#### CPU Utilization
+* Capacity used / total capacity
+* Varies from 100% to 0% 
+
+#### Efficiency
+Useful work / total work
+
+#### Throughput
+Number of jobs / unit of time
+
+#### Turnaround time
+Time to complete a job, time laps between the completion and arrival events of the job.
+
+#### Waiting time
+How long did the job spent waiting in the ready queue.
+
+#### Service time
+The time that the job has spent being active total.
+
+#### Response time
+Time between the first respons is produced and the arrival of the job. Linked to just one running time for example.
+
+## Scheduler design
+
+### Decision
+* select one or more primary performance
+* rank them in order of importance
+* Performance criteria may nt be independent from each other. 
+* Design of scheduler involves a careful balance of the requirements. 
+
+### Scheduling approaches
+* Preemptive (foreground interactive jobs)
+    * Round-Robin
+    * Priority
+* Non-Preemptive (Background jobs)
+    * First Come First served
+    * Shortest Job first
+
+#### First come first serve
+Have a queue of jobs the job that arrives first is run first, arriving jobs are inserted at the tails. Performes well for long jobs since the scheduler does not need to make any calculations.
