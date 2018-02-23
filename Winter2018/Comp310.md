@@ -1325,15 +1325,24 @@ Selects from among the processes in ready queue and allocates the CPU to one of 
 #### CPU Utilization
 * Capacity used / total capacity
 * Varies from 100% to 0% 
+* When all processes are blocked CPU is not used
 
 #### Efficiency
-Useful work / total work
+Useful work / total work \
+Busy waiting or process switching is not useful work
 
 #### Throughput
 Number of jobs / unit of time
 
 #### Turnaround time
-Time to complete a job, time laps between the completion and arrival events of the job.
+Time to complete a job, time laps between the completion and arrival events of the first job. No substraction just the time. \
+Assume a,b,c,d are jobs that run in order then turarround for each is:
+* a = a
+* b = a+b
+* c = a+b+c
+* d = a+b+c+d
+
+Total: 4a+3b+2c+d
 
 #### Waiting time
 How long did the job spent waiting in the ready queue.
@@ -1362,3 +1371,46 @@ Time between the first respons is produced and the arrival of the job. Linked to
 
 #### First come first serve
 Have a queue of jobs the job that arrives first is run first, arriving jobs are inserted at the tails. Performes well for long jobs since the scheduler does not need to make any calculations.
+
+Problems: long CPU jobs may hog the CPU. Short I/O jobs have to wait longer. This can lead to convoy effect as more and more jobs enter the queue.
+
+---
+# 23-02-2018
+
+#### Shortest job first
+Everytime a new job arrives to the queue we need to run the scheduler to see which one is the new shortest job. 
+
+Problem: need to know or estimate the processing time of each job which cost CPU time. Long running jobs may starve for the CPU when there is a steady supply of short jobs.
+
+Preemptive SJF called SRTF (Shortest remaining time first) demoed below: 
+
+| Jobs | Arrival Time | Burst Time |
+| :---: | :---: | :---:|
+|P0 | 0.0 | 7 |
+| P1 | 2.0 | 4 |
+| P2 | 4.0 | 1 |
+| P4 | 5.0 | 4 |
+
+1. Run P0
+2. P1 arrives P0 has 5 units left so we run P1
+3. P2 arrives P1 has 2 units left so we run P2
+4. P2 finishes so we run P1 since P4 has 4 units
+5. P1 finishes so we run P4
+6. P4 finishes so we run P0
+
+Avg waiting time: time complete- time arrived - time run
+
+## Determining the length of Next CPU burst
+We can only estimate the length by saying that its running time should be similar to the last time it ran. 
+1. tn = actual length of nth cpu burst
+2. toa n+1 predictedvalue for the next CPU burst
+3. alpha, 0≤alpha≤1
+4. Define toa n+1 = alpha tn + (1-alpha)toa n
+
+Alpha is usually set to 1/2. \
+From there we can predict every time the running time.
+
+#### Effect of alpha
+* = 0 then recent prediction do not count
+* = 1 only the last cpu burst counts
+* If it is another value then each successive term has less weight than its predecessor. So predicition in the passed have less weight than recent prediction
