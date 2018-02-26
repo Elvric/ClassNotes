@@ -712,3 +712,27 @@ min y1+4y2+3y3
 ### Thm(Strong duality):
 If primal and dual are both feasible then opt(primal) = opt(dual)
 
+---
+# 21-02-2018
+## Max-Flow and duality
+max $\sum_{su \in E } f_{su}$ \
+st: \
+$f_{uv} \leq C_{uv} \forall uv \in E$\
+$\sum_{vu \in E} f_{vu} - \sum_{uw \in E} f_{uw}\forall u \in V - \{s,t\}$ \
+$f_{uv} \geq 0 \forall uv \in E$
+
+### Getting the dual easily
+First we add an edge with C = infinity going from sink to source. So we can redifine it like this: \
+max $f_{ts}$ \
+st: \
+$f_{uv} \leq C_{uv} \forall uv \in E$ \
+$\sum_{vu \in E} f_{vu} - \sum_{uw \in E} f_{uw}\forall u \in V$ \
+$f_{uv} \geq 0 \forall uv \in E$
+
+#### Dual
+$x_{uv} \forall uv \in E$ \
+$y_u \forall u \in V$
+
+min $\sum_{uv \in E} C_{uv}x_{uv}$ \
+st: \
+
