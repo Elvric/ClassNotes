@@ -1041,3 +1041,66 @@ CARD(X) gives us the number of outputs. \
 We can also make assumptions let say we know a query for a certain number represents 5% of the data we can assume that any other number in the range given will have the same reduction factor. The range can be determined if the data base keeps track of the max and min values entered. 
 
 #### Reduction factor is the ratio of output/input
+
+---
+# 26-02-2018
+## Execution plan 
+```SQL
+SELECT P.cd, count(*), AVG(S.rating)
+FROM Skaters S, Participates P 
+where P.sid = S.sid AND S.age < 10
+GROUP BY P.cid
+HAVING AVG(S.rating) > 5 ;
+```
+1. Selecting of age
+2. Join the two tables
+3. Scan and select the column we want
+4. Group them
+5. Calculate the average and count
+
+### Reduction factor assumptions
+```SQL
+SELECT * 
+FROM Users
+WHERE uname like 'B%'
+
+SELECT * 
+FROM Users 
+WHERE uid = 123
+```
+First we will read every record hence we will have to read all the pages or just 1 so on average we will read half of the pages. \
+**Using a cluster B+ Tree for the first one:** Reach the leaf page that is one I\O then read the names then just start reading the names cost 1 I/O per pages that match the requierments. Since the number of tupples that qualify is 20% then we can assume that on average we will retrieve about 20% of the pages. 
+
+For the second we know that there is only one hence we can use indexed data and our reading time would be the number of leaf pages + certain number of data pages that have matching tupples.\
+**Using a cluster B+ Tree**: one leaf page one data page then the I/O cost is 2.
+
+### Uncluster B+ Tree for fetching data
+One I/O for the first leaf pages then retrieve the page but in this case we may have to count the same pages twice since we may call it after a long time since we last called it. Could go all the way to one I/O per data record worst case. This would be the same cost as cluster index if we only have 1 matching record howerver when we have multiple ones then we can have a huge increase in I/O.
+
+#### How to improve that:
+Go to the leaf entry sorted based on what we are looking for. Then sort these entries according to their record identifier ensuring that we visit each page only once. So in an example we would have to read 75 leaf pages sort them (rid=pid,slot-id) in leaf pages by page-id. **This is only fast if the leaf pages can be stored in memory** worst case we read all the pages but at least we call these pages only once. **We must also ensure that this is faster than a simple scan**. \
+
+If reduction factor is low then using the index is usually better if the reduction factor is high then just scanning each pages may be better. 
+
+#### Example
+A = 100 AND B = 50 (500 pages)
+* No index
+    * 500 I/O
+* Index On A attributes
+    * Get all the A=100 and check if B=50
+* Index for A and Index for B
+    * Go to both indexes and compare the page ids (intersection)
+
+A = 100 and B<50 (Red of B<50 = 0.5)
+* If A has a low reduction factor use the A index else use the B index. 
+
+A = 100 OR B = 50
+* No index
+    * 500 I/O
+* Index on A
+    * 500 I/O
+* 2 Index on A or B
+    * Use the indexes for both and just do a UNION.
+* 1 Index for Both attributes (A,B)
+    * Just scan the 500 I/O
+    * Better than index as we do not have to read the leaf pages.
