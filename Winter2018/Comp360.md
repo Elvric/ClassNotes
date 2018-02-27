@@ -718,7 +718,7 @@ If primal and dual are both feasible then opt(primal) = opt(dual)
 max $\sum_{su \in E } f_{su}$ \
 st: \
 $f_{uv} \leq C_{uv} \forall uv \in E$\
-$\sum_{vu \in E} f_{vu} - \sum_{uw \in E} f_{uw}\forall u \in V - \{s,t\}$ \
+$\sum_{vu \in E} f_{vu} - \sum_{uw \in E} f_{uw} = 0  \forall u \in V - \{s,t\}$ \
 $f_{uv} \geq 0 \forall uv \in E$
 
 ### Getting the dual easily
@@ -726,7 +726,7 @@ First we add an edge with C = infinity going from sink to source. So we can redi
 max $f_{ts}$ \
 st: \
 $f_{uv} \leq C_{uv} \forall uv \in E$ \
-$\sum_{vu \in E} f_{vu} - \sum_{uw \in E} f_{uw}\forall u \in V$ \
+$\sum_{vu \in E} f_{vu} - \sum_{uw \in E} f_{uw} = 0 \forall u \in V$ \
 $f_{uv} \geq 0 \forall uv \in E$
 
 #### Dual
@@ -734,5 +734,49 @@ $x_{uv} \forall uv \in E$ \
 $y_u \forall u \in V$
 
 min $\sum_{uv \in E} C_{uv}x_{uv}$ \
+So $\sum_{uv \in E} C_{uv}x_{uv} \geq f_{ts}$ \
 st: \
+$y_s - y_t \geq 1$ \
+$x_{uv}+y_v-y_u\geq 0 \ \forall uv \in E$ \
+$x_{uv} \geq 0 \forall uv \in E$\
+$y_u free \forall u \in V$ 
 
+Let (A,B) be an s-t cut. \
+Consider the solution: \
+$x_{uv} = 1 \ u \in A, v \in B$ else 0. \
+$y_s = 1, \ y_t = 0$ and $y_u = 1$ when $u \in A$ 0 OW \
+This works because: \
+$0+1-1 \geq 0 \ u \in A, v \in A$ 
+
+$1+0-1 \geq 0 \ u \in A, v \in B$
+
+$0+1-0 \geq 0 \ u \in B, v \in A$
+
+$0+0-0 \geq 0 \ u \in B, v \in B$
+
+So we found a solution that gives us the capacity of the cut. showing $Opt(Dual) \leq Min-cut$ by strong duality this is equal to max flow. $MaxFlow = OPT(Dual) \leq Min-Cut$.
+
+## Complementary Slackness
+If at some point we reach an inequality such that $a_{11}x_{1} +...+ a_{1n}x_{n} < c_1$. For a given answer. Then what happens when we d the Dual. Well assuming that the equivalent variable is $y_1$ then it is 0. 
+#### Theorem
+if $y_i^*>0 \implies a_{i1}x_i^*+...+a_{in}x_n^*=b_i$
+
+if if $x_j^*>0 \implies a_{1j}y_1^*+...+a_{mj}x_m^*=b_i$
+
+max 2a+4b+3c+d \ 
+st: \
+3a+b+c+4d ≤ 12 \
+a-3b+2c+3d ≤ 7 \
+2a+b+3c-d ≤ 10 \
+a,b,c,d ≥ 0 
+
+min 12x+7y+10z
+set: \
+3x+y+2z ≥ 2 \
+x-3y+z ≥ 4 \
+x+2y+3z ≥ 3 \
+4x+3y-z ≥ 1 
+
+Show that a=0, b=10.4, c=0, d=0.4 is the optimal solution giving us 42.\
+Well we have slack in the second constrain hence y=0 so now we know that the second and last equation must be exacty 4 and 1.
+So x=1 and z=3
