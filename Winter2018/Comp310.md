@@ -1414,3 +1414,68 @@ From there we can predict every time the running time.
 * = 0 then recent prediction do not count
 * = 1 only the last cpu burst counts
 * If it is another value then each successive term has less weight than its predecessor. So predicition in the passed have less weight than recent prediction
+
+---
+# 27-02-2018
+## Round-Robin (RR)
+Periodically preempt a running job. CPU supspends the current job when time-slice (called quantum) expires. Job is rescheduled after all other ready job have been executed at least once. \
+Its efficiency depends on the quantum length of RR:
+* too long: becomes like first come first serve
+* too short: a lot of switching so the context switiching time becomes a significant porsion of the running time. 
+
+## Priority-based
+Each process is assigned a priority. This does not reduce the running time.
+*  Priority + preemption allows process switch when a higher priority job arrives. 
+    *  Issue arrise when a lot of high priority job arrives which can lead to starvation for low prioriy jobs.
+*  Priority and aging: increase the priority of a process as it stands in the ready queue to prevent starvation
+
+## Comparaison of Running Polocies
+We should know how to use them and their advantage vs their disadvantage.
+* FCFS
+    * Better for long processes
+    * Not suitable for interactive jobs (short burst like Word)
+    * Negligible processing overheads.
+* RR
+    * Not suitable for long batch jobs because of context switching overheads.
+    * Good for interactive jobs
+    * Medium processing overhead
+* SJF
+    * Long processes can starve
+    * Can have high processing overhead.
+
+## Multi-level feedback queue scheduler
+We have different level of schedulers that have different scheduling policies. In this case we will look at ones with interactive work stations. What matters the most in this case is the response time to the screen hence response time is the key. Therefore priority is suited for that. We use feedbacks to schedules
+
+### Feedback schedulers
+1. Has several queues where each queue represent a priority level. Jobs with highest priority goes to queue 1 and lowest to queue k.
+2. If a job arrives at higher priority queue we will preempt a job that is running form a lower priority.
+3. If a job does not run to completion we have 2 rules
+    1. Either no-preemption
+    2. Or preemption
+
+### Priority
+Interactive task have a higher priority than non-interactive. Interactive jobs will have short CPU burst follow by long I/O activity. Hence if a job goes to wait before its allotted time quantum then it is priorities. 
+
+First on the arrival each job is in the highest priority queue. We run them for time T. If it is not done by that time then it is not that interactive hence we move it down to the next queue that has a quantum time of 2T. If quantum not completed then preemption then we move it to the back of the queue it came from.\
+The priority of a job reduces as time goes by.
+
+### Job escalation in priority
+Needs to happen if a job moves from bash job to interactive. We apply that rule so that if a job finishes before its time quantum it is moved to a higher queue. \
+We should not penalize long jobs for having a single long burst by the previous algorithm. After some time period S all the jobs are moved to queue 1.
+
+### MLF parameter
+* numbe of queues
+* The scheduling algorithm can be different per queue
+* The method determne to promote or demote a process to a queue
+* The method used to determine which queue the process enters when arriving for the first time. 
+
+### LINUX variation (not on exam)
+* 3 priority level (priority based scheduler)
+    * Each process is assigned a priority number level 1 (1-98) level 2 (99-198) etc...
+* first queue Real-Time FIFO and not preemptable unless new ready real-time FIFO thread arrives
+* Second queue Real-time round robin (not really realt-ime)
+* Third queue Time sharing each process is given the same runtime everytime. 
+* Higher priority level have higher quanta
+
+# Memory management
+Multiprogramming systems capable of storing more than one probram + data in memeory at the same time. Its fundamental taks is to ensure the safe execution of programs by providing sharing of memory and memory protexction.
