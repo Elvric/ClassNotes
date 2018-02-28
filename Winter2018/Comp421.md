@@ -1104,3 +1104,77 @@ A = 100 OR B = 50
 * 1 Index for Both attributes (A,B)
     * Just scan the 500 I/O
     * Better than index as we do not have to read the leaf pages.
+
+---
+# 28-02-2018 (Not in midterm)
+## External sorting
+Each set of sorting is called a run. Passes is also a new term pass 0,1,2 is different from other passes.
+
+Assume we have 2 entries per pages, 5 pages so 10 entries and 3 buffer frames in memory so not enough for all the pages.
+1. Read the first 3 pages in memory
+2. It sorts them and copies them in disk memory 
+3. Takes the next pages sort them in RAM and store them in disk memory
+4. Here we have sorted the 5 pages so pass 0 is now done
+5. Then we Merge Sort the **runs** of pass 0. This is done by loading the first page of the 2 runs and look at the records in them and write the lowest ones to a new page and store that new page in main memory.
+
+Somtimes pass 0 created more runs than there are main memory buffers. So we will need at least 2 extra passes to finish. So total cost is 2N *(# of passes) N is the number of pages
+
+### I/O costs of query
+```SQL
+Select uid,experience from Users
+Order by experience 
+```
+1. Order by experience
+2. Print the new table.
+
+If the buffer is larger than the number of pages then only pass 0 needed. **Note that the output of a pass does not always go to the disk, if it is the last merge sort the output can be sent directly to the client saving 1 I/O**
+
+### Sort in real life
+Blocked I/O use more ouptut pages and flush to consecutive blocks on disk, may lead to more I/O but each I/O is cheaper. Write after the first pass only the columns needed so we can store more tupples per pages.
+
+## Equality Joins
+```SQL
+select * 
+from Users U, GroupMembers GM
+where U.id = Gm.uid
+```
+### Join cardinality estimation
+Look at the table with the most records that matches that is the cardinality.
+
+For cross product we get:|A|*|B|
+
+If we fiter for example and remove 1/2 of the data that way then we can assume that the join reduction factor will also be reduced by 1/2.
+
+### Simple Nested Loop Join
+We lable 1 table as inner relation and the other as the outer relation. Take one record from the outer relation and compare it with entries in the inner relation.
+```
+foreach tuple u in U do
+    foreach tuple g in GM do
+        if u.uid == g.id then add<u,g> to results
+```
+Cost: UserPages + |Users| * GroupMemberPages
+
+### Page Nested Loop
+Read a page and join all the records from that pages to the entire other table. \
+Cost: UserPages + UserPages * GroupMemberPages
+
+### Block Nested Loop Join
+load as many pages from the outer table as possible and the inner table only has 1 slot for 1 page. **Note rember that a block represent a section made of a number of pages**
+Cost: UserPages + UserPages/#buffer-1 * group member pages.
+
+### Index Nested Loop Join
+```
+foreach tuple u in U do
+    find all matching tuples g in GM through index
+        then add all<u,g> to result
+```
+Use the index of the inner loop in order to find the record that matches. In this case we read the leaf page if we need more info the we go to the page itself else we do not care. \
+CardOuterRelation = # of Users\
+Cost: OuterPages + Card(OuterRelations)*cost of finding this depends if the GM is clustered or not clustered.
+
+### Block Nested Loop vs Index
+Best case nested loop: OuterPages + InnerPages
+Index nested loop is bettter if Innerpages > Card(Outer) * matching tuples Inner. Basically the fewer tuples are actually selected the better it will be.
+
+### Sort Merge Join
+Assume that we have 2 sorted tables available. We read one of each pages and just compare them when we find the next ones and so one. Cost: UserPages + GroupMemberPages.
