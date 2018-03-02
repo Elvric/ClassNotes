@@ -1577,3 +1577,59 @@ Allocate the smallest hole that is big enough. Shorter time than WF better memor
 #### Worst Fit WF 
 Allocates memory to the largest partition possible. \
 Better in certain cases say we have a program of size 90 best fit puts it in a 100 so we have then we get 10 units never used. But with WF if we allocate it to a 200 partition we still have 110 that can be used by the program. 
+
+---
+# 02-03-2018
+## Fragmentation 
+Referes to the unused memory that the memory management system cannot allocate.
+
+##### Internal fragmentation
+Waste of memory withint a partition caused by the difference of the program and the size of the partition (static partitioning).
+
+#### External fragmentation
+Waste of memory between partitions caused by scattered noncontiguous free space (dynamic partitioning).
+
+## Swaping
+Treats main memory as a preemptable resource high-speed swapping is used as the backing storage of the preempted process. So we take the data store it in a storage divice to load new data required for the program.  
+
+#### Medium-term
+Everytime we need to run a specific process we dispatch it from memory. If we need to run a process that is not in memory we swap from memory then we run it. The process needs to be in memory before starting to run. It can be done by both static and non-static but it requires a mechanism for swapping in the OS.
+
+### Swapper responsability
+swapping device (storage units like a subset of the disk)
+* Selection process to swap out
+    * Blocked/suspended processes
+    * Low priority process
+* Selection of processes to swap in
+    * time spent on swaping device, priority
+* Allocation and management of the swap space on a swapping device. 
+    * System wide
+    * dedicated
+
+## Memory protection
+Management systems most important task is to protect the memory of processes covering the OS itself as well. It can be provided at two levels hardware and software levels:
+
+### Address translation
+Memory address mapping. A process is given access to a certain range of addresses let say between 3000 and 5000. When program asks to access memory relative limit register are checked to see weather the jump is not greater than 2000 compare to the start location.  
+Then if it passed the test we compute the new address by doing an addtion between the relative address and value of the base register that is in this case at 3000.
+
+## Dynamic relocation
+Each program generated address (logical/virtual address) is translated to hardware address (physical address) at the runtime of every reference, by the hardware device known as the memory management unit (MMU).
+
+### Two views of memory
+Logical view and the physical view. Each process has its own logical view that makes them believe that it has memory allocated to everything that it needs from let say 0 to Pa. These are then mapped to physical memory with the based address Pa-start and the limits Pa-end.
+
+### Base and bounds relocation
+Each program is loaded into a contiguous region of memory. The bound register limits the range of the logical address of each program.  
+Easy to implement 2 registers plus an adder and a comparator.
+
+## Segmentation
+A segment is a region of contiguous memory and is for *based-and-bounds* relocation where all the process must be stored as there is only one segment per process.  
+
+### Segment number
+Loaded into the logical address as it gets loaded into logical address when the process gets first loaded into memory. 
+
+### Segment table same for same vs different programs
+When the program is being loaded everything is initialized this is a very dynamic running idea.
+We could have a table that has 5 segments so 5 contiguous chunks of memory in physical space. Each chunk has its own base and bounds. Bounds is the logical limit.  
+Process imputs the logical address and the Table computes the physical address. The logical address is split into 2 components one storing which segment do I need to go at and the other the offset that I want to go to. 
