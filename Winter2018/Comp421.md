@@ -329,6 +329,7 @@ C
 | cid | date |type|
 | --- | --- | --|
 | | |
+
 P
 | sid | cid | rank|
 | --- | --- | --| 
@@ -824,7 +825,8 @@ Same concept as above except that we split into segments the secondary memory an
 These are abstracts but it is the one will use for the course although different databases have different architechtures.
 
 ## Buffer managment
-Page size and fram side must be the same size. Table of fram# and pageid pairs is maintained. 
+Buffer is basically the ram and frames are units of ram which we are going to use to store pages  
+Page size and fram side must be the same size. Table of fram# and pageid pairs is maintained so that we can retrieve a page easily in the buffer using a hashmap. 
 
 ### Loading a page from the disk
 First we have an empty fram in our RAM, if they are all taken we can use another fram, if fram is dirty (page was modified), write it to the disk. \
@@ -835,7 +837,7 @@ When we load we must have a pin counter to 0. \
 After new page is loaded we set the pin counter to 1. \
 Counter could be more than 1. \
 After we are done with the operations we decrement the counter and set the dirty bit if the page has been modified. \
-Hence the only time we load a pages we check that the pin counter is at 0 and then check the dirty bit. 
+Hence when we load a new page but there is no space we check that the pin counter of the page we want to remove is at 0 and then check the dirty bit. 
 
 ## DBMS vs OS File System
 ### Why not use OS?
@@ -1178,3 +1180,72 @@ Index nested loop is bettter if Innerpages > Card(Outer) * matching tuples Inner
 
 ### Sort Merge Join
 Assume that we have 2 sorted tables available. We read one of each pages and just compare them when we find the next ones and so one. Cost: UserPages + GroupMemberPages.
+
+---
+# 12-02-2018
+## Hash Join 
+Can be used only when we use join equality (greater than and less than fails)  
+
+h has a value between 1 and B-1 if there are B buffer frames.
+- h(u.uid) = i -> tuple u of User is in Userpartition i
+- h(g.guid) = i -> tuple g of GroupMember
+
+```
+For each page of Users U
+    For each tuple u in page do 
+        append u to UserPartition h(u.id)
+```
+
+So when we load the user partions we load the entire partition into memory or as much as we can leaving just 1 free buffer space to load at least 1 GroupMember partion and start the joining process. Hence each partition must not be bigger than B-2.
+
+#### Note that at the end of the hashing process we have 2 copy of the data in the disk. The copy made from hash is discarted at the end of the query
+
+### Cost
+
+1. Hashing IO of 2*numpagestotal
+    - Read all user and GroupMember pages 
+    - Hash them in buffer
+    - Write them back to the disk
+2. Query IO of 1* numpages
+    - Load user partitions
+    - Load GroupMember partition page by page
+
+Total I\O cost is 3*numpagestotal.
+
+## Merge-Join vs Hash-join
+- Hash join better
+    - If one relation is really large
+    - sort in merge-join might need another pass
+- Merge join better
+    - if hash partition of smaller do not fit into memory as we want the hash partion to be max size B-2 which may be hard to achieve. 
+- Merge Join result is sorted
+- Hahs join good for parallelization
+    - Let each pair of partition be matched on a different node.
+    - One processor works on partition 1 and the second processor will work on partition 2. Here assume that the length of each partition has been made so that the two processors can work together in RAM.
+
+## CPU optimization
+Come up with a second hashing algorithm on the same attribute in such a way that it will make the MemberTable page map to only 1 page in the partition of users. We do that in buffer however this does not save an I/O cost.
+
+## The projection operations
+```SQL
+select GM.uid, G.gid 
+from GroupMembers GM
+```
+When we join or perform operations we project on the fly to minimize I/O queries.  
+Can be complex such as 
+```SQL
+select distinct uid
+from
+```
+Data base uses distinct only when really necessary. 
+
+## Set operations
+- Intersection and cross-product cases of join.
+- Union(Distinct) and Except acts similarly in terms of operations. 
+
+## Aggregat Operations (Avg, MIN, ect)
+Usually done at the final stage (last step) 
+- without grouping
+    - Requires scanning the relation so full table scan
+- grouping
+    - Sort on group-by attributes then scan relation and compute aggregate for each group. (can improve by combining sorting and aggredgate computation)

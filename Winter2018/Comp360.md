@@ -780,3 +780,68 @@ x+2y+3z ≥ 3 \
 Show that a=0, b=10.4, c=0, d=0.4 is the optimal solution giving us 42.\
 Well we have slack in the second constrain hence y=0 so now we know that the second and last equation must be exacty 4 and 1.
 So x=1 and z=3
+
+---
+# 12-03-2018
+# NP- Completness and Computational interactability
+- So far we designed efficient algorithm for many problems.
+- There are problems that cannot be solved by any algorithm (undecidable problem). Hilbert
+- Gödel, Church, Turing 1930's
+
+Ex: Halting Problem: Given a code with an input, we want to decide whether it eventually terminates? No
+
+We are given 10 types of tiles, each with four colours on ints edges, and 1 m by 1 m. Can we tile the hole plane so that the neighbouring tiles match on the boundery edge without rotation? Not possible to solve.
+
+- There are also problems we know we can solve using computers. Computational complexity studies the running time required for solving these problems. 
+- Are there problems for which we cannot do significantly better than brute-force search?
+
+Ex: 3 colourabiity of a graph: Input an undirected graph G(V,E). Can we color the vertices of G with 3 colours such that neighbouring vertices receive different colours.
+
+Brute-force Alg: check all the $3^n$ colouring where n is the number of vertices. Running time $O(3^nm)$. It seems that we cannot do better than that. Are there any efficient algorithm? Right now it does not seem like it. But to check if a colouring is correct then we can just run BFS or DFS and see if this is true in polynomial time.
+
+Are there problems for which verifying the correctness of a solution is significantly easier than solving them? These problems are NP problems and the question is every problems that is NP can be solved as fast as checking if a solution is correct?P vs NP and so far we do not know the answer.
+
+We will focus on Yes/No problems (decision problems). 
+
+Ex: 3 colourability.
+
+We can convert other problems to decision problems without making them easier.
+
+Ex: Max Ind problem: Given an undirected graph what is the size of the largest set of vertices no two chich are adjacent (independent set). Decision version we would add a number k and ask does G have an independent set of size at least k?
+
+# Decision problems
+We call an algorithm efficient if its running time is $O(n^c)$ for some constant c where n is the number of bits required to represent the input.
+
+Ex: Primality test
+Input m
+```
+for i=2,...,m-1
+    if i|m then return false
+endfor
+    return true
+```
+The runing time here is $O(m)$ but it is not efficient because the imput size is [log(m)]. Running time is $O(2^n)$ so it is not efficient.
+
+## P is the class of all decision problems that can be solved efficiently (polynomial time)
+
+Ex: Input G(V,E) undirected graph, Q: is G connected   
+Ex: input flow network G and a number k. Is max-flow greater or equal to k belongs to P (Can be solved with FF).  
+Ex: Primality since 2003.
+
+We can look at the sets this way
+- All problems
+    - Decidable problems
+        - Polynomial Time
+
+## Efficient certifier 
+For a problem X is an algorithm that takes an input <W,t> where W is the input and t a potential solution/certificate. 
+1. It runs in polynomial time measured in terms of W.
+2. If w is a NO input then for all t the algorithm puts false. Else if w is a Yes input then there exist a t for which the algorithm outputs true.
+
+Ex: For 3 colouring problem the efficient certifier takes <G,c> and c a potential colouring. For every edge in G it checks whether c assigns different colours to end points and outputs true and false. Running time is $O(m)$ input size is just the size of the graph. Note if G is not 3-colourable then for all c we get false. On the other hand for every (3-colourable graph) there exists a c such that the output is true.
+
+### NP - Non determanistic polynomial
+The set of problems with efficient certifiers. And the question is: is P = NP.
+
+## Thm P subset of NP
+Consider a problem X in P and let A be an efficient algorithm that solves A. Consider the following efficient certifier: <w,t>. We can ignore t and run A.
