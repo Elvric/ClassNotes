@@ -1632,4 +1632,73 @@ Loaded into the logical address as it gets loaded into logical address when the 
 ### Segment table same for same vs different programs
 When the program is being loaded everything is initialized this is a very dynamic running idea.
 We could have a table that has 5 segments so 5 contiguous chunks of memory in physical space. Each chunk has its own base and bounds. Bounds is the logical limit.  
-Process imputs the logical address and the Table computes the physical address. The logical address is split into 2 components one storing which segment do I need to go at and the other the offset that I want to go to. 
+Process imputs the logical address and the Table computes the physical address. The logical address is split into 2 components one storing which segment do I need to go at and the other the offset that I want to go to. Then we check if the addition of the offset does not go over then size of the segment
+
+---
+# 13-03-2018
+- When a process is created a new segmentation table is made.
+- The segments return to free segment pool when program terminates
+- Only segments instead of all process may be swapped when wanting to access other processes memory
+- Fragmentation problem
+
+## Paging
+**Anything that is being pointed by a page table is a page**  
+Physical memory is divided into a number of fixed size blocks, called frames. A page table defines the base address of pages for each frame in the main memory keeping track of free and used frames. A page is in logical memory and a frame is in physical memory page size = frame size
+
+### address translation with paging
+We have a page number and a page offset for the logical address
+Page number gives us the address in the page table and outputs a frame number and a frame offset. The frame number occupies the higher order bits.
+
+### Simple pages
+1. Logical address is process specific
+2. We get a logical address
+3. Go to page table and locate the page number
+4. Get the physical address composed of frame number and offset
+
+### Hardware support for paging
+- Set of dedicated registers holding the base address for each of the frame
+    - Quick to look up
+    - But it is costly as we need a lot of registers
+- In memory page table with a page table based registers  
+    - Gives overhead costs when accessing pages
+    - Problems the larger the logical memory leads to larger size page tables. So holding a page table with empty slots of pages is a waste of space since every process has its unique page table which implies that it is not necessary to have full size page tables per processes
+- Same as above with multi-level pages tables.
+    - Solves the problem directly above
+
+### Multi level pages
+To access a page in memory I go to a Top-level Page table that leads me to lower level page tables that will then lead me to the frames addresses. If I have 2 levels then I will have P1 page number and P2 page number. The lower level page tables are only loaded when needed. The way it reduces page table size is that a process will load often the same page tables. 
+
+### Inverted page tables
+Maintains a mapping for each physical frame. Therefore the inverted page table is not affected by the logical address space. In this case searching can be very inefficient. We need to search through the page table in order to find the page number.
+
+#### Hashing functions
+We get the page number into a hash so that we can access the page in the page table faster. 
+
+## Segmentation with paging
+Use both first we go to a segment table that leads us to a page table that itself leads us to physical memory. So we have non fixed segments and fixed pages. Hence the size of the page table we access can vary. 
+
+## Assocative memory
+Both segments and paging scheme introduce extra memory references to access translation tables.  
+
+### Translation buffers
+Based on the notion of locality (at a given time a process is only using a few pages) a very fast but small associative memory. Memory is used to store a few of the translation table entries. This is known as a translation look aside buffer. 
+
+### Address translation with TLB
+We first go to the TLB in the cache if the page number is there TLB hit fetch frame. If page is not there we go to the page table and store the page number and corresponding frame number in the TLB. The more TLB miss we have the longer it will take to retrieve memory, small TLB will hinder the process much more than regular page tables since if we get a lot of misses we would have searched in TLB and in page tables after wards. 
+
+## Dynamic memory allocation
+Two basic operations are neededd: allocate and free. In unix these are malloc() and free().  
+
+### Stack organization
+The free and malloc are predicatable. Lets say we call A from our main then we push a on the stack, when we return from A we pop its countent. 
+
+### Heap organization
+More randome but leads to fragmentation with unuse space which becomes wasted.
+
+## Free memory mamangement
+- bit maps
+    - 1 bit per block of memory and keeps an array of bits to see what block is used and free
+- Linked list
+    - Keep track of unused memory.
+- Buddy system
+    - Taking advantage of binary systems
