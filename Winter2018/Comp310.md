@@ -1702,3 +1702,72 @@ More randome but leads to fragmentation with unuse space which becomes wasted.
     - Keep track of unused memory.
 - Buddy system
     - Taking advantage of binary systems
+
+---
+# 15-02-2018
+## Info on midterm
+No multi level queue full on question rather a subset.
+
+## Buddy algorithm 
+When a request for memory comes we sub devide the space by half until we reach the request size. Let say we have 64 pages and the request asks for 8 pages then we are going to devide our space to 32 still to large so 16 still to large so 8 just the right size so we put our pages at the bottom of the memory.  
+When we get another request we start at the bottom, if we are asked for 8 pages in this case we have already subdivided and hence had two compartment one used one not used for 8 pages hence we can allocate the 8 pages to the request.  
+If we are asked for 4 we would devide the 8 by 2 to get the right side.  
+When used spaces are freed we fuse them together if they are next to each other. If we do not have enough space in our memory based on our splits we can fuse adjacent sections with eachother to get larger space.
+
+### Reclaiming memory
+When used by one process it is easy. However when used by multiple process uses that block 
+- Dangling pointers: occur when the original allocator frees a shared pointer
+- Memory Leak: Happen when a process exit without freeing the space hence we think it is still being used.
+
+### Reference count
+Use a counter to keep track of references, when the counter goes to 0 the memory is freed. 
+
+### Garbage collection
+Implemented by algorithms following mark/sweep. Garbage collection is however expensive.
+
+## Principle of locality
+- Locality of reference
+- Locality
+- Spatial locality
+    - The idea that a process will access memory location that are closed to each other. Caused by arrays for example. In order to take advantage of that we can prefetch that data to cache before the process asks for it as it is likely that the process will need it again.
+- Temporal locality
+    - Tendency for a process to reference memory locations that have been used recently
+    - Ex: loops
+    - Technique: make sufficient room in cache to hold that data.
+
+# Virtual memory
+Either use paging or segmentation to allocated it on physical memory.  
+The overlay idea is now however done by the OS.
+## Principal of opperation
+Create the illusion of memory that is as large as a disk and as fast as memory.  
+Locality of references only puts in physical what the program actually needs.
+- main memory (RAM)
+    - in ram fast but small
+- Paging device (Disk)
+    - in disk large but slow
+- None
+    - Has not been alocated
+
+## Missing pages
+1. The page table is extended with an extra bit that tells us whether the page is present. So when we fetch an address we actually look at that bit. 
+2. If the present bit is not there then we have a page fault
+3. The OS marks it as blocked (waiting for page) because we have to do a disk access.
+4. Finds an empty frame or make a frame empty
+5. performs an I/O operation to fetch the page to main memory if it cannot find the page on disk seg fault.
+6. trigers a page fetched eveny (form of I/O interrupt) to wake up the process.
+
+## Multi level pages reviewed
+Before we would go to the first page table then to the second level page table. Now instead of going to main memory with the frames some addresses will be pointing to disk and that is when we will get a page fault which will hence get their present bit set to 0.
+
+### Additional hardware support
+What if we have uninteruptable code as bellow 
+ ```
+fetch (instruction); decrement D0;
+if DO is zero, set PC to next else increment PC
+```
+What if the address NEXT and the instructions are on two different pages, Page Fault from where? where do we start the instruction?
+
+### Possible support
+- Instructions are undone and restarted
+- Resumes from the point of the fault
+- Prefetch all addresses before executing.
