@@ -831,7 +831,7 @@ Ex: Primality since 2003.
 We can look at the sets this way
 - All problems
     - Decidable problems
-        - Polynomial Time
+        - Polynomial Time (same or subset of NP?
 
 ## Efficient certifier 
 For a problem X is an algorithm that takes an input <W,t> where W is the input and t a potential solution/certificate. 
@@ -841,7 +841,71 @@ For a problem X is an algorithm that takes an input <W,t> where W is the input a
 Ex: For 3 colouring problem the efficient certifier takes <G,c> and c a potential colouring. For every edge in G it checks whether c assigns different colours to end points and outputs true and false. Running time is $O(m)$ input size is just the size of the graph. Note if G is not 3-colourable then for all c we get false. On the other hand for every (3-colourable graph) there exists a c such that the output is true.
 
 ### NP - Non determanistic polynomial
+
 The set of problems with efficient certifiers. And the question is: is P = NP.
 
-## Thm P subset of NP
+## Theorem P subset of NP
 Consider a problem X in P and let A be an efficient algorithm that solves A. Consider the following efficient certifier: <w,t>. We can ignore t and run A.
+
+---
+# 15-03-2018
+### Efficient certifier redef
+An efficient certifier for a problem X is a polynomial time alogirthm that takes as input. <w,t> t: is a string of 0 and 1 that acts as the hint/certificate. |t|≤ O(|w|^c) where c is a fixe constant. If w outputs true <=> exist t for which the certifier accepts this w and t. 
+
+### Problem redef
+1. NP is the set of all problems that have efficient certifiers.
+2. P is the set of problem that can be solved in polynomial time.
+
+P subset or same as NP. (Are there different 1 000 000$)
+
+## Max flow vies
+Input (G,k) where G is a network flow and is Max-flow of G ≥ k?  
+Max_flow complement: is Max-Flow < k?
+
+Problem without using the fact that Max-Flow in P prove that both these problems are in NP. <(G,k),f> if f is a flow we can verify if f is a valid flow and its value is at least k.
+
+For the conjugate we can just look at the cut so <(G,k),(A,B)> returns true if the capacity of the cut is less than k. 
+
+### Fun Facts
+For a problem that is in NP it is not always true and easy to see that its complement is in NP. 
+
+## CoNP
+The set of problems whose complements are in NP. And P is a subset of CoNP. 
+
+## EXP
+Is the set of problems that can be solved in exponential time O(2^n^c) for some constant c.
+
+Ex: 3-col is in EXP since we so far the best way is to generate all the possible 3-colorings and see if any of them is proper O(3^n*n^2) = O(2^2n).
+
+### Thm NP subset of EXP
+Let X be a problem in NP. Then there is an efficient certifier/algorithm A that takes <w,t> and returns true <=> exist a t such that A accepts <w,t>.  
+Let B be the following alg: generate all t up to size O(|w|^c) and run our certifier on it and if any of them work we output true. Hence there exist a brute force approach to check if it is possible.  
+Another interpreteation of P vs NP question: Does having a brute force algorithm implies there exist an efficient algorithm P vs NP?
+
+## Polynomial time reductions
+Can instances of problem X be solved using an efficient black box/oracle that solves problem Y?
+
+We say that X is polynomial-time reducible to Y if there is an efficient "oracle" algorithm that solves X in polynomial time using an oracle that can tell us whether y is true for Y or not.
+
+We write that X ≤p Y.
+
+Ex: Hamiltonian cycle   
+Imput: Undirected graph  
+Q: Does G have a cycle that visits aall the vertices?
+
+Hamiltonian path problem:  
+Q: is there a path that visits all the vertices?
+
+#### Show Hamiltonian cycle ≤ Hamiltonian path
+To make sure that the path starts and end at 2 points I can add two dangling edges at these points to force my path to start and end there.
+
+On an input G for Ham Cycle:  
+For every edge xy in G remove xy, add dangling edges to x and y and call it Hxy. If Hxy has a hamiltonian path then outputs true else outputs false.
+
+So if Hamiltonian Path in P => Hamiltonian cycle exist in P
+
+#### Theorem if X ≤p Y and y in P => x in P
+Take the oracle algorithm that solves X using Y and replace the oracle with an efficient algorithm of Y, this will give us an efficient algorithm for X. 
+
+Ex: Hamiltonian Path ≤p Hamiltonian cycle.  
+For every pair of verteces x and y add the edge xy if it does not exist do that 1 by 1. If this graph has a hamiltonian cycle the true else false. 
