@@ -1747,6 +1747,7 @@ Locality of references only puts in physical what the program actually needs.
     - in disk large but slow
 - None
     - Has not been alocated
+    - This is what will cause a segfaut and is not good at all.
 
 ## Missing pages
 1. The page table is extended with an extra bit that tells us whether the page is present. So when we fetch an address we actually look at that bit. 
@@ -1771,3 +1772,57 @@ What if the address NEXT and the instructions are on two different pages, Page F
 - Instructions are undone and restarted
 - Resumes from the point of the fault
 - Prefetch all addresses before executing.
+
+---
+# 16-03-2018
+ ## Basic allocation policies
+ - The fewer frames allocated for a program, the higher the page fault rate
+ - The fewer frames allocated for a program the more programs can reside in memory decreasing the cost of swapping. 
+ - Allocating additional frams to a program beyound a certain number results in little or only moderate gain in because a process uses generaly resources in a certain region more than others.
+
+## Fetch policy
+### Demand paging (pure)
+Start a program with no page loaded, wait until it references a page, then load the page
+
+### Request paging
+Similar to overlays, let the user identify which pages are needed (not practical, leads to over estimation and also user may not know what to ask for)
+
+### Pre-paging
+Start with one or a few pages pre-loaded. As pages are references bring in other not yet referenced pages too.
+ ### Opposit 
+ Cleaning policy when to write a page back the content of a frame to the disk.
+
+ ## Placement policy
+ Find a free frame:
+ - Easy since page and frame have the same size.
+ - Segmentation requires more careful placement especially when not combined with paging with pure segmentation we must consider free memory mamnagement policy.
+
+With the recent developement of non-uniform memory access (NUMA) distributed memory multiprocessor systems, placement becomes a major concern. 
+
+### FIFO
+the frames are treated as a circular list, the oldest page is replaced
+
+### LRU
+the frames whose contents have not been used for the longest time is replaced.
+
+### OPT
+The page that wihll not be referenced againf or the longest time is replaced (prediction of the future, purely theaoritical)
+
+### Random
+A frame is selected at random.
+
+### More on replacement
+- Scope
+    - Global: selected among all processes
+    - Local: select a frame from the faulted process
+- Frame locking
+    - frames that belong to the kernel or are used for critical purposes, may be locked for improvement performance.
+- Page buffering 
+    - Grouped into 2 categories, unmodified frames with clean pages and modified frames with dirty pages.
+
+## Algorithm
+All frames are in a circular queue, when a frame is needed the pointer advances to the first frame with a 0 used bit. As the pointer advances it clears the used bits. Once a frame is found, we replace the frame and marked it as used, the hardware on the other hand, sets the used bit each time an address in the page is referenced.
+
+Some system also uses a dirty bit to see if the memory has been modified in this case we give preference to dirty pages since replacing a dirty pages costs more than a clean one.
+
+If the clock moves quickly then that means that we have a lot of page faults, if the clock moves slow then the page fault is quite low.
