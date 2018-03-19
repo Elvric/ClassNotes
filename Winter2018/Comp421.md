@@ -1249,3 +1249,89 @@ Usually done at the final stage (last step)
     - Requires scanning the relation so full table scan
 - grouping
     - Sort on group-by attributes then scan relation and compute aggregate for each group. (can improve by combining sorting and aggredgate computation)
+
+---
+# 19-03-2018
+## Projection operation review
+- Usually done on the fly together with another operation (or piplined) 
+- Can be complex SELECT DISTINCT
+    - Expensive operation
+    - Requires sort in order to eliminate duplicates
+    - Often done at the very end or whenever the relation is sorted for some other reason
+    - Use distinct only when necessary. 
+
+## Execution plan
+- describes how a query is executed
+- A Tree (sequence) of basic operators (select,join,project,sort) use to process the query
+- For each operator, an indication of how it will be executed (index nested loop, sort, index, simple scan)
+
+### Example
+```SQL
+SELECT GM.gid, count(*), Avg(U.age)
+FROM Users U, GroupMembers GM
+Where U.uid = Gm.uid AND U.experience=10
+GROUP BY GM.gid
+HAVING AVG(U.age) < 25
+```
+1. Selection experience = 10 for Users
+2. Join that with GM 
+3. Project to keep gid,age (scan)
+4. Group the gid sort
+5. count and average by (scaning)
+6. select Avg(U.age) < 25 (scan)
+
+### Pipelining
+Fill a buffer frame and the start join rather than writtin it back to the disk. Write to a buffer output that when is full pass it to the next task.  
+Piplining cannot be done when sorting as we need all the records in order to sort we cannot work small parts by small parts.
+
+### Join with further restrictions
+```SQL
+SELECT *
+FROM Users U, GroupMembers Gm
+WHERE U.uid=Gm.uid
+AND experience = 10
+```
+Assume 1% have experience = 10, B means buffer -2 because 1 for user pages 1 for ouputs.
+- Do selection before join
+- Stream (pipeline) qualifying tuples into join
+- Block nested loop (get qualifiying tuples until block is full)
+    - UserPages + UsegePages * 0.01/(B-2) * GMpages = 500 +1* 1000=1500.
+- Index nested loop
+    - UserPages + Card(Users) * 0.01 * Cost finding GM = 500 + 400 * (1+2.5) = 1900
+- Sort-Merge Join
+    - Pipelining cannot be done as sort needed; therefore intermediate realtion
+    - But in particular case: result of selection fits into main memory;
+    - Cost: UserPages + 3 * GroupPages = 3500
+- Hash Join
+    - As Users after slections fits into main memory, it becomes kind of hash join with one partition
+    - No need to partition GM and Hash join becomes indentifical to Block Nested Loop. 1000 + 500 = 1500
+
+### Optimization technic
+1. Algebraic
+    - Use simple rules to perform those operations first that eliminate a lot of tuples
+        - Push down selection and projection
+    - Do not yet consider HOW to execute each operator
+    - Consider the number of tuples that flow from one operatior to the next
+    - Key issues: statistics. 
+2. Cost-Based optimization
+    - Consider a set of alternative plans created by algebraic optmization
+
+### Push Projections
+- Pushing dowin these will not reduce the number of tuples but the size of each tuples.
+
+#### Cost Based optimization
+- Find a plan with low cost
+- Dynamic programming in bottom-up fashion for deep join plans:
+    - Pass1: Find best I-relation plan for each relation
+    - Pass2: Find best way to join result of each I-relatin plan (as outer) 
+    - PassN
+
+
+### System Tuning
+- If your application has some standard, well-known queries: create appropriate indeces to speed up these queries.
+- Many updates and inputs
+    - Each insert will add new tupples
+    - Update can change some indices
+
+### Statistics
+Can use runstats to get information on number of pages per tables, number of tuples

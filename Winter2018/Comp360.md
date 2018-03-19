@@ -909,3 +909,83 @@ Take the oracle algorithm that solves X using Y and replace the oracle with an e
 
 Ex: Hamiltonian Path ≤p Hamiltonian cycle.  
 For every pair of verteces x and y add the edge xy if it does not exist do that 1 by 1. If this graph has a hamiltonian cycle the true else false. 
+
+---
+# 19-03-2018
+## Recall
+- P polynomial time solvable
+- NP efficient certifiers (True inputs are easy to verifiy given a certificate)
+- CoNP (False inputs are easy to verify)
+- EXP Exponential time solvable
+- Polynomial reduction X ≤p Y if X can be solved efficiently using an oracle for Y.
+
+NP -> brute-force (exponentials)
+
+#### Example: X is the following problem  
+Input: Undirected G  
+Q: Does G have a hamiltonian cycle  
+Problem Y:  
+Input: Undirected graph G
+Q: Does G have a cycle of length k?  
+X ≤p Y: Given an input G for problem X, then we can set k = |V| and then use the oracle of Y to see if G has a hamiltonian cycle.  
+
+#### Example: Let Z:
+Input: G  
+Q: Does G have a cycle of prime length?  
+Z ≤p Y: Given an input to G to Z consider the following efficient oracle algorithm:
+```
+for k 1,2,3,4...,|V|
+    if k is a prime number //which is in P
+    then
+        if (G,k) is true return true
+    endif
+endfor
+return false
+```
+
+## SAT problem
+Def: Suppose x1,x2,...,xn are boolean variables(true,false)
+- A term (aka literal) is a variable or its negation (xi or $\bar x_i$)
+- A clause (or clause) is an OR of a few terms C=(t1 or t2 or tl)
+- A conjunctive normal form (CNF) is an AND of clauses C1 and C2 and Cm
+
+#### Example of CNF:
+(x1 or x2 or x3^c) and (x2^c or x4) and x4^c
+
+### SAT Pproblem
+Input: A CNF ø
+Q: Is it possible to assign T/F values to variables such that ø is true.
+
+#### Theorem SAT in NP
+proof: The efficient certifier takes a truth assignment to the variables and verifies whether it satisfies all the clauses. (Can be done in polynomial time)
+
+#### Theorem (Cook-Levin 71)
+Every problem X is NP can be polynomialy reduced to SAT. X ≤p SAT  
+Corrollery: if SAT in P <=> NP = P and if SAT not in P <=> P ≠ NP.
+
+P VS NP problem is equivalent to is SAT in P?  
+
+#### Is SAT the only such problem?
+Def: (NP-complete) A problem Y is called NP-complete if 
+1. Y in NP
+2. X ≤p Y for all X in NP (completness)
+
+**SAT is NP-complete**
+
+## How can we show that a problem Z is NP-complete?
+First we show that Z is in NP by giving an efficient certifier. (important part worth the most on exam). Second we reduce SAT to our problem. X ≤p SAT ≤p Z
+
+## Independent set problem
+Input: G undirected k in |N  
+Q: Does G have an independent set of size k (no deges between them)?
+
+### Thm IND is NP-Complete
+pf: 
+1. It is in NP for true instances we can give an independent set of size k and it can be easily verified.
+2. Let ø be an input to SAT with variables x1,...,xn. Construct a graph G of ø in the following manner:
+    1. Start with n isolated edges each between a variable xi and its negation xi^c
+    2. For each clause Ci = (ti1 or ti2 or tir) put r new vertices in the graph and join all these r verticies together. 
+    3. Connect the two between each other so that each thing in 2 is linked to its conjugate in 1.
+
+
+
