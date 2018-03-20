@@ -1826,3 +1826,87 @@ All frames are in a circular queue, when a frame is needed the pointer advances 
 Some system also uses a dirty bit to see if the memory has been modified in this case we give preference to dirty pages since replacing a dirty pages costs more than a clean one.
 
 If the clock moves quickly then that means that we have a lot of page faults, if the clock moves slow then the page fault is quite low.
+
+---
+# 20-03-2018 (After 2nd Midterm)
+
+## Thrashing
+The number of process in memory determines the multiprogramming (MP) level. The effectiveness of VM is closely related the the MP level. Thrashing: the system is spending its time moving pages in and out of memory and hardly doing anything useful.  
+Hence the goal generaly is to find the best spot between CPU utilization and multiprogramming level.  
+Removing processes for:
+- lowest priority
+- faulting process
+- newest process
+- process with lowest memory usage
+- process with highest memory usage 
+
+## Working Set
+The set of pages taht are accessed by the last x memory references at a given time t and denoted by W(t,x)  
+**Denning's Wirking Set Principla states that:**  
+- a program should run if and only if its working set is in memory
+- A page may not be victimized if it is a member of the current working set of any runnable (not blocked) program.  
+
+The down side of the working set is that for every process we need to keep track of what pages where accessed last.  
+Solutions:
+- Maintain idl time value (amount of CPU time received by the process)
+- Update the information once in a while rather than every time scan for used bit and set there idl time back to 0, resets the used bit to 0 for all pages.
+- Pages with lowest idle time are part of our working set
+
+## Page fault frequency
+How frequently are page fault occuring P = # page fault / time period T. Where T is the critical inter page fault time. When a process runs bellow the lower bound a frame is taken away from it (its resident set size is reduced). Similarly, an additional frame is assigned to a process which runs above its upper limit. 
+
+### Current trends
+- Larger physical memory
+    - page replacement is less important
+    - less hardware required to support replacement policy
+    - Larger page sizes
+        - Better TLB coverage
+        - Smaller page table
+- Larger address spaces
+    - sparse address spaces
+    - single (combined) address spaces (part of the OS part for the user processes)
+- File Systems using virtual memory (not covered)
+    - memory mapped files
+    - file caching with VM
+
+# Virtual Machines
+
+## General Idea
+- Multi threading
+    - Have virtual CPU that gives us the illusion that enables threads to persist their computation on the CPU as switching happens - without clobbering each other.
+- Multi processing
+    - Adds memory virtualization to multi-threading. Every process has its own memory view
+    - File system is sahred and so is the kernel. However, kernel is a protected resource. In a perfect scenario, we do not need to worry about this sharing. 
+- Beyond is virtual machine.
+
+## Virtual machine
+- Hardware (shared physical machine)
+    - Virtual machine monitor
+        - Virtual machine 1
+        - Virtual machine 2
+        - Virtural machine 3
+
+Definition: Provides an environment for programs that is essentially identical to physical machine  
+
+### Motivation for VM
+The idea came from the need of file sharing system. TTS was tried by IBM then stopped they then tried CMS. The main goal was to get a multiuser time-sharing system.  
+
+### Components:
+- Host actual phyisical maching
+- VMM or hypervisor, creates the virtual machines on top of it and runs them
+- Guest processes provided with virtual copy of the host.
+
+#### Benefits
+- Host system protected from VMs, VMs protected from each other.
+    - Virus will not spread
+    - Sharing is provided through via shared file system.
+- Freeze, suspend running VM
+    - They can be copied and move somewhere else
+    - Snapshot of a given state can be taken and we can go back to it.
+    - Clone by creating copy and running both original and copy
+- Great for OS research, better system development efficiency
+- Run multiple, different OS on a single machine.
+- Templating create an OS + application VM, provide it to customersm us it to create multiplle instance of tha combination
+- Live migration move a running VM from one host to another
+    - No interruption of user accesses
+- All those featurs taken together -> cloud computing.
