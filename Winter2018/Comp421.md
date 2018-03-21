@@ -1335,3 +1335,136 @@ Assume 1% have experience = 10, B means buffer -2 because 1 for user pages 1 for
 
 ### Statistics
 Can use runstats to get information on number of pages per tables, number of tuples
+
+---
+# 21-03-2018
+# Large scale data processing
+
+## Why
+- Hardware
+    - CPU speed does not increase
+    - Instead multicore
+- Commodity clusters
+    - Easy access to 1000 of nodes (multiple processors and servers) through cloud computing
+    - Much cheaper than large mainframe
+- Big Data
+    - Anstronomy high resolution, high-frequency sky serveys
+    - Medicine: digital records, MRI, ultrasound
+    - Biology: sequencing data
+    - User behavoir data: click streams, search logs…
+        - Google, Facebook, Walmart
+
+## Distribution and performance
+- Scale up
+    - Improve performance by buying a larger machine.
+- Distribution scale-out
+    - Improve performance through parallel executions
+- Performance metrics:
+    - Throughput: transcations/queries per time unit
+        - The higher the better
+        - Important for OLTP (Online transaction processing) no need to know for exams.
+    - Response time: time for execution of individual query
+        - The smaller the better
+        - Important for OLAP (analytical processing)
+
+## Speedup
+The data size remains the same but:
+- More nodes -> more throughput and/or lower response time
+    - Non-linear Speedup Startup costs
+        - Coordination costs
+        - Communication costs
+        - Skew (equal distribution of load not possible)
+
+## Scaleup 
+Data increases
+- more nodes -> have same throughput / same response time despite more data.
+    - Non-linear Speedup and scaleup
+        - Data distribution overhead
+        - Non-parallelizable operations
+    - Communication costs
+    - Skew
+
+## Parallel Relational Database Systems
+A lot of that technology was developed in the 90s.
+- Good understanding of distributed execution of relational algebra queries
+- Both for
+    - OLTP: workload of short, update intensive queries, such as day to day banking
+    - OLAP (analytical processing) Decision support: workload of complex queries, mainly read-only
+- Sophisticated and optimized operators (such as distributed join operators hash)
+- Expensive and specialized: Oracle, Teradata 
+
+
+## Parallel query evaluation
+- Inter-quert parallelism
+    - Different queries run in parallel on different processors; each query is executed sequentially
+- Inter-operator parallelism
+    - Different operators within same execution tree run on different processor
+    - Pipelining leads to parallelism (give output to next operator as it is being created)
+- Intra-operator parallelism
+    - Given operator can be executed in parallel 
+    - Hash join
+
+### Horizontal Data Partitioning
+- Data
+    - Large table R(K,A,B,C)
+    - Key-values store KV(K,V) (other data model)
+        - Every record can have only two things a key and a value. Equivalent of Hashtable for database
+- Goal 
+    - partition records in chunk stored at different node 
+- Hash partitioned on attribute X:
+    - Record r goes to chunk i, according to hash function
+- Range partitioned on attribute X:
+    - Rpartion range of X intos v1<v2<v3
+    - Record i goes to range v2 if v1<vi<v3
+
+#### Parallel operator
+- Execution path
+    - Push selections to nodes with chunks
+    - Execute locally at each node
+    - Send result to coordinating node
+    - Assemble result and return to user
+
+### Vertical data partitioning
+- Column stores
+- Data relations R(K,A,B,C,D,E)
+    - Partitioned into RAB(K,A,B), RCDE(K,C,D,E)
+- Query
+    - Select A from R where B>50 hence we can go to just the first partition with less data so less number of pages to read
+- But if we want to get A and C then we have to do a join on both table. Hence only efficient if we are interested in just certain data types
+
+### Map reduce
+General purpose distributed computing framework. It can be applied to many type of queries one direction within the NoSQL movement
+
+## Data Processing at Massive Scale
+Get the data even with crashes of nodes so we do not have to start again
+
+### Distributed Large-Scale File Systems
+Done by Google, Yahoo  
+- Assumptions
+    - Files are large (terabytes)
+    - Files are rarely updated
+- Main concepts
+    - Split into big chunks 64 mb to track each block more easily.
+    - Each chunk replicated for availability
+    - Master node knows about location of chunks
+        - Meta-repository (also replicated for fault-tolerance)
+
+### Map-reduce again (each taks given a key and a value)
+1. Map Tasks: extract something interesting from records and output a new set of data records (key-value pairs)
+2. Shuffle and reduce step
+    - Transform all the key value pair with the same key to a key value list pair
+3. Reduce tasks: aggregate, summarize, filter (key and values input and output) get the output we want.
+
+#### Phase details
+- Record reader
+- Map function
+- Combine 
+- Write to locale file
+
+### Combine
+Is done at the mapper site so that the outputs can do the combine on its output to sumarize the data a bit more so that the suffling and sorting gets easier for the next step.
+
+### Failures
+Detected by master node.
+- Master assign new worker if a node crashes
+- Straggler all the cpu are being used and our last tasks are done except one node. In this case we start a duplicate task to do the exact same thing, if the duplicate tasks terminate before the original we kill the original task and use the duplicate one reverse otherwise.
