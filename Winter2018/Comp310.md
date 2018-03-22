@@ -1829,7 +1829,6 @@ If the clock moves quickly then that means that we have a lot of page faults, if
 
 ---
 # 20-03-2018 (After 2nd Midterm)
-
 ## Thrashing
 The number of process in memory determines the multiprogramming (MP) level. The effectiveness of VM is closely related the the MP level. Thrashing: the system is spending its time moving pages in and out of memory and hardly doing anything useful.  
 Hence the goal generaly is to find the best spot between CPU utilization and multiprogramming level.  
@@ -1892,7 +1891,7 @@ Definition: Provides an environment for programs that is essentially identical t
 The idea came from the need of file sharing system. TTS was tried by IBM then stopped they then tried CMS. The main goal was to get a multiuser time-sharing system.  
 
 ### Components:
-- Host actual phyisical maching
+- Host actual phyisical machine
 - VMM or hypervisor, creates the virtual machines on top of it and runs them
 - Guest processes provided with virtual copy of the host.
 
@@ -1910,3 +1909,78 @@ The idea came from the need of file sharing system. TTS was tried by IBM then st
 - Live migration move a running VM from one host to another
     - No interruption of user accesses
 - All those featurs taken together -> cloud computing.
+
+---
+# 22-03-2018
+## Data centers 
+Multiple physical servers, faster deployment, easier maintnance for the client, cheaper with economies of scale, we are working on energy efficiency now.
+
+## Physical Vs virtual
+- Physical
+    - Hardware
+    - Kernel checks all the instructions of the user and executes them
+- VM
+    - hardware
+    - Virtual machine manager
+    - then the VM 
+    - Then the kernel of each VM.
+
+## VMMs types
+0. type 0 hypervisor: just hardware support via firmware
+1. type 1: OS like software build to provide virtualization also includes general OS that provide standard functions as well VMM funtion
+2. runs on standard OS systems but provide vm feature to guest os
+
+## Building blocks
+Generally difficult to provide an exact duplicate of underlying machine. Most VMMs implement a virtual CPU (VCPU) to represent state of CPU per guest as guest believes it to be, when guest get swap by VMM, information from VCPU loaded and stored
+
+### Requierments
+An efficient machine is an **efficient isolated duplicate** of real machine
+
+### Implementation privilege/kernel mode
+The virtual machine runs on the user mode of the physical machine. They cannot all run on privileged mode (defined by the hardware) in the hardware so the machine must execute in user mode. When a privilege instruction is being executed in the VM then we have a problem.  
+
+### Sensitive instructions
+Instructions that behave differently whether in kernel or in user mode. 
+- Control-sensitive instructions
+    - Affect allocation of resources on the VM
+    - chenge processor mode without causing trap
+- Behaviour sensitve instruction
+    - Effect depends on location in real memory or on processor mode.
+
+#### Privileged instruction
+Cause fault in user mode work fine in privileged mode. We use a trap mode catching instructions that cannot be run in the user mode to make them run in kernel on the pysical machine
+
+### Theorem
+For any conventional third-generation computer, a virtual machine monitor may be constructed if the set of sensitive instructions for that computer is a subset of the set of privileged instructions.
+
+## The (REAL) 369 architectute
+2 exections mode supervisor (kernel) mode and problem mode (user), all the sensitive instructions are privileged instructions. The kernel sensitive information however will not be trapped which will cause different output on kernel or user
+
+
+| | user mode | Privileged Mode
+| --- | --- | --- |
+|non-sensitive| executes fine | executes fine
+|errant instructions | Traps to VMM; VMM causes trap to occur on guest OS | traps to VMM; VMM causes trap to occur on guest OS |
+|sensitive instructions | trapst ot VMMl causes trap to occur on guest OS | traps to VMM; VMM verifies and emulates the instructions |
+
+## Trap and emulate
+Actions in the guest that cause a switch to kernel mode must cause a switch to kernel mode on VM.
+
+- How does a switch happen?
+    - Attempt to run in on user causes instruction to get Traped
+    - VMM gains control, analzes error, executes operation as attempted by guest.
+    - Returns control to user mode
+    - Known as trap and emulate
+    - Most virtualization products use this at least in part
+- User mode in guest runs at same speed as if not a guest
+- But kerneel mode privilege mode code runs slower due to trap and emulate.
+- CPUs adding hardware support, more CPU modes to improve virtualization performance.
+
+### Implementation of trap and emmulate
+User processes are in guest user mode then we have guest kernel mode with the OS and privileged instructions.  
+Then the VMM traps the privileged instructions and emulate the action to give the same outcome as if on a real machine then update the state of the system such as VCPU.
+
+## Intel x86
+Sensitive instructions are not a subset of privilegde instructions so they cannot be trapped and emulates
+
+popf: pops word off stack, setting processor flages according to world's content. sets all flages if in kernel mode, ignore in user mode. Hence this intruction will have a different outcome on this computer.
