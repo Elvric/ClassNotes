@@ -987,5 +987,62 @@ pf:
     2. For each clause Ci = (ti1 or ti2 or tir) put r new vertices in the graph and join all these r verticies together. 
     3. Connect the two between each other so that each thing in 2 is linked to its conjugate in 1.
 
+---
+# 21-02-2018
+There are problems in the calss NP such that every problem is reducible to them X ≤p Y all X in NP
+1. Y in NP
+2. all X in NP
 
+Then Y is called NP complete.
 
+#### Thm(Cook-Levin 71) SAT is NP-complete
+ex: ø = (x1 or x2 or x3) and (not x2 or x4) and (not x4) which is a CNF (Conjuctive Normal Form)  
+P = NP <=> SAT in P  
+Now we also now that an X problen in NP problem is NP complete we just need to show that SAT ≤p X.
+
+### Back to the independent set problem
+Claim if ø is satisifiable in then Gø has m+n independent set when n is the number of variables and m the number of claims.  
+Consider a truth assignment that satisifies ø then we pick the coresponding vertices from the matching that was in step one that are true terms. 
+
+Claim if Gø has an independent set of size k=m+n then ø is satisfiable.  
+Proof: It would have to pick just one node for each claim and one node from each graph subset from step 1. Then the corresponding truth assignments will have at least one true term in each clause. 
+
+SAT ≤p IND:  
+Given an input ø then construct Gø and compute k=m+n. If Gø has size at least k then ø is satisifiable else it is not.
+
+## ClIQUE (adjacent vertecs in this case to all the other vertices):
+Input: undirected G, k in N
+Q: Does G have a clique of size ≥ k?
+
+### Thm CLIQUE is NP-problem
+Proof:  
+It is an NP as CLIQUE of size k could be used as a certificate and verified efficiently by checking the adgacency of the vertices.
+
+### Thm CLIQE is NP-Complete
+IND ≤p CLIQUE  
+Given input (G,k) for IND, we construct negation of G (replacing ages with non ages and vice versa). If negation of G has a CLIQUE of size k then that means that G has IND of k.
+
+## Vertex Cover
+Input: undirected G, k in |N  
+Q: Does G have a vertex cover of size ≤k?  
+Set of verteces such that removing them removes all the edges.  
+`Recall: köning thm: size of the min vertex cover equals size of the largest matching and can be solved using max flow` for bipartite graph VC can be solved in polynomial time.
+
+### Thm VC is in NP
+Proof VC in NP, certificate is a vertex cover k and can be verified in polynomial time.
+
+### Thm VC is NP complete
+Given an inptu (G,k) as a IND input. Then ask whether a the graph has an VC of size at most |V(G)|-k then ouptut true else false.  
+Not that if there is a vertex cover `S` of size n-k where n = |V(G)| then `not S` is an independent set of size k and the reverse is also true.
+
+#### SAT, IND, CLIQUE, VC 
+
+## SET COVER
+Input: S1,S2,...,Sn in U  
+Q: can we chose k of these sets so that there union is all of U
+
+### Thm SET COVER in NP
+Proof: Take a set choice and see if there union cover U in polynomial time
+
+### Thm SET COVER is NP-complete
+Take VC with (G,k), each set is a node and what is inside of that set are all the edges of that node k does not change. If we can choose k sets such that there union covers all the edges of U then true else false.
