@@ -1468,3 +1468,86 @@ Is done at the mapper site so that the outputs can do the combine on its output 
 Detected by master node.
 - Master assign new worker if a node crashes
 - Straggler all the cpu are being used and our last tasks are done except one node. In this case we start a duplicate task to do the exact same thing, if the duplicate tasks terminate before the original we kill the original task and use the duplicate one reverse otherwise.
+
+---
+# 26-03-2018
+Good lecture for mapper to look online
+
+## Selection with map reduce
+```SQL
+SELECT * FROM Users WHERE experience = 10
+```
+key = uid and value = rest of the columns
+- Map: key and value pair check if experience = 10 if yes goes to the output else does not make it.
+- Reduce: does nothing.
+
+## Join with map reduce
+Note that the suffle and sort is fixed by the framework
+Natural Join R(A,B,C) with Q(C,D,E).
+```SQL
+SELECT * FROM R, Q WHERE R.C = Q.C
+```
+- Map:
+    - For each tupple (a,b,c) of R, output (c,(R(a,b)))
+    - For each tupple (c,d,e) of Q, output (c,(Q(d,e)))
+- Reduce:
+    - (c,value-list)
+    - value-list  = (R,(a1,b1),(Q,(d1,e1))
+    - Then produce all the combinations as the output.
+
+## Projection with Map/reduce
+- Map: take what we want to project as the key and a dummy value.
+- Reduce: Just output the key and a dummy variable.
+
+## Group by Map/reduce
+- Map: key is the grouping column and the values are the values that will be grouped
+- Reduce: perform some aggregation on the values and outputs the key and that agregation result.
+
+# Declarative Languages
+- Map-Reduce frakework hides scheduling and parallelization
+
+## Pig Latin
+A higher SQL like language to run complex queries that require several map jobs. 
+
+```Apache
+Users = load 'users'; as (name,ages);
+Fltrd = filter Users by age >= 18 and age <= 25;
+Pages = load 'pages' as (uname,url);
+Jnd = join Fltrd by name,Pages by uname;
+Grpd = group Jnd by url;
+Smmd = foreach Grpd generate ($0), count($1) as clicks
+# $0 first attribute
+Srtd = order Smmd by clicks desc;
+Top5 = limit Strd 5;
+store Top5 into 'top5sites'
+```
+
+### Load and Store
+Users = load 'users' as (name,age);
+Load: read information from file into a (temp) relation
+- Mostly user defined to translate file format into a relational format.
+
+Store: write relation into file
+- Only then will it execute the execution scripts each variable actually just store what it should do.
+
+### Group by
+Grpd = group Rel by A  
+Result realtion is Grpd(group,Rel) which looks like this:  
+(a1,{(a1,b1,c1)},({a1,b2,c2})) and so on.
+
+### For each
+Used to project the columns that we want:  
+Smmd = for each Grpd generate (\$0),count(\$1) as c;  
+Rel = for each R1 generate A,B;
+
+## Data Model and Flattening
+- Supported types:
+    - Atomic(string,number)
+    - Tuple(58,'lilly')
+    - Multiset {(58,'lilly),33,'Debby'}
+- Flatten
+    - Res = foreach R generate \$0,flatten(\$1)
+        - Unravel the nesting from (1,(2,3)) to (1,2,3)
+
+### Implementation
+Executes only when storing or giving a string output. Before running it creates an execution tree, not as good as the regular database, then it will execute multiple map reduce jobs behind the scene.
