@@ -1940,7 +1940,7 @@ An efficient machine is an **efficient isolated duplicate** of real machine
 The virtual machine runs on the user mode of the physical machine. They cannot all run on privileged mode (defined by the hardware) in the hardware so the machine must execute in user mode. When a privilege instruction is being executed in the VM then we have a problem.  
 
 ### Sensitive instructions
-Instructions that behave differently whether in kernel or in user mode. 
+Instructions that behave differently whether in kernel or in user mode. `cause a fault only in certain systems not all` 
 - Control-sensitive instructions
     - Affect allocation of resources on the VM
     - chenge processor mode without causing trap
@@ -1984,3 +1984,38 @@ Then the VMM traps the privileged instructions and emulate the action to give th
 Sensitive instructions are not a subset of privilegde instructions so they cannot be trapped and emulates
 
 popf: pops word off stack, setting processor flages according to world's content. sets all flages if in kernel mode, ignore in user mode. Hence this intruction will have a different outcome on this computer.
+
+---
+# 27-03-2018
+The VMM runns in privileged mode.
+#### POPF
+pop word off stack, setting processor flages according to word content. set all flags in kernel none in user mode
+## Building Block - Trap and Emulate
+Guest OS runs in user mode and the VMM runs in kernel mode.  
+Attempting a privileged instruction in user mode will cause an error -> trap. So the VMM gets control analyse the error executes operations as attempted by guest. Returns the result to the guest updating the virtual CPU as well. At the end the user mode in VM runs as fast as physical user mode but a kernel instruction on VM will run slower than the ones in physical kernel.
+
+### Rings
+Allows different leveles of privilege. the lower the more privileged. Given a virtual machine when running in ring 1 will have more privileges than just ring 3.
+
+| rank | type |
+| :---: | :---: |
+| 0 | kernel |
+| 1 | guest OS |
+| 2 | |
+| 3 | app |
+
+For popf app that sets flag in kernel and non in user. In the case of rings we interrupt-disable flag in ring 1 where it ring 0 it would not but at least now we are giving some additional privileges to the guest modes.
+
+### What to do?
+- Binary rewriting
+    - rewrite kernel binaries of guest OSes
+        - Replace sensitive instructions with hypercalls (trap to the hypervisor VMM)
+        - do so dynamically
+- Hardware virtualization
+    - fix the hardware so it is virtualizable
+        - Processor allow virtualization
+- Paravirtualization
+    - Virtual machine differs from real machine
+        - More convenient interfaces for virtualization
+        - hypervisor interface between virtual and real machine
+        - guest OS is modified
