@@ -1,6 +1,4 @@
- 
-
-# Comp 360 
+ # Comp 360 
 
 ## Intro Lecture 1 08/01/2018
 
@@ -1046,3 +1044,47 @@ Proof: Take a set choice and see if there union cover U in polynomial time
 
 ### Thm SET COVER is NP-complete
 Take VC with (G,k), each set is a node and what is inside of that set are all the edges of that node k does not change. If we can choose k sets such that there union covers all the edges of U then true else false.
+
+---
+# 26-03-2018
+## 3 coloring problem
+Input: undirected graph G and 3 values
+Q: Is G 3 colourable
+
+### Thm 3-COL in NP
+Shown earlier
+
+### Thm 3-COL is NP complete
+To prove completeness,  
+3-SAT to this problem:  
+`Input A CNF ø such that every clause has exactly 3 terms`  
+Q: is ø satsifiable
+
+#### Thm SAT ≤p 3-SAT => 3SAT is NP-complete
+
+ø is sat <=> Gø is 3-COL  
+Idea: We will think of colours as {T,F,B}  
+Start with a triangle with nodes Vt, Vf, Vb (without loss of generality we can assume that we are looking for a colouring that colours Vt with T, Vf with F and Vb with black)  
+Next we add a matching of size n with and connecting each node representing a variable with its conjugate.  
+3rd step we connect Vb to all these new vertices to ensure that they are coloured in either T or F. So now any 3 colouring of this graph gives us a truth assignment. Now we just want to make sure that every clause has at least 1 true term.  
+Now we are going to use the idea of or gate apply to the graph structure in order to ensure that we get at least each clause to contain one true value.  
+So now for every clause in ø we glue a copy of the circuit mentined abouve on the corresponding terms as we have 3 terms max per clause.  
+Finally we connect the verteces on the edges to the Vf vertex to ensure that if the graph is colourable the verteces must be T or B.
+
+## Graph colouring
+input: G and k in N
+Q: Is G k-colourable?
+3-COL ≤p COL, we query oracle for k = 3 that will tell us if G is 3 colourable or not.
+
+## 4-COL
+Input G undirected  
+Q: is G 4 colourable?
+
+### Thm 4-COL is NP-complete
+3-COL ≤p 4-COL  
+Add a new node that is connected to every single node of graph G call this new graph H. So if H is now 4 colourable then G is 3 colourable.
+
+### Thm for every k > 3 the k-COL is NP-complete
+
+### Thm 2-Sat is in P
+Proof: start with 1 term and look at the implications that it creats so x1 = T then blablabla. If the implecations do not match then change x1 = T to F and look at the implications if they are not satisifiable then the problem is not satisfiable. Runs in O(n) where n is the number of x
