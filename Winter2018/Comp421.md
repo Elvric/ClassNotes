@@ -1551,3 +1551,116 @@ Rel = for each R1 generate A,B;
 
 ### Implementation
 Executes only when storing or giving a string output. Before running it creates an execution tree, not as good as the regular database, then it will execute multiple map reduce jobs behind the scene.
+
+---
+# 28-03-2018
+
+# Transactions
+## Money transfer
+```SQL
+Transfer(id1,id2,value)
+{
+    SELECT balance into :bal
+    FROM account
+    WHERE accountid = :id1 
+
+    bal += value
+
+    UPDATE accounts
+    SET balance = :bal
+    WHERE accountid =:id1
+
+    SELECT balance into :bal
+    FROM account
+    WHERE accountid = :id2
+
+    bal -= value
+
+    UPDATE accounts
+    SET balance = :bal
+    WHERE accountid =:id2
+}
+```
+This can be broken in many ways.
+
+## Electronic transaction
+An electronic transaction encapsulates operations that belong logically together. Boundaries of the transaction have to be defined by the programmer. It contains DBS operations and application code. This is used for example with purchase elements in shopping cart of online e-commerce side, flight reservation.
+
+## Application vs DBS
+A user's program interact with the database (insert,delete,update)  
+A database transaction is the DBMS's abstract vuew of a user program:  
+- r(X) read
+    - Brings things into main memory same as copy value inot variables
+- w(X) write
+    - bring object into main memory and modify it
+- Objects(X) (tuple, relations)
+
+## Online transactions processing (OLTP)
+- Pre-defined application tasks of reasonable size
+    - 4-20 SQL operations
+    - simple 1-4 tables involved
+    - Update intensive 15 to 50% of SQL statements are updates
+- Volumes up to hundreds/thousands of transaction per minute.
+
+## ACID Properties
+The success of transaction was due to well-defined properties that are provided by the database system:
+- **ATOMICITY** executed entierly or not at all.
+- CONSISTENCY must preserve the consistency of the data (not in bold because it cannot be garented by the database alone)
+- **ISOLATION** in case that transactions are executed concurrently: the effect must be the same as if each transaction were the only one in the system
+- **DURABILITY** the changes made by a transaction must be permanent (= they must not be lost in case of failures)
+
+programmer only indicates:  
+- when transaction start
+- The sequence of sql operations
+- when the transaction finishes.
+
+### ATOMICITY
+A transaction T might commit after completing all its actions. A transactin might get aborted in this case DBMS undo all modifinactions so far the data base state is as if the transaction never occured. After the notification the user knows that non of the transaction's modifications is reflected in the database.
+
+#### Local recovery
+`Eliminating partial results in case of abort`  
+- before w(x)
+    - store a `before image` of x (somewhere in main memory into the log )
+    - if abort comes up it will restore the previous state using the before image.
+
+The recovery manager is the program that resets the before image.
+
+### DURABILITY
+There must be a garantee that the changes introduced by a transaction will last and survive any failures.
+
+## Recovery after System Crash
+Restart server and perform **global recovery**  
+- committed before crash
+    - in database
+- aborted
+    - not in database
+- active 
+    - not in database
+
+### Update vs logs
+Each update changes the record on the corresponding page. Dirty pages are written to the disk only when the buffer manager decides. Writting information to log disk is faster that random writes to standard disks. 
+
+## WAL write ahead logging
+for each w(x) we record
+- before-image: you can undo changes of active transactions
+- after-image: you can redo changes of committed transactions.
+
+### UNDO/REDO recoverty
+For the ones that did not commit look at the log and get the before image, for the one that did commit go to the log file and use the after image.  
+- How do we know which transactions commited
+    - Write commit/abort log too.  
+- How do I avoid redoing all committed transactions since system starts?
+    - checkpointing
+    - write out dirty pages on a regulare basis during normal processing to reduce redo phases.
+
+# Isolation and Concurrency control
+## Isolation
+- DBMS can execute transactions concurrently
+    - expoloitation of resources
+        - One uses the IO the other the CPU
+        - Exploiting multi-core
+- Isolation
+    - although transactions execute concurrently, each transaction runs in isolation not affected by the actions of other transactions. 
+- Enforced by concurrency control protocol.
+- Concurency control provides serializable executions
+    - Identical as doing all transactions one after the other.

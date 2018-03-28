@@ -554,6 +554,7 @@ so rewriting gives us:
 This was a very generic example and we saw how to deal with all of them. 
 ### Why do we care about standard form?
 c= 
+
 |v| 
 |---:|
 |c1|
@@ -856,7 +857,7 @@ An efficient certifier for a problem X is a polynomial time alogirthm that takes
 
 P subset or same as NP. (Are there different 1 000 000$)
 
-## Max flow vies
+## Max flow views
 Input (G,k) where G is a network flow and is Max-flow of G ≥ k?  
 Max_flow complement: is Max-Flow < k?
 
@@ -950,7 +951,7 @@ Def: Suppose x1,x2,...,xn are boolean variables(true,false)
 #### Example of CNF:
 (x1 or x2 or x3^c) and (x2^c or x4) and x4^c
 
-### SAT Pproblem
+### SAT Problem
 Input: A CNF ø
 Q: Is it possible to assign T/F values to variables such that ø is true.
 
@@ -1088,3 +1089,71 @@ Add a new node that is connected to every single node of graph G call this new g
 
 ### Thm 2-Sat is in P
 Proof: start with 1 term and look at the implications that it creats so x1 = T then blablabla. If the implecations do not match then change x1 = T to F and look at the implications if they are not satisifiable then the problem is not satisfiable. Runs in O(n) where n is the number of x
+
+---
+# 28-03-2018
+#### Hamiltoninan path and cycles in both directed and undirected G are NP-complete
+
+### Travelling Salesman Problem: 
+There are n cities and we are given the pairwise distances between all these cities. A travelling sales man wants to start from a city, visit every other city and come back to the starting point, minimising the traveling distance.  
+Input: dij for 1 ≤ i < j ≤ n distance between i and j and K in |N  
+Q: Can it be done with ≤ K travel distance?
+
+#### Thm: TSP is NP-Complete
+Proof: Hamiltonian cycle ≤p K
+Given an input G for hamiltonian, set vij to be one if ij in E if ij not in E then dij=2. Then set k to n. So now if there is TSP of length ≤ K => then G has a hamiltonian cycle else no.  
+If G is a hamiltonian cycle => same cycle has total distance n On the other hand if there is TSP cycle of length ≤ n since there are n travelled paris there each has to be distance ≤ 1.
+
+### Subset Sum:
+Input: Numbers w1, w2,..., wn in N and Number W in |N
+Q: Can we pick a set of wi such that there sums is exactly equal to W?
+
+#### Thm it is NP-complete
+It is possible to reduce 3-SAT to show that 3-SAT ≤p SubsetSum
+
+
+
+### Knapsack `maybe in the final warning`    
+Input: w1,...,wn in |N, W in N and K in N  
+Q: Can we pick a subset so that it sum does not exceed W and is at least K?
+
+#### Thm knapsack is NP-Complete
+Subset-sum ≤p Knapsack  
+Set K to W and run the Oracle.
+
+# PSPACE problems:
+The class of problems that can be solved using polynomial space(number of bits).  
+
+## P subset of PSPACE this is because an algorithm that terminates in polynomial time does not have the time to write and read more bits than a polynomial amount (as writting those bits would take more than the algorithm can afford)
+
+## NP is a subset of PSPACE
+condsider a problem X in NP and an efficient certifier for X that takes (w,t) with W is the input and t a potential certificate where |t| ≤ p(|W|) for some polyinomial P().  
+Alg: input is just W and generate  all possible t of size at most p(|W|) one by one reusing the space then run the certifier on (w,t) and if true terminate if they all fail then false.
+
+## PSPACE is subset of EXP
+
+## PSAPCE example not in NP
+### QSAT:
+Input CNF ø and a list of quantifiers on the variables  
+Q: Is the corresponding formula true?  
+Ex: for all x1 there exists x2 and there exists (x1 or x2) and (x1 or not x2) and (not x1 or x2 or x3)  
+In this case this is false since if x1 is false then x2 must be true and vice versa but that does not hold.
+### QSAT is PSPACE - Complete
+
+## Conclusion
+Many natural problems that we would like to solve are NP-Complete. It is even believed that there are no subexponential algorithms for NP-complete problems.
+
+# Approximate answers of NP-Problems
+Ex: Vertex cover:  
+Input: Graph G
+Q: What is the size of the smallest vertex cover in G?
+
+## Naive algorithm:
+    while exists edge in G
+        pick both its endpoints and remove them.
+
+Is there a garenti of wrongness in a way?  
+The algorithm picks 2m nodes if it comes across e1,e2,...,em throughout its execution. No vertex can cover more than one of e1 to em. Showing that the minimum vertex cover is at least m
+
+### Thm the output of naive algorithm  ≤ 2* min vertex cover
+This is called a 2 factor approximation 
