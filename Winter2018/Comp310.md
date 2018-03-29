@@ -2019,3 +2019,28 @@ For popf app that sets flag in kernel and non in user. In the case of rings we i
         - More convenient interfaces for virtualization
         - hypervisor interface between virtual and real machine
         - guest OS is modified
+
+---
+# 29-03-2018
+## Binary rewriting
+Privileged mode code run via binary translator, replace sensitive instructions with hypercalls. However this remains a very slow process since we must translate instructions. Hence translated code is cached usually translated just once so the instructions can be reused multiple time.  
+CPU knows what modes it runs on and the instruction outcome depends on that state.
+
+## Building Binary translation
+1. If guest VCPU is in user mode, guest can run instructions natively.
+2. If guest VCPU is in kernel mode (guest believes it is in kernel mode but the physical machine is not)
+
+Here there is a problem and we solve it this way:
+1. VMM examines every instructions guest is about to execute by reading a few instructions ahead of program counter (this is to speed up the process)
+2. Non-special instruction run natively
+3. Special instructions translated into new set of instructions that perform equivalent tasks (ie: changing the flags in the CPU).
+
+Code reads native instructions dynamically from guest, on demand, generates native binary code that executes in place of original code. Test have shown that booting windows XP as guest causes 950000 translations at 3 microseconds each which slow it down by a factor of 5% compare to regular OS.
+
+## Fixing the Hardware
+Use rings with 0 as the most privileged and then other levels, 0 is the kernel mode but we can allow other programs to have more privileged than just being in user mode. We can for instance run the guest OS is in ring 1 and run the processes of the user in the guest OS in ring 3.
+
+Intel Vanderpool technology created a new processor mode ring -1 that is only used by the hypervisor (VMM). So that the OS kernel running on top of the VMM will have ring 0. Which means that both OS of pysicall and virtual machine will run on ring 0.
+
+## Paravirtualization
+The guest OS is modified so that it is aware that it is a VM. This is done by removing some of complexity needed to support unmodified OS, ie: have the binary rewritting already done in the OS rather than having to do it dynamically. The applications themselves see no changes.
