@@ -2044,3 +2044,44 @@ Intel Vanderpool technology created a new processor mode ring -1 that is only us
 
 ## Paravirtualization
 The guest OS is modified so that it is aware that it is a VM. This is done by removing some of complexity needed to support unmodified OS, ie: have the binary rewritting already done in the OS rather than having to do it dynamically. The applications themselves see no changes.
+
+---
+# 03-04-2018
+# Protection
+Referes to the activity of controlling the access of programs, processes, or users. Enforced through password associated with a user. Policies: what is enforced (access to mycourse page). Protectin was first thought of in multi programming to protect one program from another. Kernel memory is shared between processes but the user memory is not.
+
+## Introduction
+- Reasons
+    - Need to ensure that each program component in the system uses resources consistent with stated policies.
+- Reliability
+    - Be able to detect event at the interfaces between subsystems. 
+    - This detection can often prevent a malfunctioning subsystem from contaminating a healthy subsystem.
+    - Distinguish between authorized and unauthorized usage.
+- Where
+    - Done by the OS and applications
+    - Application created entities should be protected by the application itself and not only depend on the OS itself.
+
+### Policy
+State what are the rules that must be respected
+
+### Mechanisms
+How the policies are going to be enforced.
+
+## Terminology
+- Objects refers to both hardware and software objects. Software include programs, files, semaphores. Hardware: CPU, memory segments.
+- A computer system is collection of processes and objects
+- *need-to-know* a process needs to have accesss to only those objects that are essential for the process.
+
+- A process operates in a protection domain that specifies the resources the process may access.
+    - Each domain defines a set of objects and the types of operations that may be invoked on each object. Domain may not always be disjoint.
+    - The ability to execute an operation on an object is an access right.
+    - A domain is a collection of access rights -  each of which is an ordered pair <object-name,rights-set>
+
+## Protection domains
+Assocation between process and a domain may be static or dynamic
+- static
+    - we should be able to change the domain contents
+    - if a process reads in phase 1 and writes in phase 2 the needs will change with time.
+    - With static we will have both read and write permision violiating the *need to know* principal since read is not essential to part 2. 
+- dynamic
+    - switch domain as processes need new permissions controling that switching.
