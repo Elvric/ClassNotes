@@ -1664,3 +1664,63 @@ For the ones that did not commit look at the log and get the before image, for t
 - Enforced by concurrency control protocol.
 - Concurency control provides serializable executions
     - Identical as doing all transactions one after the other.
+
+---
+# 04-04-2018
+## Serial execution
+There can be issues if two transaction occur in parallel since we might as shown in class calculate an interest rate twice on the same 100$.
+
+## Transaction
+A sequence of w and r operations on objects of the DB. Each transaction must at the end send a messge either c or a.
+
+## Schedule
+A sequence of actions (read,write,commit,abort) from a set of transactions.
+
+### Complete schedule
+Contains the commit abort for each transactions
+
+### serial schedule
+Where transactions are executed one after the other.
+
+## Reading uncomitted data (dirty read)
+If we have 2 different transactions with one of them having a w and the other a r or two w then we have a conflict. The standard is to draw an arrow between the confilicting actions pointing downwards. In general reading changes from an object that was modified by a particular transaction that did not yet commit is still called a dirty read even though the read and write may be fine.
+
+## Unrepeatable read
+R(A) then an other transction modifies W(A) and the same transaction reads R(A) again this is unrepeatable read/
+
+## Lost update
+One program read the other one read as well writes back and then the first one writes back so here we lost some information.
+
+## Commited then Aborted Transactions
+A transaction r(a) then w(a) and another transaction r(a) but then the first one aborts hence the r(a) is no longer good. if we then modify the value read and write it back then we got a dirty write.
+
+## Conflict Serializable Schedules
+- Two schedules are conflict equivalent
+    - Involve the same actions of the same (committed) transactions
+    - Every pair of conflicting actions is ordered the same way
+- Conflict serializable
+    - S is conflict equivalent to some serial schedule which contains the committed transactions of S.
+
+## Serializability and Dependency Graphs
+Make a node for each of the transaction (T1),(T2) when we see a conflict we draw an arrow between them in the right direction. Just one arrow in every direction however.  
+
+#### Thm: Schedule is confilct serializable if and only if its dependency graph is acyclic.
+
+## Concurrency control mechanism
+Given an execution we can test whether the execution was serializable if yes then fine else its too late. So concurrency control takes measures suche that a non-serializable execution never happens
+
+### Locking
+- Non conflic transaction can execute at the same time.
+- Upon first conflict the second transaction has to wait untile the first transaction commits or abort.
+- Locks have two type read or write lock
+- Function
+    - Each transaction Ti must obtain a shared S lock before reading and an X lock on object before writting. 
+    - Share lock S can be given to multiple programs, whoever X lock only has one instance.
+
+## Strict Two phase locking
+- Phase 1
+    - Acquirs locks whenever you need one.
+    - If no conflicting lock then we can carry on
+    - If there is a conflict then we must wait.
+- Phase 2 Lock release
+    - After a transaction has to release a lock the transaction cannot aquire nor request any lock.
