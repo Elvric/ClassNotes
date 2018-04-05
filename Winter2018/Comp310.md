@@ -2085,3 +2085,65 @@ Assocation between process and a domain may be static or dynamic
     - With static we will have both read and write permision violiating the *need to know* principal since read is not essential to part 2. 
 - dynamic
     - switch domain as processes need new permissions controling that switching.
+
+---
+# 05-04-2018
+
+## Domains
+- Each user may be a domain - set of objects that can be accessed depends on the user identity
+- Each process
+- Each procedure
+
+## Protection in UNIX
+Domain is associated with a UID, when executing the program Z will have the privileged associated with UID A. When executing a file Y with setuid bit set and the fie Y is owned by UID B, the process will have associated with UID B for the duration of execution of Y. setuid and setgid access added using chmod.
+**uid bit: unix access right flags that allow user to run an executable with the permissions of the executable's owner or group**
+
+### Protecton domain in unix example
+- Printer spooling problem
+    - various commands to access line printer queues are setuid files (to user root) so the UID bit is set to 1 because we need to access the printer port/dev/printer that is owned by the root.
+- Problem
+    - If the user manages to create a file with root as user ID and setuid bit set, then the user can become the root and do anything
+- Alternate aproach
+    - Restrict all setuid programs to reside in a predefined directory- cna have no secret setuid programs- because only those residing in the system directory can run.
+    - Have a deemon process to control access to protected objects allow no domain changes through setuid mechanism
+
+## Process Based Protection Domains
+Typically a function running within a process inherits the process' access rights. Use **sandboxing** restrict access to limited resources (file resources, CPU time, memory space) and terminate function if conditions are violated.  
+Sandboxing is a security mechanism for separating running programs.
+
+## Access matrix
+- Provides us a *scheme* for specifying a variety of policies
+- *Need a mechanism* that can implement the access matrix and ensure that the semantic properties hold.
+- Access matrix specifies what a process executing in domian D_i can accesss and what operations are allowed on the accessed objects.
+- Used for static or dynamic association
+    - Dynamic are implemented by domain switches.
+
+### Matrix in theory
+
+| Object/Domain | F1 | F2 | F3 | printer | D1 |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+|D1| read | | read | | |
+|D2| | | | print |switch |
+|D3| | read* | execute | |
+|D4| read write | | owner read write | | switch |
+
+Note that the switch present in the matrix only exists for dynamic domain so that a switch can only be done when allowed.
+
+### Access matrix modification
+frequently it becomes necessary to change the access matrix itself
+- Grant permissions to new entities
+- Transfer permisions
+
+Propagation of rights should however be limited. We denote when a permission can be copied within the same column with an asterix (read*,write*,execute*). For the **owner** privileges in a domain we can add or remove privileges to other domains in the same column than owner is in.
+
+### Access matrix size
+Access matrix can be very spares in general.  
+Implemented in two ways:
+- By columns/object (access control list)
+- by row/domain (capability lists for domain)
+
+## Access control list
+Associate each domain with a list of domain (A,B)  
+F1 -> A: RW; B: R  
+F2 -> A: R; B: RW  
+For each access list we only store domains that have rights.
