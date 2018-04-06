@@ -2146,4 +2146,40 @@ Implemented in two ways:
 Associate each domain with a list of domain (A,B)  
 F1 -> A: RW; B: R  
 F2 -> A: R; B: RW  
-For each access list we only store domains that have rights.
+For each access list we only store domains that have rights. Instead of user ID we can have group IDs and user IDs. Using group IDs we can introduce the notion of roles.
+
+---
+# 06-04-2018
+
+## Capability control list
+Each domain rights are stored by domains. For every domain we store what its access rights are. Users are in user space and the rights list are stored in the kernel space.
+
+## Access control scheme
+User logs in with a password to ensure the user is really who he says he is. Then we have a reference monitor who every time the user makes a request for an object sends it the the authorization database where the access matrix is. Finnally then the user can access his request.
+
+## Trusted systems
+Most computer systems leak information. Damages that cost a lot of money due to viruses, damages data. In theory a secure system can be build but security must be the primary goal of the system.
+
+### Reasons
+1. Support for legacy systems e.g Windows
+2. Only way to build a secure system is to keep it simple featues addtions complicate things. e.i ASCII (just text) emails and emails with binary attachments are difficult to trust. (Binary attachment could be a malicious program).  
+Same idea with HTML that is secure when passive than HTML with applets
+
+To build a secure system, the model at the core of the OS should be easily understood and verified.
+
+## Trusted computing based
+1. System that has formal security requirements and meet these requierments.
+2. At the center of a trusted system is a minimal trusted computing base TCB. Should also be separate from the OS
+3. TCB consists of hardware and software necessary for enforcing the security rules.
+4. If TCB works according to specs the system cannot be compromised.
+5. TCB consists of most hardware, a portion of the OS-kernel and most if not all of the user programs that have super user power (setuid programs).
+6. All operations should go through the reference monitor in the TCB.
+
+## Multi-level security
+Most OS have **dicretionary access control**
+- Individual users determine who may read, write, execute their files and other objects.
+- In some environments, tighter security is necessary
+- Organization will set the access policies that cannot be overridden by individual users without exception
+
+Stricter access control is provided by **mendatory access control**
+- Regulate the flow of information in addition to the standard discretionary access control.
