@@ -1724,3 +1724,104 @@ Given an execution we can test whether the execution was serializable if yes the
     - If there is a conflict then we must wait.
 - Phase 2 Lock release
     - After a transaction has to release a lock the transaction cannot aquire nor request any lock.
+
+---
+# 09-04-2018
+## Lock table structure
+S1(A) S means shared lock, 1 means transaction 1 and A means resource A. X means exclusive lock.
+
+| Lock | Process aquired |
+| --- | --- |
+| A  | T1:S, T3:S, (WL: T2: X) |
+
+`If we have S S S X S S S in the waiting queue then when when we can we will only alocate the following locks S S S and the new queue will be X S S S`
+
+### Details
+- Transaction does not request the same lock twice
+- Transaction does not need shared lock if it alread holds exclusive lock
+- If transaction request x lock when it already has an s lock it must wait for all the s lock that are active to be released before aquiering the x lock.
+
+## Deadlocks
+Cycle of transactions waiting for locks to be released by each other.
+- Waits-for graph:
+    - T1 -><- T2
+    - Nodes are transactions
+    - There is an edge from T1 to T2 and vice versa.
+
+In order to remove deadlocks we must kill a transaction responsible for the cycle. When such a transaction is killed we must undo what it did which is shown throuhg w1^{-1}
+
+#### wait for vs dependency 
+- wait for means node wait for another node
+- dependency means node will execute after the node of origin.
+
+## Other concurrency mechanism
+- Snapshot Isolation
+    - Oracle, postgreSQL MicrosoftSQL
+    - example of multi version system
+
+### Snapshot
+The writer makes a new copy while readers use an appropriate old copy. Readers are always allowed to proceed but writters are not.
+
+## Transactions in JAVA
+Default is auto-commit with java but it can be changed with
+```java
+con.setAuto-commit(false);
+try
+{
+    //sql query and changed
+    con.commit();   
+}
+catch(SQLException ex)
+{
+    System.err.println("SQLException"+ ex.getMessage());
+    con.rollback();
+}
+```
+
+## Phantoms
+If we relax the assumption that the DB is a fixed collection of objects, even Strict 2PL will not assure serializable.  
+T1 as lock on existing tupples with rating 5:
+```SQL
+SELECT max(age) FROM Skaters WHERE rating = 5;
+```
+T2:
+```SQL
+INSERT INTO Skaters --.....
+```
+T1: arrives again:
+```SQL
+SELECT max(age) FROM Skaters WHERE rating = 6;
+```
+From our perspective first T1 output happened before T2 but now assume T2 added a new skater with rating = 6 it will look like T2 happened before T1.
+
+## Isolation levels
+
+| Level | Dirty read | Unrepeatable read | Phantom |
+| :---: | :---: | :---: |  :---: |
+| Read uncommitted | maybe | maybe | maybe |
+| read committed | no | maybe | maybe |
+| repeatable read | no | no | maybe |
+serializable | no | no | no |
+
+- Read uncommited
+    - Read op do not set locks can read not commited updated
+- Read commited
+    - read op set short s locks have to wait for X locks to be released, release lock imediatly after read
+- Repeatable read
+    - Read operation set standard lock S and can aquire them just once
+- Serializable
+    - As soon as a lock is released no lock can be aquired.
+
+Can be mentioned in java
+```Java
+setTransactionIsolation(TRANSACTION_SERIALIZABLE);
+```
+
+# Graph databases
+
+## Introdudction
+- Based on Euler's graph theory
+- Data model
+    - Nodes represent real world entities or virtual entities, they can be modelled with labels and types.
+    - Edges between nodes in graph represents relationships, edges are directional. Edges can have properties of their own.
+    - Properties are key value pairs that are assocated with either a particual node or a particular relationship. Each node are free to have its own set of different properties for example some nodes representing a person could have job title other may not have that.

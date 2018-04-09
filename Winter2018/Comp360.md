@@ -1148,7 +1148,7 @@ Ex: Vertex cover:
 Input: Graph G
 Q: What is the size of the smallest vertex cover in G?
 
-## Naive algorithm:
+## Naive algorithm vertex cover:
     while exists edge in G
         pick both its endpoints and remove them.
 
@@ -1157,3 +1157,128 @@ The algorithm picks 2m nodes if it comes across e1,e2,...,em throughout its exec
 
 ### Thm the output of naive algorithm  ≤ 2* min vertex cover
 This is called a 2 factor approximation 
+
+---
+# 04-04-2018
+# Approximation algorithms
+For a maximisation problem, an alog is an alpha-approx alg if output ≥ alpha * optimal.  
+For a minimization if output ≤ alpha * optimal
+
+
+## Integer Linear Program for Vertex Cover
+We are going to reduce Vertex cover to that:  
+For every vertex we have a variable 1 if the vertex is pick 0 other wise which gives us:
+
+min sum(x_v) for all v in V
+
+s.t:  
+x_u + x_v ≥ 1 for all uv in E  
+x_v in {0,1} for all v in V
+
+## What is above is not a linear program it is an ILP-Val
+Hence we must relax that probelm so we convert it to a linear program.
+
+### LP-relaxation:
+min sum(x_v) for all v in V
+
+s.t:  
+x_u + x_v ≥ 1 for all uv in E  
+x_v ≥ 0 for all v in V  
+x_v ≤ 1 for all v in V *this could be droped as we are minimizing*
+
+opt(LP-VC) ≠ opt(ILP-VC)  
+opt(LP-VC) ≤ opt(ILP-VC)  
+This is true as relaxation gives us fewer constrains as if the min exists in ILP then it also exists in LP but not the other way arround.  
+
+So now we got decimal numbers so we are going to round them in order to get integers again.  
+Let x_v = 0 if x_v* < 0.5  
+Let x_v = 1 if x_v* ≥ 0.5  
+These new x_v still satisifies the conditions they are still a feasible solution to the linear program. Note that x_v ≤ 2x_v* hence our final solution can be at most 2 times the optimal comparte to the INT-VC. So as last lecture this is 2-factor approx.
+
+---
+# 09-04-2018
+
+## Load balancing problem
+Input: Processing times (t1,t2,t3...) and a number of machines m.  
+Goal: Distribute the jobs among the m machines so that the last finishing time is minimized.  
+Ex: 2,3,4,6,3,3 m=3  
+Opt=7 {3,4},{6},{2,2,2}
+
+### Alg 1
+Assign the current job to the machine with the current lowest load:  
+Opt=8 {3,2},{2,6},{4,2}
+
+#### Thm ALG 1 is a two-factor approx algorithm
+Proof: Let T* be the optimal solution and T be the output of the algorithm. We need to show that T ≤ 2T*. Note that  
+
+max(t_i) ≤ T* (0)
+
+as every job has to be assigned to some machines. As every job has to be assigned to a machine  
+
+sum(t_i)/m ≤ T*  (1)
+
+As the total processing time has to be distributed among m machines.  
+
+Let i be the machine with the highest load in our algorithm T and let tj be the last job assigned to this machine. Let's look at the time that tj is being assigned to this machine, the load was T-tj which was the smallest load => the final load of all machines are at least  
+
+T-tj => sum(ti) ≥ m(T-tj)  
+T* ≥ T-tj by (1)  
+T* ≥ tj
+
+T ≤ 2T*
+
+### Alg 2
+Sort the t in ascending order and then run AlgI so we put the more costly jobs first.
+
+#### Thm Alg 2 is a 3/2 factor approx alg
+Pf:  
+i will be the machine with the highest load and tj the last job of this machine.    
+If # of job ≤ m then the alg is optimal (each job goes to a separate machines)  
+
+Claim: if n ≥ m+1 => T* ≥ 2t_{m+1}  
+Pf of claim: one of the machines will have two of t1≥t2≥...≥tm+1 and its load will be at least 2t_m+1 given than t_m+1 is the lowest number in our list.
+
+If tj is the only job assigned to machine one then T = tj ≤ T* =>
+T = T*
+
+So we can assume there are at least two jobs on machine i. Since n ≥ m+1 => j ≥ m+1 => tm+1 ≥ tj
+
+T* ≥ 2tm+1 ≥ 2tj
+
+Looking at the previous proof we get:
+
+T* ≥ T-tj  
+1/2 T* ≥ tj  
+3/2 T* ≥ T
+
+## Center selection
+Input: A set S of n points p1,p2,...,p3 on the plane and a set of numbers k in N.  
+Goal: to select k centers on the plane such that the maximum distance of any point in S to a center is minimized.
+
+Distance of (pi,C) = min dis(p,q) p in S and q in C. 
+
+Notes:  
+1. We have 2 points and 1 center the minumum distance is half of the distance between the two points.  
+2. We have 2 centers and n=3 We can put one center in the center of the smallest distance between the 3 points and another center directly on the point that has the largest distance fromt the other 2 points.  
+
+### Alg 1
+```
+Put one of the points p1,p2,...,pn in C
+For i =2,..,k
+    pick the point with largest distance to C and add it to C.
+```
+
+#### Performance
+On the first note the algorithm will have d12 but the optimal is d12/2. Hence the algorithm is not better than 2-factor algorithm.
+
+#### Thm
+This is a 2-factor approx algorithm.  
+Proof:  
+If n ≤ k => alg is optimal as it puts a center on each point. But if n > k then => let c1,c2,..,ck be the centers chosen be the algorithm and let ck+1 be the point with the largest distance from {c1,..ck}
+Output = dist(ck+1,C)
+
+Consider the points that we chose c1,c2,...,ck,ck+1  
+Note dist(ci,cj) ≥ r for all i ≠ j where r dist(ck+1,C) as we choose the biggest distance between centers before assigning the new center.
+
+Can the opt(S,C) < r/2?  
+Let q1 to qk be the optimal centers. For each of these centers let's look at the points that this center is closest to them. one of q1,...,qk gets at least points and the distance between these two is at least r whose distance is ≥ r. So this center is in distance at least r/2 to one of those.
