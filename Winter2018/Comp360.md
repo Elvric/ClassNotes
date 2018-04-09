@@ -1195,6 +1195,25 @@ Let x_v = 0 if x_v* < 0.5
 Let x_v = 1 if x_v* ≥ 0.5  
 These new x_v still satisifies the conditions they are still a feasible solution to the linear program. Note that x_v ≤ 2x_v* hence our final solution can be at most 2 times the optimal comparte to the INT-VC. So as last lecture this is 2-factor approx.
 
+## Knap sack
+Input: w1,w2,...,wn ≥ 0 and a capacity w in N  
+Goal: Maximize the sum in my knapsack  
+This problem is np-complete
+
+### Alg 1
+```
+Sort the item in decreasing order 
+for i = 1,2,...3,n do
+    if we can add wi to the knapsack add it 
+endfor
+```
+Assume that wi is the first itam that is not picked by the algorithm => wi-1 ≥ wi is in the knapsack and the knapsck has at least W-wi weight in it. wi ≤ wi-1 ≤ W/2  
+=> wi ≤ wi-1 < W/2  
+Since the elements are sorted the only way that we woudl stop adding wi is if either we run at of them so we are optimal or we filled at least half of W. Hence output ≥ 1/2 optimal.
+
+## Load balancing problem (see bellow)
+
+
 ---
 # 09-04-2018
 
@@ -1228,7 +1247,7 @@ T* ≥ tj
 T ≤ 2T*
 
 ### Alg 2
-Sort the t in ascending order and then run AlgI so we put the more costly jobs first.
+Sort the t in decreasing order and then run AlgI so we put the more costly jobs first.
 
 #### Thm Alg 2 is a 3/2 factor approx alg
 Pf:  
