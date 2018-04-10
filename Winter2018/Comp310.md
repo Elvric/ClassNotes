@@ -2182,4 +2182,45 @@ Most OS have **dicretionary access control**
 - Organization will set the access policies that cannot be overridden by individual users without exception
 
 Stricter access control is provided by **mendatory access control**
-- Regulate the flow of information in addition to the standard discretionary access control.
+- Regulate the flow of information in addition to the standard discretionary access control through stricct rules that are implemented system wide.
+
+---
+# 10-04-2018
+## Bell-la Padula Model
+Developped by the military to restricts the information flow.
+
+- Simple security property: a process running at security level k can only read objects at its level or lower
+- The *property: A process at security level k can only write objects at its level or higher.
+
+This is called a read down and write up model to prevent information leak from a higher level to another one.
+
+## Biba model
+Problem with Bell_la Pendula: lower level security user cna corrupt the files of a higher security level not respecting the data integrity.
+
+This model is the exact opposit of Bell-la Padula to counter the negative affects.
+
+## Trojan horse
+Malicious computer program which misleads users of its true intent.
+- keylogger that sends all recorded key strokes back to the attacker.
+
+### Attack system
+Used a back pocket file so that when the victim executes the trojan we go to a file we are interested in, read the content of the file and write them to our back pocket file. The back pocket file has the following privleges, read write for the hacker and write for the victim.
+
+### Defense system
+Security propery, *-property is violated if we try to do the above since we assign a security level are assigned to subjects so if the hacker has a lower security level than the victim then the write to the back pocket file will not happen.
+
+## Orange book security
+Divides OS into seven categories based on their security properties. Today it has been replaced with a newer DoD standard - However still used as a guide.
+
+### Orange book categories
+- Level D: No security requierments at all (Windows 98)
+- Level C: Environment with cooperative users, authentification login, ability for user to decide which files are made available to other users C1. C2 adds DAC to other users.
+- B,A All controlled users and objects to be tagged using security labels interpreted according to La-Bell Padula model.
+
+## Covert Channels
+Provide a way to comunicate between a server and a collaborator. In this case the covert channel leaks information to the collaborator without the client noticing.
+
+It is hidden from the access control mechanism, instead of sending the actual data to the collaborator it may send data for example at a certain speed or with certain patterns that can be decoded into information.
+
+## Intruders
+Unauthorazed individual exploiting a legitimate user account or authaurized individual misusing privileges.
