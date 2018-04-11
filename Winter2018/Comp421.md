@@ -1825,3 +1825,86 @@ setTransactionIsolation(TRANSACTION_SERIALIZABLE);
     - Nodes represent real world entities or virtual entities, they can be modelled with labels and types.
     - Edges between nodes in graph represents relationships, edges are directional. Edges can have properties of their own.
     - Properties are key value pairs that are assocated with either a particual node or a particular relationship. Each node are free to have its own set of different properties for example some nodes representing a person could have job title other may not have that.
+
+---
+# 11-04-2018
+## Depth
+Hard to work in depth with SQl query when trying to reach an entity from another.  
+Graph database are better at doing that. Schema flexibility can be implemented with entities.
+
+## Use cases
+- Social/professional Networks
+- Computer networks
+- Complex hiarchy
+- Greo spatial data
+- Supply Chain
+- Relationship between pages
+- Maintain knowledge base
+- Real-time recommendation
+- Fraud Detection
+
+## Graph interaction
+- Custom Programming language APIs
+    - Not yet standardized
+- Query
+    - Cypher
+    - Gremlin
+    - SPARQL
+    - XPath
+- Neo4j
+    - edges are directed
+
+## Cypher
+Declarative language for Graph Databaase Systems similar to SQL for relational models. Specifies what data to retrieve not how to retrieve them.
+
+### Data types
+Standard data types and extended graph datatypes
+- Nodes
+- Relationships
+- Paths
+- Maps
+- Lists
+
+### SELECT cypher
+To not care about the direction we can just remove the arrow inn the query.
+```cypher
+MATCH(e:Employee)
+RETURN e;
+
+Match(e:employee)
+RETURN e
+Orderby (e.email);
+
+MATCH(e:Employee {ename:'Janet'})
+RETURN e;
+
+MATCH(e:Employee)
+WHERE ename in [bava,babsv]
+RETURN e;
+
+MATCH(e:Employee)
+WHERE NOT (e)-[:WORKS_in] ->()
+RETURN e
+
+--Employees not mentored
+MATCH(e:Employee)
+WHERE NOT (e)<-[:MENTORED]-()
+RETURN e
+
+MATCH(e:Employee)
+WHERE e.job IS NULL
+RETURN e
+```
+
+## Modifying a graph 
+CREAT/DELETE  
+SET/REMOVE  (no need to study)
+MERGE  (no need to study)
+Check for data if it is there modify it else create a new node.
+
+### INSERT GRAPH
+```cypher
+CREATE(d:Departement {dname:"PR,did:12}) <-[:WORKS_IN]-
+(e.EMPLOYEE{ename:"Jane",eid:201,ephone:"111-333-9999"});
+```
+
