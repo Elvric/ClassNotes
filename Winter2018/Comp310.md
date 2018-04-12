@@ -2223,4 +2223,120 @@ Provide a way to comunicate between a server and a collaborator. In this case th
 It is hidden from the access control mechanism, instead of sending the actual data to the collaborator it may send data for example at a certain speed or with certain patterns that can be decoded into information.
 
 ## Intruders
-Unauthorazed individual exploiting a legitimate user account or authaurized individual misusing privileges.
+Unauthorazed individual exploiting a legitimate user account or authaurized individual missusing privileges.
+- guessing passwords
+- Distributing pirated software
+- viewing sensitive data without authorization
+
+---
+# 12-04-2018
+## Intrusion detection
+Detects attempted or successful intrusion and can take different forms:
+- Time of detection: real time or afterwards
+- Types of input examined: shell commands, process system calls, network packet headers or content.
+- Responsible types: killing the offending process, alerting the administrator, leading the intruder to a **trap**
+
+Multiple imputs must be analysed to detect intrusion.
+
+### Signature-based detection:
+Attempts to characterize attack conditions and detects whether any such behavior occurs
+
+### Anomlay detection
+Attempts to characterize normal conditions and detects whether anything other that normal behavior occurs.
+- Auditing and logging
+    - Keep track of normal behavior over time and when something occurs we see if that behavior respects the usal behavioural pattern
+- Tripwires
+    - software security tool to moniter and alert on specific file changes on a range of systems which can be donw through system call monitering
+
+# Dining Philospher 
+N philosophers seated arround a circular table either thinking or eating, N plates and N forks.
+- A philiospher that wants to it take the fork to its left and then to the right in order to it
+- A fork can be used by only 1 phylospher at a time
+- Devise an algorithm th allow all phylosphers to it.
+
+Avoid deadlock, livelock, starvation
+
+## Attempt 1
+If each philospher grabs left fork the semaphore is at 0 but now we have a deadlock
+```
+sem fork[n];
+while(1)
+{
+    P(fork[i])
+    P(fork[i+1%n])
+    //eat
+    V(fork[i+1%n])
+    V(fork[i+1%n])
+}
+```
+
+## Deadlock solution
+All at most n-1 philisopher at the table but not really practical in real life.
+
+## Attempt 2
+```
+sem fork[n] = {1}
+sem mutex = 1
+stopped = 0
+enters = 0
+philospher[i]
+{
+    while(1)
+    {
+        get_fork(i)
+        put_fork(i)
+    }
+}
+
+get_fork(i)
+{
+    get_waiter_permission();
+    wait(frok[i])
+    wait(fork(i+1)%n)
+}
+
+put_fork(i)
+{
+    get_waiter_permission();
+    signal(fork[i])
+    signal(fork(i+1)%n)
+    inform_waiter()
+}
+
+get_waiter_permission()
+{
+    wait(mutex)
+    eaters++
+    {
+        if(eaters>n-1)
+        {
+            signal(mutex)
+            wait(stopped)
+        }
+        else
+        {
+            signal(mutex)
+        }
+    }
+}
+
+inform_waiter()
+{
+    wait(mutex);
+    eaters--
+    if(eaters == 4)
+    {
+        signal(stopped)
+    }
+    signal(mutex)
+}
+```
+
+# Final exam format
+- 20 short questions 3 points each
+- 4 long or multi part questions 10 mark each
+- Similar to sample exams posted fall 2016
+- May have programming questions and algorithm
+
+## Material
+All the lecture slides seen in class (excluding trojan horse, covert channels, Meltdown, moniter)
