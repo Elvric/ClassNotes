@@ -2340,3 +2340,7 @@ inform_waiter()
 
 ## Material
 All the lecture slides seen in class (excluding trojan horse, covert channels, Meltdown, moniter)
+
+**THE END**
+
+--- 

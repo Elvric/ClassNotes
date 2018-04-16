@@ -1907,4 +1907,97 @@ Check for data if it is there modify it else create a new node.
 CREATE(d:Departement {dname:"PR,did:12}) <-[:WORKS_IN]-
 (e.EMPLOYEE{ename:"Jane",eid:201,ephone:"111-333-9999"});
 ```
+---
+# 16-04-2018
+Final traverse the Graph to get data nothing on create and delete thing.
 
+## Delete
+```
+MATCH(e:Employee{empd=201})-[r:WORK_IN]->(d:Department{deptid:12}) DELETE e,d,r
+```
+Cypher when deleting a node can cause us to have a dangling edge so this is done this way.
+```
+MATCH(e:Employee{empid:201})
+DETACH DELETE e
+```
+
+## JOIN/Traversal (Important for the final)
+```
+MATCH(e:Employee)-[w:WORKS_IN]->(d:Department{dname:"HR})
+RETURN e
+
+MATCH(e:Employee)-[w:WORKS_IN]->(d:Department)
+WHERE d.dname = "HR"
+RETURN e
+```
+
+### Traversal in various forms
+```
+MATCH(e:Employee)--(n) WHERE e.name = 'Paul' RETURN e,n
+
+MATCH(e:Employee)-[]-(n) WHERE e.ename = 'Paul' RETURN e,n
+
+\\Only out going replationship
+
+MATCH(e:Employee)-[]->(n) WHERE e.ename = 'Paul' RETURN e,n
+```
+-- and -[]- means any edge.
+
+```
+MATCH(e:Employee)-[:MANAGES]->(n:Employee)
+WHERE e.ename = 'Steve'
+RETURN n.ename
+```
+
+Return info of people works for or is mentored by Katie
+```
+MATCH(e:Employee)-[:Manages|Mentors]->(n)
+WHERE e.ename = 'Katie'
+Return n
+```
+
+Get people that neither work or are mentored by katie
+```
+--This is a cross product between all employees
+MATCH(e:Employee),(n:Employee) 
+WHERE e.name = 'Katie' AND NOT (e)-[:MANAGES|MENTORES]->(n)
+Return n
+```
+
+Find employee that report to managers that themselves report to Steve.
+```
+MATCH(e:EMPLOYEE)-[:MANAGES]->()-[:MANAGES]->(n)
+WHERE e.ename='Steve'
+Return n
+
+MATCH(e:Employee)-[:MANAGES*2]->(n)
+WHERE e.ename = 'Steve'
+Return n
+
+(e)-[*] --all the way out
+(e)-[*3..] --3 or more edge
+(e)-[*3..5] 3 to 5 edge
+(e)-[*..5] --Up to depth 5
+```
+
+Find if Janet is Managing an employee who manages an employee who is friend with janet
+```
+Match(e:Employee){ename='Janet'}-[:MANAGES]->(e1)-[:MANAGES]->(e2), (e)-[:FRIEND_OF]->(e2)
+RETURN e,e1,e2
+```
+
+# Important things we have to know
+Most of the things are on mycourses.  
+This time creating the graph will be based an written requierments no ER for that part.  
+Query evaluation find the cardinality for algebraic tree. If we do not have enough time remember
+- See if we can do selection and projection first to reduce the number of records / width of tuples.
+- Try some of the best join alogirthms
+    - Index nested join
+    - Block nested join
+- Project the required fields to reduce size
+- Sort (hash join) or sort merge join 
+
+
+**THE END**
+
+--- 
