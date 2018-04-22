@@ -1301,3 +1301,145 @@ Note dist(ci,cj) ≥ r for all i ≠ j where r dist(ck+1,C) as we choose the big
 
 Can the opt(S,C) < r/2?  
 Let q1 to qk be the optimal centers. For each of these centers let's look at the points that this center is closest to them. one of q1,...,qk gets at least points and the distance between these two is at least r whose distance is ≥ r. So this center is in distance at least r/2 to one of those.
+
+---
+# 11-04-2018
+For certain problems we can guarantee a reasonable trade off between the approx factor and running time
+
+#### Ex
+O(n^1/e) alg that is a (1+e)-factor aprrox alg forall e > 0. these algorithm are PTAS 
+
+## POLYTIME APPROX ALGORITHM SCHEME (PTAS)
+Forall e > 0  there exists a polytime (1+e)-factor approx alg for the problem. O(n^1/2), O(n^2^2^1/e)
+
+### Knapsack problem to PTAS
+Values v1,v2,...,vn in N  
+Weights w1,...,wn in N  
+capcity W in N  
+
+Goal: Select a subset of items suhc that their total weights does not exceed W but the total value is maximized.
+
+#### Dynamic programming approach
+OPT[k,V] = smallest weight of a subset of items from 1,..,k
+that has total value at least V.
+
+OPT[k,V] = min(Opt[k-1,V],opt[k-1,V-vk]+w_k)
+
+```
+For k=0,...,n do
+
+    OPT[k,0] = 0
+
+endfor
+
+For v = 1,..., sum(vk) do
+    opt[0,v] = infinity
+endfor
+
+for k=1,...,n do
+    for v=1,...,sum(vi) do
+        if(opt[k-1,v] < opt[k-1,V-vk]+wk)
+        {
+            opt[k,v] = opt[k-1,v]
+        }
+        else
+        {
+            opt[k,v] = opt[k-1,V-vk]+wk
+        }
+    endfor
+endfor
+for v=sum(vi),..,0 do
+    if (opt[n,v]>W)
+    {
+        continue
+    }
+    else
+    {
+       return v
+    }
+endfor
+```
+Running time O(nsum(vi))=O(v\*n^2) where v\* is the largest vk  
+This is not a polynomial time algorithm as it depends on v* which can be greater than n.
+
+#### An approximation algorithm idea
+Round these numbers to make the algorithm faster.  
+Let e > 0 set b  = e/2n v*  
+Set vi~ = [vi/b]b  
+Note vi+b ≥ vi~ ≥ vi 
+
+**P1**  
+Solve v1~,...vn~  
+w1,...,wn  
+W   
+Then we can change these vi~ to ^vi where vi~/b= ^vi to solve the problem. **P2**
+
+Opt(P1) = b*Opt(P2)  
+With the running time of P2 being O(n^2*(v*/b+1))  
+=O(n^2+n^2v*/b)  
+=O(n^2v*/(ev\*/2n))  
+=O(2n^3/e)  
+=O(n^3/e) and we have a fixed epsilon.
+
+Now what does this tell us about the optimal original result vs result of P1/P2?
+
+Claim: if S is the set of items found by the algorithm P1 and S* is the optimal answer then (1+e)sum(vi) i in S ≥ sum(vi) i in S*  
+
+#### Proof
+sum(vi) i in S* ≤ sum(vi~) i in S* ≤ sum(vi~) i in S ≤ sum(vi+b)  
+sum(vi+b) i in S = sum(vi) i in S + bn = sum(vi) i in S + ev*/2 i in S = sum(vi) i in S + bn = sum(vi) i in S + ev*/2  
+sum(vi) i in S + ev*/2  ≤ sum(vi) i in S + e/2 sum(vi) i in S*
+
+From here we have shown that sum(vi) i in S* ≤ sum(vi) i in S + e/2 sum(vi) i in S* 
+
+So to conclude we have the fact that S ≥ (1-e/2)S\*
+
+---
+# 16-04-2018
+## Set cover problem
+Goal find the smallest T in (S1,S2,S3) such that U S S in T = entre space.
+
+### Approx
+At every step cover as many new elements as possible.
+```
+R = Entire set
+T = ø
+while R ≠ ø do
+    Pick Si with largest Si and R
+    Set R = R-Si
+    Set T = T+Si
+endwhile
+return T
+```
+
+#### Notation 
+Hn = 1+1/2+1/3+1/4+1/n  
+int(1,n)1/x dx ≤ Hn ≤ 1+int(0,1) 1/x dx  
+ln(n) ≤ Hn ≤ 1+ln(n)  
+Hn = Theta(ln(n))
+
+#### Thm the above algorithm is an Hn-Factor approx algorithm where n = |U|
+
+Pf:
+Let `K` be the output of the alg and `K*` be the optimal solution. We need to show that `K ≤ Hn-K*`.  
+For every x in U let c_x = 1/|Si and R| where Si is the first selected set that covers x.
+
+Claim `sum Cx {x in U} = K`  (1)
+
+Every time we select a set Si each element Si and R gets assigned a cost of 1/|Si and U| which adds 1 to the total cost.
+
+For every Set Sj sum Cx {x in Sj} ≤ H_{|Sj|}  
+Let Sj = {a_1,a_2,a_3} where a1 is covered first and a2 covered second and so on. Then a1 ≤ 1/|Sj| as it would be covered by a set that covers more elements than Sj then a2 ≤ 1/|Sj|-1 and so on so the final cost of Sj is ≤ H_|Sj|
+
+`sum cx {x in Sj} ≤ H_|Sj|` (2)
+
+Let T be the optimal solution |T| = K* and U Sj = entire set j in T.  
+K = sum cx {x in U} ≤ sum j in T sum x in Sj cx ≤ k* Hn  
+K ≤ Hn\*K\*
+
+Note that if all the Sj are all ≤ t forall j{1 to m} then the above alogrithm is Ht-Factor algorithm.
+
+Unless P = NP there is nothing better algorithm that ln(n)-factor. All the algebra above Cx/Hn is a feasible solution for the dual for x in U
+
+---
+# THE END 
