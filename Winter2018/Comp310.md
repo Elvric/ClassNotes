@@ -2297,7 +2297,6 @@ get_fork(i)
 
 put_fork(i)
 {
-    get_waiter_permission();
     signal(fork[i])
     signal(fork(i+1)%n)
     inform_waiter()
