@@ -2277,8 +2277,8 @@ All at most n-1 philisopher at the table but not really practical in real life.
 ```
 sem fork[n] = {1}
 sem mutex = 1
-stopped = 0
-enters = 0
+sem stopped = 0
+int eaters = 0
 philospher[i]
 {
     while(1)
@@ -2291,7 +2291,7 @@ philospher[i]
 get_fork(i)
 {
     get_waiter_permission();
-    wait(frok[i])
+    wait(fork[i])
     wait(fork(i+1)%n)
 }
 
