@@ -320,7 +320,7 @@ The relation we work on must be set compatible: same column types not title in t
 #### In Class examples
 S skater table, P competitions result and C competition dates and details. 
 
-S
+
 | sid | sname | rating | age
 | --- | --- | --| --|
 | | | |
