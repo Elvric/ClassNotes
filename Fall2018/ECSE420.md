@@ -62,4 +62,154 @@ Memory latency: CPU rates have increased 4x faster than memory access speed. Mul
 ## Chalenges
 
 ### Sophisticated applications
+
 Flight stimulation require a lot of computing power, as the system evolve the computation load on each processor used might vary so we must equilibrate that somehow. As the scale of the process increases the time difference might go from 2 extra seconds to 2 extra days.
+
+---
+
+# Lecture 2 06/09/2018 Multithreading and parallele computing
+
+## Introduction
+Requires to invoque system dependent procedures and functions to implement multithreadung. Java had that from multithreading - The concurrent running of multipl tasks within a program.
+
+## Thread concept
+Run multiple threaads on multiple CPU or run multiple thread on a single core machine using time sharing. Thread can be more efficient on a single core if for example we have a lot of IO coming from the app.
+
+### Creating thread and Tasks
+```java
+public class TaskClass implements Runnable
+{
+   public TaskClass(...)
+   {
+   }
+      // Implements the run method
+   @Override
+   public void run() 
+   {
+      // Tells system how to run custom thread
+   }
+}
+
+public class client
+{
+   public void SomeMethod()
+   {
+      // Create task class
+      TaskClass task = new TaskClass(...);
+      // Create thread
+      Thread thread = new Thread(Task);
+      // Start the thread
+      thread.start();
+   }
+}
+```
+Run should never be invoked directly since that will run the method in the same thread that the call is made. Start on a thread cannot be started twice this my cause an exception if the thread is already running and asked to start again
+
+### The thread class
+Subclass of the runnable interface, list non exaustive
+```
+Thread()
+Thread (Runnable Task)
+start() void
+isAlive() boolean
+setPriority(int p)
+join()
+```
+Hence it is possible to do this
+```java
+public class CustomThread extends Thread
+{
+   public CustomThread(...)
+   {
+
+   }
+   @Override
+   public void run()
+   {
+
+   }
+}
+public class Client
+{
+   public void method()
+   {
+      CustomThread thread = new CustomThread(...);
+      thread.start();
+   }
+}
+```
+However this is not recomended
+
+#### Methods
+```java
+// temporarly release time for other thread can help to debug
+thread.yield();  
+
+// Sleep the thread of the ammount of milliseconds entered
+try
+{
+   Thread.sleep(long mills);
+}
+catch (InterruptedException ex)
+{
+
+}
+
+// use join method to force one thread to wait for another thread to finish here the main Thread joins thread4 and waits for it to finish before carrying on.
+Thread thread4 = new Thread();
+try
+{
+   thread4.join();
+}
+catch (InterruptedException ex)
+{
+
+}
+
+// Priority goes from 1 to 10 normal priority goes from 1 to 5 
+// MIN_PRIORITY, NORM_PRIORITY, MAX_PRIORITY
+Thread.priority(6);
+```
+
+### Thread pools
+Pool of available thread that can run different tasks. If we had to create a new thread for each task we want to run could get costly, hence starting and creating fewer thread maybe a better option. Example if we have 8 cores on our machine we may just want 8 threads.
+
+Java provides the executor interface, that has an execute method executing thread and the executorservice has methods to manage the thread in the thread pool. The executorService inherits from the executor interface.
+
+```
+Excutor
+   Execute(Runable)
+ExecutorService
+   shutdown
+   shutdownNow()
+   isShutDown() bool 
+   isTerminated() bool
+```
+
+#### Creating Executors
+use the already existing static class ``Executors``
+```java
+// Create a fixed number of thread in the thread pool
+newFixedTheadPool(NumberOfThreads: int) ExecutorService returned
+// create new threads as needed but will reuse prevousl constructed thread when available
+newCachedThreadPool() ExecutorService returned
+```
+
+```java
+import java.util.concurrent.*;
+public class ExecutorDemo
+{
+   public static void main()
+   {
+      ExecutorService executor = Executors.newFixedThreadPool(3);
+      executor.execute(new Runnable('a'));
+      executor.execute(new Runnable('b'));
+      executor.execute(new Runnable('c'));
+
+      executor.shutdown();
+   }
+}
+```
+``if the number of available thread is lower than the number of executes then the some thread will perform two tasks and switch between them randomly``
+
+The idea is if you want just one thread for just one task use the thread class but if you want more thread for more tasks use the thread pool.
