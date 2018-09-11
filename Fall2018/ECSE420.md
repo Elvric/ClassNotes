@@ -155,7 +155,9 @@ catch (InterruptedException ex)
 
 }
 
-// use join method to force one thread to wait for another thread to finish here the main Thread joins thread4 and waits for it to finish before carrying on.
+// use join method to force one thread to wait for another
+// thread to finish here the main Thread joins thread4 and waits 
+// for it to finish before carrying on.
 Thread thread4 = new Thread();
 try
 {
@@ -191,7 +193,8 @@ use the already existing static class ``Executors``
 ```java
 // Create a fixed number of thread in the thread pool
 newFixedTheadPool(NumberOfThreads: int) ExecutorService returned
-// create new threads as needed but will reuse prevousl constructed thread when available
+// create new threads as needed but will reuse prevousl 
+// constructed thread when available
 newCachedThreadPool() ExecutorService returned
 ```
 
@@ -213,3 +216,133 @@ public class ExecutorDemo
 ``if the number of available thread is lower than the number of executes then the some thread will perform two tasks and switch between them randomly``
 
 The idea is if you want just one thread for just one task use the thread class but if you want more thread for more tasks use the thread pool.
+
+---
+# Lecture 3 11/09/2018
+## Thread Sychronization
+### Race condition
+Threads reading the old imput instead of the new one overiding each other. A class is said to be __thread safe__ if an object of the class does not cause a race condition. 
+
+To avoid race conditions we must ensure that no more than one thread enter the critical region of the program. t
+
+### Syncronized in Java
+For the method we use that:
+```java
+public synchronized void deposit(int amount)
+public void deposit(int amount)
+{
+    syncronized(this)
+    {
+        // method body
+    }
+}
+```
+Internally the synchronized method acquires a lock before executing the method, the lock is on the object from which the lock was involve and if we are on a static method the lock is for the entire class.
+
+We can also synchronized block of code
+```java
+public void test()
+{
+    synchronized (expr)
+    {
+        statments or expr.method();
+    }
+}
+```
+The expression expr must evaluate to an object reference in order to lock the object.
+
+### Syncronization Using Locks
+This is already done implicitly with the synchronized method however this can be done explicitly
+```java
+import java.util.concurrent.locks.Lock; // (interface)
+lock(): void
+unlock(): void
+newCondition(): Condition
+```
+This class we use inherits from that and is called
+```java
+import java.util.concurrent.locks.ReentrantLock;
+ReentrantLock()
+ReentrantLock(fair: boolean) 
+// if fair is true then thread access method by
+// first come first (longest waiting thread)
+// serve else it is based on priority or random factor
+```
+#### Creating a lock in Java
+```java
+import java.util.concurrent.locks.ReentrantLock;
+public class AccountWithSync
+{
+    private Lock lock = new ReentrantLock();
+    private int balance = 0;
+    public void addPennyTask(int amount)
+    {
+        try
+        {
+            lock.lock() // Acquire the lock
+            int newBalance = balance + 1;
+            balance = newBalance;
+        }
+        catch (Exception e)
+        {
+        }
+        finally
+        {
+            lock.unlock(); // Release the lock
+        }
+    }
+}
+```
+
+### Conditions
+Can be used to facilitate communication among threads. A thread can specify ahat to do under a certain condition. Conditions are objects created by invojing the newCondition() monthod on lock objects
+```java
+public class Condition
+{
+    public void await() // current thread waits
+    {}
+    public void signal() // wakes up one waiting thread
+    {}
+    public void signalALl() // wakes up all waiting thread.
+    {}
+}
+```
+#### Example with withdraw and deposit tasks
+```java
+import java.util.concurrent.locks.*;
+public class DrawWithdraw
+{
+    private Lock lock = new ReentrantLock();
+    private Condition newDeposit = lock.newCondition();
+    private int balance = 0;
+    public void withdraw(int amount)
+    {
+        lock.lock();
+        while (balance < amount)
+            newDeposit.await();
+        blance -= amount
+        catch ()
+        {}
+        finally
+        {
+            lock.unlock();
+        }
+    }
+    public void deposit(int amount)
+    {
+        try
+        {
+        lock.lock();
+        balance += amount;
+        newDeposit.signalAll();
+        }
+        catch()
+        {
+        }
+        finally
+        {
+            lock.unlock();
+        }
+    }
+}
+```
