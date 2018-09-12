@@ -45,3 +45,13 @@ Prepare a sketch (pdf, handwritten) of the main screens of your application. Tha
 - Throw the dice
 - Communicate with other players
 - Loading saving functions accessed
+
+---
+# Lecture 3 12/09/2018
+See lecture 2 in COMP533
+
+## Modeling
+Focus on what is essential. We create models to represent ideas in an easier way (financial, safer and simpler).
+
+### Fondue
+Look at the slide it describes the thecnique that we are going to use to develop the software we are going to folow the waterfall system implementing fondue.

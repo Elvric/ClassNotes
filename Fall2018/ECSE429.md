@@ -82,3 +82,78 @@ Is the building working as expected?
 * Validation and verification not based on well defined techniques.
 * Software dev processes are commonly unstable.
 * Software quality is poorly measured, monitored and controlled.
+
+---
+# Lecture 3 12/09/2018
+## Software Quality Factors
+### McCall's model
+3 major phases:
+- Product Transition 
+    - portability
+        - Adaptation to different software environment
+    - Reusability
+        - Use of software for other projects
+    - Interoperability
+        - Ability to interface with other systems
+- Product Operation
+    - Correctness
+        - Accuracy and completness of required output
+    - Reliability/availability
+        - First Failure/Maximum failure rate
+    - Efficiency
+        - Resources needed to perform softare fonctionality
+    - Integrity
+        - Security system, access rights
+    - User experience
+        - How intuitive, how much training
+- Product Revision
+    - Maintainability
+        - Effort to identify and fix software failures
+    - Flexibility
+        - Degree of adaptability (to new customers, new taks)
+    - Testability
+        - Support for testing (lob files, automatic diagnostic) traceability
+        - Reproducable path to the error
+
+## Software Quality assurance
+A planned and systemic pattern of all actions necessary to provide adequate confidence that an item or product conforms to the standards set.
+1. Acceptable level of confidence fonctional
+2. Acceptable level of confidence that it conforms to scheduling and budgetary requirements
+3. Initiation and management of activities for the improvment of greater quality software.
+
+### Measurments
+1. Formal methods - verify mathematically specified properties
+2. Testing - Explicit input to exercise software check expected output
+3. Inspection - human examination of requierments, design, code
+4. Metrics - measure a known set of properties related to quality
+    1. Sycomatic complexity (The more loops you have in a method the higher the complexity the most likely to have errors)
+
+### SQA Defects
+__Prevention__: pervent defect from occuring in the first place through traing, planning and simulation  
+__Detection__: finds the defect through inspections, testing or measuring.  
+__Remove__: Isolation, correction and verification of fixes through fault isolation, fault analysis and regression testing.
+
+## Software development lifecycle models
+- Sequential 
+    - Waterfall, V-model
+    - Deliver software containing the complete features but takes years
+- Iterative
+    - Agile, Kanban, Scrum, Spiral
+    - Software features grow incrementaly
+
+## Software Testing
+### Kinds of defect/ Fault model
+Ambiguities: In the requirements     
+Omissions: missing an else statment     
+Inconsistencies: Use of metric system in one method and imperial system in the other.  
+Inaccuracies: Using 3 as a value for Pi or not using values with sufficient level of precisions.  
+Contradiction: software holds information only if you have a username but the username only exists if you have the information.  
+Superflous statement: extra if statment or undocumented fonctionality, trap door.
+
+What can of faults do we espect the programmer to make in order to create the testing technics that will test for these faults.
+
+
+### Objective of testing
+For customers: support decision making, reduce risks.  
+For project manager: Evaluate work produce, verify the requierments, build confidence in the level of quality of the product, detect and prevent defects  
+External authorities: Comply with legal or regulatory requierments or standards. Verify that the software comply with the standards.

@@ -86,14 +86,14 @@ We have a set (W, ≤)
 For every non-empty subset 
 $$ U \subseteq W \land U \not = \emptyset \\
 \exists u_0 \in U$$
-Such that uo is minimal
+Such that uo is least
 
 ##### Example 4
 $$\mathbb{N}, \leq$$
 $$\mathbb{R}, \leq$$
 The first one is well founded the second one is not.  
-A well founded total order is called a well order.  
-If an order is not well founded there are infinitly long strictly descending sequences.
+A well founded total order is called a __well order__.  
+If an order is not __well founded__ there are infinitly long strictly descending sequences.
 
 ## Induction
 Induction works if and only if the order is well founded
@@ -157,7 +157,7 @@ A DFA is a 4-tuple:
    $$F \subseteq S$$
 
 Now what about when we use a whole world then we get
-$$ \delta^* : *\Sigma^* \rightarrow S $$
+$$ \delta^* : S*\Sigma^* \rightarrow S $$
 By induction:  
 $$ 
 \delta^*(s,\epsilon) = s \\
