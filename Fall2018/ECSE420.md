@@ -346,3 +346,172 @@ public class DrawWithdraw
     }
 }
 ```
+
+---
+# Lecture 4 13/09/2018
+## Java build in lock condition
+If we have a syncronized block of code associated with an abject we can use these methods to make the thread wait. They must be call in the syncronized block of code otherwise an exception in throughn.
+```
+wait()
+notify()
+notifyAll()
+```
+
+```java
+syncronized (anObject)
+{
+    try
+    {
+        while(!condition)
+        {
+            anObject.wait();
+        }
+    }
+    catch (InterruptedException ex)
+    {
+        ex.printStackTrace();
+    }
+}
+
+syncronized (anObject)
+{
+    anObject.notify() ;
+    anObject.notifyAll();
+}
+```
+
+## Using different conditions
+```java
+public class ConsumerProducer
+{
+    private static final CAPACITY = 1;
+    private LinkedList<Integer> queue = new LinkedList<Integer>();
+    private Lock lock = new ReentrantLock();
+    private Condition notFull = lock.newCondition();
+    private Condition notEmpty = lock.newCondition();
+    public void write()
+    {
+        try
+        {
+            lock.lock();
+            while(queue.size() == CAPACITY)
+                notFull.await();
+            queue.enqueu(0);
+            notEmpty.signal();
+        }
+        catch
+        {}
+        finally
+            lock.unlock();
+    }
+
+    public void remove()
+    {
+        int value = 0;
+        try
+        {
+            lock.lock();
+            while(queue.size() == 0)
+                notEmpty.await();
+            value = queue.remove();
+            notFull.signal();
+        }
+        catch
+        {}
+        finally
+            lock.unlock();
+    }
+}
+```
+
+## Blocking Queues
+Is a datastructure that allow syncronized access to it part of the BlockingQueue interface that itself inherits from queue that inherites from collection. There are 3 concrete blocking queue array, linked and priority
+```
+put(Element: E): void
+take(): E
+```
+### Array blocking queue
+```
+ArrayBlockkingQueue(capacity: int)
+ArrayBlockingQueue(capacity: int, fair: boolean)
+```
+### Linked
+```
+LinkedBlockingQueue()
+LinkedBlockingQueue(int: capacity)
+```
+### Priority
+Same as linked with priorities
+```
+PriorityBlockingQueue()
+PriorityBlockingQueue(int: capacity)
+```
+
+## Semaphore
+```
+Semaphore(numberofPermits: int)
+Semaphore(numberofPermits: int, fair: boolean)
+acquire(): void
+release(): void
+```
+## Deadlock
+they are used to avoid deadlock when multiple threads need to access the same object at the same time we can have a problem if O1 has A but wants B and O2 has B but wants A.
+
+### Preventing Deadlock
+Assign an order on all the objects whose locks must be acquired and ensure that each thread acquires the locks in that order.
+
+## Thread States
+- new
+- ready
+    - Ready state until it starts running
+    - yield()
+- running
+- wait for target to finish (blocked)
+    - join()
+- wait for time out
+    - sleep()
+- wait to be notified
+    - await()
+- finished
+
+### Information on thread state
+isAlive() true if ready, blocked, running false if new or finished  
+
+interrupt() interupt the thread, if the thread is in Ready or 
+Running then its interrupted flag is set if the thread is
+blocked it awakens and enter ready state throwing interupt exeption
+
+isInterrupted() true if interupted false otherwise
+
+## Syncronized collection
+The classes in java collection are not thread safe but can be made thread safe data in a collection. The collection class provides 6 methods to wrapp a collection in a syncronized maner.
+
+### Fail-Fast
+We can have an issue when using an iterator, using the Collection class we are protected when adding or removing (modifiying) the collection but the iterator itself does not modify the collection hence we must ensure that any iteration occurs in a syncronized fashion manualy.
+
+## Fork Join Framwork in java
+ForkJoinPool inherits from ExecutorService
+```
+cancel(interrupt: boolean): boolean
+get(): V
+isDone(): boolean
+ForkJoinPool()
+ForkJoinPool(parallelism: int) define the number of processes we want to create
+invoke(ForkJoinTast<T>): T
+```
+
+ForkJoinTask abstract implements the Future interface
+```
++fork(): ForkJoinTask<V>
++join(): V
++invoke(): V
++invokeAll(ForkJoinTask<a>): void
+```
+
+Then extended with RecursiveAction or RecursiveTask
+```
+#compute()
+```
+void for action but V for Task for the return value, these must be overwritten in our class as this is the method that runs when performing the task
+
+ForkJoinTask are thread like entities that are light weight threads. 

@@ -190,3 +190,37 @@ Then the machine is quite simple to draw to get to the accepting state but gets 
 #### Proposition
 * Every finite language is regular (we can build a machine that will recognize all the word of that language).
 * It is possible to have states that cannot be reached.
+
+---
+# Lecture 4 12/09/2019
+## Turing machines continue
+It is important to realize that states encode information. 
+
+### Example accept any number divisible by 3
+Then we must keep track of the value of mod 3 with the number. But the machine here sees each digit one by one lets call the number the machine has seen  x then if we add a 0 after x then we have doubled the size of the number so we get 2x if it is a 1 then we get 2x+1. However we can just keep track of the reminder:
+
+r = 0 and we see a 0 then the number has doubled but the reminder is still 0.  
+r = 0 and we see a 1 then the number has doubled+1 so the new reminder is 1  
+r = 1 and we see a 0 then the number has doubled so the reminder is now 2  
+r = 1 and we see a 1 then the number has doubled + 1 which gives us a r = 0  
+r = 2 and we see a 1 then number has doubled + 1 which gives us a reminder of 2  
+r = 2 and we see a 0 then the number has doubled which gives us r = 1.
+
+### Proving that the example above requires at least 3 states
+Suppose that we have a machine with only 2 states and we claim that it can recognise numbers divisible by 3.  
+Since we have 2 states then one must be an accept state and the other must be a reject state.  
+Now lets consider 3 different string 100, 101, 110. So we get rejected, rejected and accepted. This means that 100 and 101 go to the same state. So after readding 100 we end up with the same state than 101. This implies that 1001 and 1011 must go to the same state since we have ended on the same state before but one is divisble by 3 the other one is not so we have a contradiction no such machine is possible.
+
+## Non-Determininistic finite automata
+Design a machine to accept all words that end in aa with an alphabet {a,b}, this can be done with a machine that can predict when the last 2 a's are going to come and go to specific states, so we have 2 arrows for a in the transition but the machine will know when to take each. Also we do not need to mention all the arrows for that machine, if the machine jams then it simply rejects.
+
+There is an algorithm which converts ands NFA into an equivalent DFA. Here equivalent means recognises the same language. The algorithm is pretty much back tracking
+
+$$NFA+\epsilon$$
+Means that the machine in certain state is allowed to change state when not reading anything the same theorem applies any such machine can be converted to a DFA.
+
+Consiser the decimal digits:
+$$ \Sigma = \{.,+,-,0,1,2,3,4,5,6,7,8,9\}$$
+27. , 47.3, 202.961, +17.0, -5.61
+    
+We can draw a machine that checks if the number is valid note that we want numbers either in front or behind the decimal point.
