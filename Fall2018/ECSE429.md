@@ -157,3 +157,117 @@ What can of faults do we espect the programmer to make in order to create the te
 For customers: support decision making, reduce risks.  
 For project manager: Evaluate work produce, verify the requierments, build confidence in the level of quality of the product, detect and prevent defects  
 External authorities: Comply with legal or regulatory requierments or standards. Verify that the software comply with the standards.
+
+---
+# Lecture 4 14/09/2018
+## 7 testing principles
+1. Program testing can be to show the presence of bugs but never their abscence
+2. Exhaustive testing is impossible (testing is always incomplete like testing a factorial function for n). The continuity propery cannot apply to software as a bridge build for w car will work if there are y < w car the same thing cannot be said for software.
+3. Early testing saves time and money. The cost of deffect rises as we find the bug later in the production stage.
+4. Defects are clustered together, the more bugs you fix the more bugs there are.
+5. The pesticide paradox. A system tends to become resistent to particular testing. Executing the same test will not find new bugs.
+6. Testing is context dependent, increase level of criticalit means increase level of testing
+7. Abscence of errors is a fallacy. Finding bugs or finding no defect in the software does not help us to know if the software is bug free. (it does not prove anything)
+
+## Test levels
+Groups of test activities that are organized and put together.
+
+### Unit test
+Takes component code as imput
+
+### Integration testing
+Component code tested, integrated modules.
+
+### System test
+fonctioning systems
+
+### Acceptance test
+Validated system
+
+## Unit testing
+Usually automated
+### Objectives
+Verify the fonctionality of a component, find defects in components, build confidence in component quality
+
+### test basis
+detailed code data model, component specific (only specific part of the code is tested no integration)
+
+### Test object
+What we are testing? Components unit, classes, code+data structure, databases modules
+
+### Typical defect
+Incorrect fonctionality, Data flow problem, Incorrect code logic, defects are fixed as soon as they are found
+
+### Specific approaches
+Test-driven dev, Many code-level white box.
+
+## Integration Testing
+Interatction between components and interfacs (still automated)
+### Objective
+Verify the fonctional and non-f of behavior of interfaces
+
+### Test Basis
+Software design, Sequence diagram work flow, Protocol and interface specification, Architecture
+
+### Test objects
+Subsystem, interface, API, Databases, infrastructure, microservice
+
+### Typical defects
+Incorrect/missing data or message structure, wrong timing, Interface mismatch, Communication failure between subsystems, incorrect assumption between bondaries units
+
+### Specific approach
+Bib bang vs incremental integration, Architecture based buttom un/top down, Functional decomposition (Test interaction between let say pressing the break and the ABS would it work in combination with ACC)
+
+## System Testing
+Carried out by independent testers as early as possible
+
+### Objectives
+Verify the fonctional and NF of the system as specified, Validate completness, build confidence in the system as a whole,
+prevent bugs from going in production, verify data quality.
+
+### Test basis
+Software requierments spec, use case state diagrams, User stories, risk analysis report, sysrem and user manual
+### Test Objects
+Applications, HW/SW systems, system configuration and configuration data
+
+### Typical defect
+Incorrect calculations, incorrect sytem behavior
+
+## Acceptance testing
+Checking with business compliance, safety compliance legal compliance are done here but not done in the above test
+### Objectives
+Veryfy the F and FN of the system, build confidence in the quality of the system as a whole.
+
+### Test Objects
+Business process of full system, forms, reports existing production data,
+
+### Type of defect
+The system workflow do not meet the business requierments, system violates safety requierments, NF failure (performance)
+
+### Type of testing
+
+#### User acceptance testing
+Fitness for use by the user, business process are performed correctly 
+
+#### Operational acceptance testing
+Test backup and restore, install, uninstall, disaster recovery Data load / migration, performance testing
+
+#### Contractual and regulatory acc testing
+Check contract acceptant criteria, check adderence to regulation perfomed by independent user or authoritities
+
+#### Alpha beta testing 
+Alpha test done by existing customers at the development place, beta done by existing customers in their own location.
+
+## Test types
+
+| Fonctional testing | Non fonctional testing
+|-----|-------|
+|Evaluate functions othat the system shoudl perform what the system shoud do| How well the system behaves? Caracteristics of the system |
+|Completness, correctness, appropriatness| Reliability, performance, security, usability|
+| performed at all levels | Should be performed at all levels |
+| To what exten a fonctional element has been exercised | the extent to which some type of NF element has been exercices|
+
+| Black box | White Box |
+|----|-----|
+|Same as fonctional (specification)| Derive test based on the sytem internal structure (implementation)|
+|All levels | 

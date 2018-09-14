@@ -224,3 +224,56 @@ $$ \Sigma = \{.,+,-,0,1,2,3,4,5,6,7,8,9\}$$
 27. , 47.3, 202.961, +17.0, -5.61
     
 We can draw a machine that checks if the number is valid note that we want numbers either in front or behind the decimal point.
+
+---
+# Lecture 5 14/09/2018
+## Non determainistic automaton formal definition
+Fix alphabet and   
+$$ N = (Q, Q_0, \Delta,F) \\
+Q = \text{Finite set of states}\\
+Q_0 \subseteq Q: \text{start states } Q_0 \not = \emptyset\\
+\Delta = Q * \Sigma \rightarrow 2^Q\\
+2^Q = \text{the set of all subsets of Q}\\
+\Delta^* = 2^Q * \Sigma^* \rightarrow 2^Q\\
+A \subseteq Q,\Delta^*(A,\epsilon) = A\\
+w \in \Sigma^*, a \in \Sigma,\Delta^*(A,wa) = \cup_{q \in \Delta^*(A,w)} \Delta(q,a)$$
+
+Fact(1):  
+$$ \Delta^*(A\cup B,w) = \Delta^*(A,w) \cup \Delta^*(B,w)$$
+
+Fact(2):  
+$$ x,y \in \Sigma^*, \Delta*(A,xy) = \Delta^*(\Delta^*(A,x),y)$$
+
+### Def of the language of the machine
+$$L(N) = \{w|\Delta^*(Q_0,w)\cap F \not = \emptyset\}$$
+
+### Theorem 1
+Given an NFA N as above  
+$$ \exists a \text{ DFA } M, (S,S_0,\delta,\hat{F}) \text{ such that } L(M) = L(N)$$
+Proof:  
+$$ S = 2^Q\\
+s_0 = Q_0\\
+\hat{F} = \{A \subseteq Q | A \cap F \not = \emptyset\}\\
+\delta(A,a) = \cup_{q \in A} \Delta(q,a) = \Delta*(A,a)$$
+Now we want to show that L(M) = L(N):  
+Lemma  
+$$\Delta^*(A,w) = \delta^*(A,w)$$  
+Proof by induction on the length of the word |w|  
+Base case 
+$$ w = \epsilon\\
+\Delta^*(A,\epsilon) = A = \delta^*(A,\epsilon)$$  
+Induction Case:
+$$ \text{Assume } \forall A \subseteq Q\\
+\Delta^*(A,x) = \delta^*(A,x)\\
+\Delta^*(A,xa) = \delta^*(A,xa)\\
+\delta^*(A,xa) = \delta(\delta^*(A,x),a)\\
+= \delta(\Delta^*(A,x)a)\\
+= \Delta^*(\Delta^*(A,x),a)\\
+= \Delta*(A,xa)$$
+Proof of the theorem concluded:
+$$ L(N) = \{w|\Delta^*(Q_0,w) \cap F \not = \emptyset\}\\
+=\{w|\Delta^*(Q_0,w) \in \hat{F}\}\\
+=\{w|\delta^*(Q_0,w) \in \hat{F}\}\\
+=\{w|\delta^*(s_0,w) \in \hat{F}\}\\
+=L(M)
+$$
