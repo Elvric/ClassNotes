@@ -249,7 +249,7 @@ $$L(N) = \{w|\Delta^*(Q_0,w)\cap F \not = \emptyset\}$$
 
 ### Theorem 1
 Given an NFA N as above  
-$$ \exists a \text{ DFA } M, (S,S_0,\delta,\hat{F}) \text{ such that } L(M) = L(N)$$
+$$ \exists \text{a DFA } M, (S,S_0,\delta,\hat{F}) \text{ such that } L(M) = L(N)$$
 Proof:  
 $$ S = 2^Q\\
 s_0 = Q_0\\
@@ -269,7 +269,7 @@ $$ \text{Assume } \forall A \subseteq Q\\
 \delta^*(A,xa) = \delta(\delta^*(A,x),a)\\
 = \delta(\Delta^*(A,x)a)\\
 = \Delta^*(\Delta^*(A,x),a)\\
-= \Delta*(A,xa)$$
+= \Delta^*(A,xa)$$
 Proof of the theorem concluded:
 $$ L(N) = \{w|\Delta^*(Q_0,w) \cap F \not = \emptyset\}\\
 =\{w|\Delta^*(Q_0,w) \in \hat{F}\}\\
@@ -277,3 +277,70 @@ $$ L(N) = \{w|\Delta^*(Q_0,w) \cap F \not = \emptyset\}\\
 =\{w|\delta^*(s_0,w) \in \hat{F}\}\\
 =L(M)
 $$
+
+---
+# Lecture 6 17/09/2018
+## Regular expressions
+Algebra with terms defined inductively  
+$$\Sigma \text{ Alphabet }=\{a,b\}\\
+ \phi \\
+ \epsilon\\
+ \text{any letter from }\Sigma \text{ is a regular expression }\\
+ R,S \in RE \implies R+S\\
+ R,S \in RE \implies R.S\\
+ R \in RE \implies R^*
+ $$
+
+ Examples:
+ $$ ab+\epsilon\\
+ (a^*b)^*\\
+ a^*+b^*\\
+ aa^*\\
+ \phi
+ $$
+
+ An RE describes a subset of  
+ $$ \Sigma^*$$  
+The empty set is defined as  
+$$ \phi$$
+Then  
+$$R+S := \{w\in R\} \cup \{w\in S\}\\
+R.S := \{w_1,w_2| w_1 \in R, w_2 \in S\}\\
+R^* := \{w_1,w_2,w_3,...,w_n| w_i \in R\} \cup \{\epsilon\}$$
+
+Example:  
+$$ (a^*b)^* = \{\epsilon,ab,abab,aaab,abaab,b\}$$
+
+### Theorem
+Every regular language can be recognised by regular expressions,any language defined by a regular expression is a regular language.
+
+#### Idea of the proof DFA --> RegExp
+Enumerate the states: {1,2,3,...,n}  
+Then define a family of regular expressions, we look at the machine and only allow only specific movement through the machine, then our goal is to decrease these movements by converting them to a regular expressions. 
+
+Familiy of regular expression
+$$ R_{i,j}^k: \text{ Describes all paths that take the machine
+from state i}\\
+\text{to state j but only passing through states numbered k or less}$$
+When k=0 we are not allowed to stop anywhere so there must be a direct transition between i and j.
+
+Compute
+$$ R_{i,j}^k \forall (i,j)$$
+
+Induction
+$$R_{i,j}^{k+1} = R_{i,j}^k+R_{i,k+1}^k(R_{k+1,k+1}^k)^*R_{k+1,j}^k$$
+
+### Equations between regular expressions
+\+, .  
+$$R.(S+T) = R.S+R.T\\
+R + \phi = R \\
+R+(S+T) = (R+S)+T\\
+R+S = S+R\\
+R+R = R\\
+R.\epsilon = R = \epsilon.R\\
+R.S \not = S.R\\
+R.(S.T) = (R.S).T\\
+\epsilon+RR^* = \epsilon R^*R = R^*
+$$
+
+
