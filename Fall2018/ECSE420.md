@@ -515,3 +515,89 @@ Then extended with RecursiveAction or RecursiveTask
 void for action but V for Task for the return value, these must be overwritten in our class as this is the method that runs when performing the task
 
 ForkJoinTask are thread like entities that are light weight threads. 
+
+---
+# Lecture 5 18/09/2018
+## Moore's Law
+The clock speed is now almost flat altought the number of transistors doubles every 2 years. This is because the master a transisitor is used the more it hits up and we have now reached the heat limit. 
+
+## CMP (Chip multi-processor)
+All on the same chip we have multiple CPU with multiple cache that access a shared memory. (multi core). 
+
+So now the issue is that we can no longer wait overtime for our processors to be more powerful so that our code runs faster. Now we have to take advantage of the multi core on the chips and split the code so that they can run concurrently on the multicore to speed it up. Like using two processors should allow us to double the speed.  
+The issue comes when we have to lock resources for the thread and multiple threads want to access the same resource then there is an idle time for certain threads which hence do not really speed up as expected the runtime of the code.
+
+## Concurrent computation
+The issue is that there computation are asynchronous which can case delays such as:
+* cache misss (short)
+* Page fault (long)
+* Scheduling quantum used up (really long)
+
+This is out of our control the JVM or OS is the one that manages that. These are unpredictable delays and we cannot do much about these delays.
+
+### concurency Jargon
+Hardware: cores processors  
+Software: threads and processes
+
+## Finding prime numbers from 1 to 10^9
+We have 10 processors so the first idea is to split the work evenly between the 10 threads, thread 1 gets number from 1 to 10^9, thread 2 from 10^9 to 2*10^9 and so on but this can cause some speed up issues. As some number may take longer to be identified and the number of primes in a segment may vary. 
+
+### Concrency Idea: Counter
+```java
+Counter counter = new Counter()
+void printPrime()
+{
+    long j = 0;
+    while (j<10^10)
+    {
+        j = counter.getAndIncrement();
+        if (isPrime(j))
+        {
+            print(j);
+        }
+    }
+}
+```
+In this case this is better than what we had before but we need some sychronization when accessing the counter.
+
+### Single thread Counter class
+```java
+public class Counter {
+    private long value;
+    public long getAndIncrement() {
+        return value++;
+    }
+}
+```
+This can definitly cause some synchronization issues as seen earlier in class. So we would want this action to be done atomically.
+
+### Multiple thread Counter class
+```java
+public class Counter {
+    private long value;
+    public long getAndIncrement() {
+        sychronized (this) {
+        return value++;
+        }
+    }
+}
+```
+In this case here we have mutual exclusion.
+``Question what does syncronized do when accessing static variables``
+
+## Alice and bob pet issue
+2 people have 2 pets but there is only one pond we must have an algorithm so that the two pets are not in the pond at the same time. We want to ensure both pets never in the pond at the same time __Safety__ and if both want to get in at least on gets in __liveness__.
+
+Message passing does not work in this case as the other partie may not be there or respond. The communication must be __persistent__ and not __transient__.
+
+Cannot be solved by an interupt system by using a bit in another thread to cause interupts as we may run out of bits.
+
+## Amdahl's law
+$$
+speedup = \frac{1}{1-p+\frac{p}{n}}\\
+p = \text{parallel fraction}\\
+n = \text{\# of threads}
+$$  
+So there is always a sort of bottle neck in case of speed up. The only way to get a speed up equal to the number of threads created we must almost have all the code parallisable. 
+
+Hence our goal is going to minimize the overhead assocated with parallelizing a fraction of the code P. And learn how to introduce parallelism in the 1-p part.

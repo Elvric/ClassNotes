@@ -342,5 +342,3 @@ R.S \not = S.R\\
 R.(S.T) = (R.S).T\\
 \epsilon+RR^* = \epsilon R^*R = R^*
 $$
-
-
