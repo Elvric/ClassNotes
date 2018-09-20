@@ -271,3 +271,57 @@ Alpha test done by existing customers at the development place, beta done by exi
 |----|-----|
 |Same as fonctional (specification)| Derive test based on the sytem internal structure (implementation)|
 |All levels | 
+
+---
+# Lecture 5 19/09/2018
+## Maintenance testing
+Carried after system is already in production env. Changes made for maintenance testing is needed to evaluate success and ensure the lack of side effects.
+
+Triggers for maintenance
+- Modificiation
+    - Planned enhancment
+- Migration
+    - from one platform to other
+- Retirement
+    - Fonctionality
+    - Sub systems
+
+It evaluates the planned/ecevuted change by identify consequences + possible side effects.
+
+## Test activities and processes
+Testing is a process that has many different steps:
+1. Test planning
+2. Test monitering and control
+3. Test analysis
+4. Test design
+5. Test implementation
+6. Test executiom
+7. Test Completion
+
+### Test planning
+Define the objective of testing, define the approach taken to meet these objectives with the constrains imposed by the context of the system. i.e we can access the innter system of a bank only on Sunday bettween 12 and 14 
+
+### Test Monitoring and Control
+Compare actual progress against the test plan using test monitoring metrics. Evaluate exit criteria (check results against coverage)
+
+### Test analysis
+Identify test features, define and prioritize associated test conditions, analyse test basis (Requierments, design model, implementation)
+
+### Test Design
+Elaborate test conditions into sets of hight level test cases. 
+
+### Test Implementation
+Create the software for execution by creating test suites and automated test scripts from test procedures. Arrange the test suites into efficitient schedule. Build the test environment.
+Prepare the test data.
+
+### Test execution
+Run the test suits in accordance with the test execution schedule. Compare results with expected results, analyse anomalies to identify the causes. Regord the defects based on the observed failures, log outcome of test execution, verify and update traceability.
+
+### Test completion
+Collect data from completed test activities. Occures at project milestones, check if all defect reports are closed. Create a test summary to report to the stakholders. Analyse lessons learned from completed test activities and analyse changes for future test iteration.
+
+## Importance of tracability
+The idea that each test must be linked to a specific aspect or goal in the code and such a fonction must be followed from the designed document, to the code, to the test designed to test the fonctionality.
+
+## Test driven development
+Listen to customers to gather the requierments, develop test cases, code the program then redesign/refactor/clean up as more code is added to the system.

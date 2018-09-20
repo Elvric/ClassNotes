@@ -601,3 +601,109 @@ $$
 So there is always a sort of bottle neck in case of speed up. The only way to get a speed up equal to the number of threads created we must almost have all the code parallisable. 
 
 Hence our goal is going to minimize the overhead assocated with parallelizing a fraction of the code P. And learn how to introduce parallelism in the 1-p part.
+
+---
+# 20/09/2019
+## Mutual exclusion
+- Focuse first on 2 threads
+- Then for n threads
+- Fair solutions
+- Inherent costs
+
+### Event
+An even is a is something a thread A does and happen instentaneously at a specific time for 0 amount of time. If two events happen simultaneously one must happen before the other.
+Invoke a method, returning of a method, assign local variables, assign shared variables.
+
+### Thread
+A is a sequence of events. We can think of threads of state machine where the thread is in a state and after an event we have a transition to a new state.
+
+### Thread state
+We can look at the program counter to know what instruction is going to be read next.
+
+### Concurency
+Events of two different threads interleaved. Still one happen before the other
+
+### Interval
+We take to events and the time between these two events represent the interval. Intervals may overlap or be disjoint.
+
+### Precedence
+Interval A precede interval B if interval A happens before interval B. 
+
+### Repeated events
+To repeat an event we just use a super script to indicate the number of time an event a happened.
+
+### Deadlock free
+If a thread calls lock and never returns means that other thread must compete lock and unlock infinetely many times. System as a whole makes progress even if an individual starve.
+
+## Mutual exclusion on 2 threads
+```java
+class LockOne implements Lock {
+    private boolean[] flag = new boolean[2];
+    // Thread ID is either 0 or 1
+    public void lock() {
+        int i = ThreadID.get();
+        int j = 1 - i;
+        // if i is the current thread then j is the other
+        flag[i] = true;
+        while (flag[j]) {};
+    }
+}
+```
+Assume concurency
+$$ CS_A^j \\
+CS_B^k
+$$
+That means that flag[A] was set to true and then flag[B] was false and flag[b] was set to true and flag[A] was false. Hence we can assume that both thread read the flag variable of the other before the other had the chance to write to the flag variable. Then looking at the code we can see that there is hence a contradiction.
+
+Deadlock freedome however is not safe in our case as both of them could raise their flag and end up in deadlock.
+
+```java
+public class LockTwo implements Lock {
+    private int victim;
+    public void lock() {
+        victim = i;
+        while (victim == i) {};
+    }
+}
+```
+Satisfies mutal exclusion but does not satisfy deadlock free. Sequential execution deadlocks.
+
+### Peterson's Algorithm
+```java
+public void lock() {
+    flag[i] = true;
+    victim = i;
+    while (flag[j] && victim == i) {};
+}
+public void unlock() {
+    flag[i] = false;
+}
+```
+
+It satisfies mutual exclusion through the order of execution in the code. And is deadlock free for the following reasons: solo other's flag is false, duo just one thread at a time can be the victim.
+
+Starvation free. As when one thread reads the while loop it does so over and over, when the thread that wants to enter the lock then it will be the victim hence then the other thread that was waiting will get in.
+
+## Filter algorithm that works for n threads
+There are n-1 waiting rooms, at each level at least one thread gets through and at least one thread gets blocked. Only one thread makes it through.
+```Java
+public class Filter implements Lock {
+    int[] level;
+    int[] victim;
+    public Filter(int n) {
+        level = new int[n];
+        victim = new int[n];
+        for (int i = 0; i < n; i++) {
+            level[i] = 0;
+        }
+    }
+    public void lock() {
+        for (int L = 1; L < n ; L++) {
+            level[i] = L;
+            victim[L] = i;
+        }
+        while (((exists k != i) level[k] >= L) && victim[L] = i) {};
+    }
+}
+```
+The only difference with Pererson's in terms of usefullness is that the system is not fair, threads can be taken over by overthreads. As if A starts before B then A should enter before B.

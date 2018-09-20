@@ -86,7 +86,7 @@ How interacts with the system directly. Will the system need to interact with ot
 #### Categories
 __Primary actors__: actor with a goal on the system, obtain value on the system, may interact with the system with facilitator actors. Flash point player that wants to login
 
-__Secondary actors__: actor which the system has a goal towards them. In order to achieve a goal to a primary actor.  
+__Secondary actors__: actor which the system has a goal towards. In order to achieve a goal to a primary actor.  
 Opening a bank account once set up the system needs to print out the information of the bank account, the printer will be asked to print the statment hence the printer will be the secondary actor. Very often the system depends on secondary actors to achieve the goal. 
 
 Most use cases are basically how primary actor asks for something and how the system with the secondary actors respond to it. 
@@ -136,3 +136,7 @@ High level use case can have subclasses such as placing an order involves supply
 White arrow subsystem-|>User to show different subsystem calls from one use case depending on the imput given.
 
 <\<extends>> adds know interaction new interaction step to the base use case in case of a specific input like ordering a boat the user asks to recieves the boat manual. Generally we do not use extends that much. 
+
+# 19/09/2018
+## Object orientation overview
+See the 533 notes most likely.

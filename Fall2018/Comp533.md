@@ -234,4 +234,63 @@ Aspects are woven together at join points Aspect languages (AspectJ, AspectC#, A
 - Aspects
     - Group together pointcutes, advice and introduction
 
-ADD VICE
+---
+# Lecture 5 19/09/2018
+## AspectJ continued
+Joinpoints are identified using point cut designators.  
+__Call joinpoint__: calling a fonction in another function.   
+__The execution joinpoint__: happens when in a function we call a fonction on another object.   
+__Initialization joinpoint__: creating an instance I guess ? 
+__Execution handeling joinpoint__: handler(TypePattern)  
+__Field accesses__: get(Signature), set(Signature) used to access an attribute.  
+__Object__: Done in realation with objects, any call done in a certain object.
+
+We can add + when we also what to include subtypes, we can also add * when it can be anything. From what I understand so far it is like bash and the aspect syntax is a bit like trying to find a word. When et do call(public * Account.get*(...)) means that we want to intercept all calls that are public with any return type that are getters.
+
+__pointcut__: can be used to create warnings or errors
+
+Example of AspectJ:
+```AspectJ
+pointcut PublicCallsToAccount(Account a) :
+call(public * Account.*(..)) && target(a);
+
+pointcut SettingIntegerFields(int newValue) :
+set(* int Account.*) && args(newValue);
+
+around PublicCallesToAccount(Account a) {
+    if (a.blocked) {
+        throw new AccountBlockedException();
+    }
+    else {
+        procee();
+    }
+}
+```
+
+### AspectJ advice
+Around: means instead of
+Before after (not sure yet) :(
+
+```AspectJ
+private boolean Account.blocked = false;
+public void Account.block() {
+    blocked = true;
+}
+public void Account.unblock() {
+    blocked = false;
+}
+```
+In the code above here we are in an aspect and we add to the class Account implicitly the field blocked and two extra methods that allow the class account to change the value of that new field. This makes sense since the class account is purposly not build to include that aspect. It is the role of the aspect to apply its requierments if I may say to the class therefore the aspect must have the ability to modify the class as if a Dev has adding new methods to the class in a regular java program.
+
+TODO PUT THE CODE GIVEN IN THE SLIDES HERE.
+```AspectJ
+public aspect BlockableAccouts {
+    pointcut PublicCallsToAccount (Account a) {
+        call(public * Account.*(..)) && target(a);
+    }
+}
+```
+
+Questions about arrows
+About arround
+About Iblockable
