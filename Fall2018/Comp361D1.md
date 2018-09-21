@@ -140,3 +140,7 @@ White arrow subsystem-|>User to show different subsystem calls from one use case
 # 19/09/2018
 ## Object orientation overview
 See the 533 notes most likely.
+
+# 21/08/2018
+## Association
+In UML we just draw a full name with a black arrow pointing to the object that contain the other in a way I think?

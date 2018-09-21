@@ -325,3 +325,117 @@ The idea that each test must be linked to a specific aspect or goal in the code 
 
 ## Test driven development
 Listen to customers to gather the requierments, develop test cases, code the program then redesign/refactor/clean up as more code is added to the system.
+
+# 21/09/2018
+## Static Validation and validation technics
+The code is not executed, can be done manually or automatically. It can target all aspects fo the developments
+- Specification,
+- Architecture
+- Models
+- Code
+- Testware
+- Documentation, User guides
+
+With that method we can catch faults earlier and identify defects not found by dynamic testing, save the cost of execution. Does not require the entire program to be coded for the test to begin. Improve the communication between teams members with code reviews which helps among the members of the team. It increases the productivity by allowing for more maintainable code.
+
+### Type of defects found
+- Requierments Defects: inconsistencies, ambiguities
+- Coding defects: variables with no value, variable declared but never used
+- Incorrect Interface specification: different unit of measurment used by the caller
+- Security vulnerabilities: Buffer overflows, missing test for acceptance criterion
+- Maintainability defects
+
+## Review process
+During a meeting during which a work product, or set of work product is presented to project personnel is presented to parties of interests to receive comments and corrections.
+
+### Types
+- Informal review
+- Walkthrough
+    - Monstly informal
+    - Driven by the other of the piece of code, evaluate a lot of aspects of the code
+- Technical Review
+    - Documeted process
+    - gaine consensus, detect potential defects
+- Inspection
+    - Formally documented process, external experts, moderators involves
+    - Look for defect, obetain deate and communicate development documents
+  
+#### Inspections roles
+- Mderator
+    - Ensure that the inspection procedure are followed
+    - In chager of assembling the inspection team
+    - keeping the team on track
+    - Like the coordinators
+    - Usually comes outside of the project team
+- Recorder (scrib)
+    - Document all defects that arise from inspection meeting
+    - Not only procedure but requirese some procedure knowledge
+- Reviewer
+    - Analyses and detects defects in the work product. 
+    - All participants play that role 
+- Reader (presenter)
+    - Leads the inspection team through the inspection meeting by reading aloud small logical units
+- Producer (author)
+    - Work product author
+    - Responsible from correcting any defects found
+
+### Procedure
+1. Planning fase
+2. All team member become familiar with the projects
+3. Overview of the project sent
+4. Preparation prior to the meeting
+5. Meeting
+6. Third hour (added to discuss solutions and extra discussions)
+7. Review reports sent (rate severity of defects, statistics about findings)
+8. Rework
+9.  Follow-up meetings
+
+### Review checklist (generique)
+- Requierments
+- Design
+- Generique code
+- Specific language code
+- Generic Document
+
+Organization develop there own check litsts and maintain, improve and develop them
+
+### Identify review types
+|Characteristics|InfREv|Walkth|TecRev|Insp
+|---------------|------|------|------|----|
+|Scrive is mendatory | no |yes|yes|yes|
+|Review Meeting | no |no|no|yes|
+|Individual preparation |no|optional|yes|yes|
+| Use of checklist Optional|yes|yes|yes|no|
+|Defects log and review reports produced |no|yes|yes|yes|
+| Review meeting led by the author |no|yes|no|no|
+| Reviewer should be technical experts|no|no|yes|yes|
+|Follows a formal documented process|no|no|no|yes|
+|Review meeting led by a facilitator|no|no|yes|yes|
+
+## Modern code reviews
+More lightweight, flexible and asyncronous. Usually done by open source communities. There are two essential roles author and reviewer. Code reviews are done more often with more documents.
+
+It is the autors responsability to submit code that is easy to review, prefer small changes
+
+### Commit messages
+Capitalize short title
+
+Explainatory text or bullets point
+
+Must be written in imperative (fixed bug,)
+
+### Reviewer criteria
+- Purpose
+- Implementation
+- Legibility and Style
+    - The read efforts
+    - Does the code contain TODO
+- Maintainability
+    - Read the tests
+- Security
+    - Verify API
+
+### Comment style
+Critisize the code not the author. Avoid judgment. Differentiate between, pointing out the error, suggestions and orders.  
+
+Developer should respond to every comment. Explain the decision process

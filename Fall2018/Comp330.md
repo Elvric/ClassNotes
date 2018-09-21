@@ -242,7 +242,7 @@ Fact(1):
 $$ \Delta^*(A\cup B,w) = \Delta^*(A,w) \cup \Delta^*(B,w)$$
 
 Fact(2):  
-$$ x,y \in \Sigma^*, \Delta*(A,xy) = \Delta^*(\Delta^*(A,x),y)$$
+$$ x,y \in \Sigma^*, \Delta^*(A,xy) = \Delta^*(\Delta^*(A,x),y)$$
 
 ### Def of the language of the machine
 $$L(N) = \{w|\Delta^*(Q_0,w)\cap F \not = \emptyset\}$$
@@ -341,4 +341,35 @@ R.\epsilon = R = \epsilon.R\\
 R.S \not = S.R\\
 R.(S.T) = (R.S).T\\
 \epsilon+RR^* = \epsilon R^*R = R^*
+$$
+
+# 20/09/2018
+## Minimization of DFA
+Dfa have a unique minimal form. Define an equivalence relaton of states.
+
+Use equivalence classes to define new smaller machine.
+
+Def: Given a DFA 
+$$ M = (S,s_0,\delta,F)$$  
+over alphabet we say
+$$ p,q \in S $$
+Are equivalent, and write pxq, if
+$$ \forall x \in \Sigma^*, \delta^*(p,x) \in F \iff \delta^*(q,x \in F)$$
+
+We are going to write [p] for the equivalence class of p
+
+Lemma A:
+$$
+(p = q) \implies \forall a \in \Sigma, \delta(p,a) = \delta(q,a)
+$$
+
+Proof:
+$$
+\delta^*(\delta(p,a),x) \in F\\
+\delta^*(p,ax) \in F
+$$
+By assumption then pxq also takes us to an accept state.  
+We know that 
+$$ \delta^*(q,ax) \in F \text{ or }\\
+\delta^*(\delta(q,a),x) \in F
 $$
