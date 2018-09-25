@@ -343,6 +343,7 @@ R.(S.T) = (R.S).T\\
 \epsilon+RR^* = \epsilon R^*R = R^*
 $$
 
+---
 # 20/09/2018
 ## Minimization of DFA
 Dfa have a unique minimal form. Define an equivalence relaton of states.
@@ -353,14 +354,22 @@ Def: Given a DFA
 $$ M = (S,s_0,\delta,F)$$  
 over alphabet we say
 $$ p,q \in S $$
-Are equivalent, and write pxq, if
-$$ \forall x \in \Sigma^*, \delta^*(p,x) \in F \iff \delta^*(q,x \in F)$$
-
+Are equivalent, and write pxq, or: 
+$$ p \approx q$$
+if
+$$ \forall x \in \Sigma^*, \delta^*(p,x) \in F \iff \delta^*(q,x) \in F$$
+Remark when not equivalent we get:  
+$$  
+p \not \approx q\\
+\exists x \in \Sigma. (\delta^*(p,x) \in F \land \delta^*(q,x) \not \in F\\
+\lor \\
+\delta^*(p,x) \not \in F \land \delta*(q,x) \in F)
+$$
 We are going to write [p] for the equivalence class of p
 
 Lemma A:
 $$
-(p = q) \implies \forall a \in \Sigma, \delta(p,a) = \delta(q,a)
+(p = q) \implies \forall a \in \Sigma, \delta(p,a) \approx \delta(q,a)
 $$
 
 Proof:
@@ -370,6 +379,109 @@ $$
 $$
 By assumption then pxq also takes us to an accept state.  
 We know that 
-$$ \delta^*(q,ax) \in F \text{ or }\\
+$$ \delta^*(q,ax) \in F \\
 \delta^*(\delta(q,a),x) \in F
 $$
+
+Defining the new machine now:
+$$
+S' = \text{ equivalen classes of S } (S / \approx)\\
+s_0' = [s_0]\\
+\delta'([p],a) = [\delta(p,a)] [\text{ Well defined  }]\\
+F' = \{[s]| s \in F\}
+$$
+
+Lemma B
+$$
+p \in F \land p \approx q \implies q  \in F\\
+$$
+Lemma C
+$$
+\forall w \in \Sigma^*, \delta'^*([p],w) = [\delta^*(p,w)]\\
+\delta'^*([p],\epsilon) = [p] = \delta^*(p,\epsilon)]\\
+\text{Hypothesis step}\\
+\delta'^*([p],w) = [\delta^*(p,w)]\\
+\text{ Induction step}\\
+\forall a \in \Sigma, \delta'^*([p],wa) = [\delta^*(p,wa)]\\
+\delta'^*([p],wa) = \delta'(\delta'^*([p],w),a)\\
+= \delta'([\delta^*(p,w)],a)\\
+= [\delta(\delta^*(p,w),a)]\\
+=[\delta^*(p,wa)]
+$$
+
+### Theorem
+L(M) = L(M')  
+Proof in the notes by direct calculation.
+
+Now we want an algorithm to do this.
+
+### algorithm
+Start by saying that there is only one state and they are all equivalent.  
+Then we keep track of all the pairs and any pair such that one is an accept state and the other not an accept state shall be marked not equivalent.  
+Then we carry one with new pairs and look weather a certain letter brings us to an accept state if they do then we do nothing if they do not then we mark these sets as not equivalent.
+
+## Distingishibility
+$$ p \bowtie q \implies \exists w \in \Sigma^*\\
+ (\delta^*(p,w) \in F \land \delta^*(q,w) \not \in F \lor \delta^*(q,w) \in F \land \delta^*(pw) \not \in F)
+$$ 
+Here we can see that these two states are distingishible
+
+#### Fact
+If 
+$$ \exists a \in \Sigma\\
+\delta(p,a) \bowtie \delta(q,a) \implies p \bowtie q
+$$
+
+### Algorithm 
+$$
+S \times S \text{ array of bool}\\
+\forall \text{ pair } (p \in F \land q \not \in F) \text{ put a 0 at [p,q] position}
+$$
+Repeat until nothing changes anymore:  
+For each pair [p,q] not marked 0 check if
+$$ \exists a \in \Sigma(\delta(p,a),\delta(q,a))$$
+is marked 0 if yes then mark [p,q] with a 0.
+
+If two states are not labelle 0 by the algorithm then they are equivalent.
+
+### Proof of correctness (not complete but the idea is there)
+Assume that there exists a pair of states that are not marked yet they are not equivalent. Call such a pair a bad pair. Now consider the word w where for one of the state it goes to an accept state and the other a reject state.  
+Conisder a shorter version of w that leads hence to earlier state. Thes states must be marked as non equivalent since ulimatly there exits a string w that leads them to different state. Hence if these two states have been marked as non equivalent, it is not possible that there next states are also marked as equivalent since they do not lead to equivelent state.
+
+---
+# 21/09/2018
+## MyHill_Nurode theorem
+Notes on the website.
+### Right inveriance
+R is an equivalence relation on strings/word if it has the following additional property.
+$$
+xRy \implies \forall z,xzRyz
+$$
+We say R is right invariant.
+$$
+M = (Q,\Sigma,q_0,\delta,F)\\
+\delta^*:Q \times \Sigma^* \rightarrow Q
+$$
+A word defines a fonction from Q to Q
+$$
+w \in \Sigma^*\\
+q \rightarrow \delta^*(q,w)\\
+xR_My \iff \delta^*(q,x) = \delta^*(q,y) \forall q
+$$
+This is right invarient.
+
+$$ 
+L \subseteq \Sigma^*\\
+xR_Ly \iff \forall z, xz \in L \iff yz \in L
+$$
+Easy to see that it is right invarient.
+
+Hence we have 2 examples of right invarient equivalent relations. R_M and R_L
+TFLAE
+
+Now we can prove the **Myhill_Nerode** theorem
+1. The language L is accepted by a DFA
+2. L is the union of some of the equivalence classes of a right invariant equivalence relation of finite index
+3. R_L has finite index and indeed has smaller index then any relation R of the type mentioned above.
+
+**Index** = # of equivalence classes of a relation

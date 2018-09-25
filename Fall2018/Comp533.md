@@ -257,12 +257,12 @@ call(public * Account.*(..)) && target(a);
 pointcut SettingIntegerFields(int newValue) :
 set(* int Account.*) && args(newValue);
 
-around PublicCallesToAccount(Account a) {
+around PublicCallesToAccount(Account a) : PublicCallsToAccount(a){
     if (a.blocked) {
         throw new AccountBlockedException();
     }
     else {
-        procee();
+        proceed();
     }
 }
 ```
@@ -294,3 +294,45 @@ public aspect BlockableAccouts {
 Questions about arrows
 About arround
 About Iblockable
+
+# 24/09/2018
+## Standare Object Oriented domain modeling
+Requierments:
+- Fonctional requierments
+- User expctations
+- Non-fonctional requierments
+
+The domain model captures the concepts in the domain of the problem.
+## Object during requierment phase
+The object can have attributes that we know we are going to need but no set methods/operations. 
+
+## Associations
+The glue of objects, they glue them together letting them know what object they are related to. They are represented in UML with a line. The name of the association is on the line. This does not force anything it just says that there maybe a relationship between 2 objects. At runtime there could or could not be instances of that realation.
+
+It is important to view such relation as a pair of instances of objects in our sence. We do not view them as actual java relationship where one store the address of the other and vice versa.
+
+In this design if we have more than 1 objects related to other we can make an association class that holds the relation for the 3 objects.
+
+The cardinality defines how many objects can interact with object. Wrote as such is umle 0..1 or 1...*
+
+Carful for more than binary relationships, the numbers represent for any combination of the object related to the object of interest we must have x...y objects. The key word here is __for any__.
+
+### Association class
+Written with a dash line ------ like student______-----Takes_____Test 
+
+Association must have role, by role we mean the title of the object related to each other for each other.
+
+Ex: if we have a person and a company then to the company the person is an __employee__, to the person the company is the **employer**. Thise terms are the roles.
+
+We can also connect a class with itself like person, has parents and this is where these roles are important.
+
+## Agregation (Not really important for this course)
+Binary relationship where we want to communicate that there is a hole part relationship. It is transitive and antisymmetric.
+- If a is part of b and b is part of c then a is part of c.
+- If a is part of b then b is not part of a
+
+Aggregation are writen by the romubs shape white arrow this way
+Person __________<>Flight
+
+### Composition
+Is a stricter form of agreagation represented by a black rhumbus. for example with have a window and inside that window we have 2 scrol bars. In this case if we destroy the window then we destroy the scrol bars.

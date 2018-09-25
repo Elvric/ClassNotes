@@ -707,3 +707,78 @@ public class Filter implements Lock {
 }
 ```
 The only difference with Pererson's in terms of usefullness is that the system is not fair, threads can be taken over by overthreads. As if A starts before B then A should enter before B.
+
+---
+# 25/09/2018
+The filter lock satisifies unbounded waiting as in our case r is unbounded. 
+$$ CS_A^k \rightarrow CS_B^{j+r}$$
+
+## Fairness
+No one starves, thread enter in a predefined order established either on the arrival of the thread or before the arrivale of the thread.
+
+## Bakery algorithm
+```java
+public class Bakery {
+    boolean[] flag;
+    Label[] label;
+    public Bakery(int n) {
+        flag = new boolean(n);
+        label = new Label();
+        for (int i=0; i < n; i++) {
+            flag[i] = false;
+            label[i] = 0
+        }
+    public void lock() {
+        flag[i] = true;
+        label[i] = max(label[0],label[1],...)
+        while(exists k flag[k] && (i,label[i]) > (k,label[k])) {}
+    }
+    public void unlock() {
+        // Note that labels always keep increasing
+        flag[i] = false;
+    }
+}
+```
+### No deadlock
+There will always be 1 thread with the lowest label and if there is a tie then we still let one of the thread in.
+
+### First come first serve
+If we assume that thead A enters before thread B then when thread A wants to renter the critical section it must have a higher label than thread B.
+
+### Mutual exclusion
+Suppose 2 threads end up in the critical section. If we assume one thread has an earlier label it should have a smaller label and enter the critical section before it or if it had a bigger label then it should not have been able to enter the critical section.
+
+### Problem
+Comes as the number keeps increasing at a certain points there will not be enough bits to go to the next number hence we get overflow and the number becomes negative.'
+
+### Time stamps
+Label variable is really a timestamp. And we must be able to generate other time stamp, compare them, generate later time stamps. 
+
+In theory it is possible to create a syncronized method to generate time stamps that is wait-free, concurrent and never overflow.
+
+THe bad new that is that it is hard to create an wait free and concurent system for that.
+
+## Time stamping system
+### Sequential idea
+Think of time stemps as precedence graph, we have a bunch of node and if a node has an edge going to another node means that this node dominates other node (has to wait for the other nodes before doing anything here the word dominate is counter intuitive).
+
+In order for that to work for thread systems each node actually represents a set of circular node. The formula is:
+$$ T^k = T^2*T^{k-1}\\ \log_2(3^k) \approx 2^k$$
+
+### Shared memory
+Registers themselves that store memory come in different forms:
+- Multi-Reader-Single-writer(flag[])
+- Multi-Reader-multi-writer(victim[])
+- Not that interesting: SRMW, MRMW
+  
+## Proving that we need at least n SWMR register for mutual exclusion with n threads.
+In our case lets assume that we can achieve mutual exclusion for n threads with n-1 registers. N-MRSW, we have 3 threads [a,b,c]. Assume that thread a goes in the critical section and b tries to enter the critical section. Then assuming that b and c are linked to a SWMR register then a cannot inform b that it is in the critical section hence the algorithm cannot work
+
+### Proving the same fact for n with MRMW
+Now we have two threads [a,b] assume that just one MRMW register. Assume that thread b has to write to the register before entering the critical section but before it can write the tread gets suspened. Thread a comes allong writes to the register and goes into the critical section. Then thread b jumps back into action and writes then enter the critical section. So that proves the fact for MRMW.
+
+### Bakery algorithm register
+Uses 2n MRSW register. And is the smallest number for FIFO that we can reach.
+
+### Summary
+In order to do better than this we need to have a better hardware that allow us to perform other operations than just read write. 
