@@ -335,4 +335,34 @@ Aggregation are writen by the romubs shape white arrow this way
 Person __________<>Flight
 
 ### Composition
-Is a stricter form of agreagation represented by a black rhumbus. for example with have a window and inside that window we have 2 scrol bars. In this case if we destroy the window then we destroy the scrol bars.
+It is a stricter form of agreagation represented by a black rhumbus. for example with have a window and inside that window we have 2 scrol bars. In this case if we destroy the window then we destroy the scrol bars. The multiplicity must be either 1 or 0..1 in terms of the container the containee have no limits.
+
+---
+# 26/09/2018
+### Constrains
+Can be added to the arrow as such {order}. By default it is unordered.
+
+### Association with subsets --->
+So we can have two relations ships going both ways with different objects. We can draw an arrow between the two to show that the relation on the left must be a subset of the relation on the left.
+
+### Derived association
+If a department is a composition of the company and I work for the company then I am also emplotyed by that company, I cannot be employed by any other company. This can be shown by putting this info at the bottom of the graph.
+
+{context: Person  
+selt.employer = self.department.company}
+
+### Qualified Association
+Show how a relationship can be achieved or retrived like a building with floors to the right of the arrow on the building side we can rignt Building[floorNumber: Integer]______0...1 floor, means that given an integer I can retrieve the floor associated with it.
+
+## Discovering the domain model
+Brainstorming looking for physical objects people, places and so on.  
+Distingish objects from classes and roles from classes.  
+Suppress the redundant, irrelevant, vague classes. Then look at the use cases.
+
+### Association classes vs proper class
+The association class can only exists when associated with all of the objects of the assocations. We can then change that as a real class that is in bettwen the objects. Note that both implemetations can be good as sometimes we many prefer one over the other. Everything depends on the implementation.
+
+#### Exercise
+![alt text][GraphDiag]
+
+[GraphDiag]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "GraphDiag"

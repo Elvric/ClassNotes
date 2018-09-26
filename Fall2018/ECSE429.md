@@ -439,3 +439,62 @@ Must be written in imperative (fixed bug,)
 Critisize the code not the author. Avoid judgment. Differentiate between, pointing out the error, suggestions and orders.  
 
 Developer should respond to every comment. Explain the decision process
+
+---
+# 26/09/2018
+# Static Analysis tools
+## Coding guide lines
+Set of rules that give recomendations on style (formatting, naming, structure) and best programming practicies
+### Industry/domain-specific (automotive, avionic)
+MISRA C: focus on reliability, safety, security.  
+Tools: PolySpace, SonarQube,  Coverity
+
+Made of rules 143 (imposed) and 16 directive. Rules can be checked with yes/no/undecidable answer by static analysis on the other hand directives can be subjectives.
+
+#### Some rules of MISRA C
+1. Project shall not contain unreachable code
+2. Shall have no dead code (operation is reachable but removing the operation does not affect program behavior)
+3. Identifiers shall be distinct from macro names
+4. A typedef name shall be a unique indentifier
+5. The right hand operand of a logical && and || shall not contain any side effects
+6. A goto statement has shall not be used
+7. All if...else, if construct shall be terminated with an else statment.
+
+### Platform specific (Java, C)
+We have 5 key words: Consider, DO NOT, DO, AVOID.
+1. CONSIDER making base classes abstract even if they do not contain any abstract member
+2. Do not provide apstractions unless they are tested by developing several concreate implementations and APIs consuming the abstracion
+3. DO choose carfully between abstract class and interface
+   
+### Organization specific (Google, CERN)
+Categorized into: source file basics, source file structure, formatting, naming, programming practices, javadoc.
+1. Never make your code less readable by fear that some program may not handle non ASCII characters.
+2. Local variable names are written in lower case
+3. Brackets are used for all if statmetns even when not required
+4. Each statement is followed by a line break
+
+## How to enforce these guidelines
+Some functions are build in into the IDEs but we can use external tools.
+
+# Patter-Based static analysis tools
+Automated analysis of software without code execution. Commun tools includeL FindBugs, PMD, SonarQube, CheckStyle.
+
+## Traditional set up
+First the source code is given to the parser. Parser takes the program code and the grammar that describe the syntatically correct program.  
+First it goes to a lexer that takes the source code and creates a list of tokens (sees a class that must have 5 carachters and a space so the lexer creates one class token)  
+Parser: Then takes that token list and creates an abstract syntax trees. If there is a violation of the rules the parser will give an error message.
+
+i.e 13+15, 13,+,15 are all 3 tokens, the intax tree would be addExp with the 3 tokens above.
+
+From an software engeneering a parser represents a list of errors. For example now parser can give many errors at the same time.
+
+From the abstract syntax tree we can then build the type hiarchy seen on eclipse or the call graph that shows the run through of the program. These are done by filtering what matters from the view in the syntax tree.
+
+Note to create a proper type hiarchy and call graph we got to also go back to the librairy methods and also include return values. This is how our tree becomes more like a graph rather than a tree. And we use that graph to build the things mentioned above.
+
+### ASG/DOM
+From the abstract syntax tree we can use Document Object Model it includes javaProjct file, the package. These may not be 1 to 1. Fun fact the type hiarchy and call grah are usually generated from that.
+
+The patte based static checks are derived from the DOM. Fun fact when we refactor we actually refactor first in the DOM tree that then modifies the abstract syntax tree that itself then changes the source code.
+
+Our pattern-based static analysis find erroneous cases by graph pattern matching. It then finds faulty graph patterns in the DOM graph by having node and edges criterion that can be used to detect faulty graph stucture in the entire graph.
