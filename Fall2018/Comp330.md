@@ -485,3 +485,38 @@ Now we can prove the **Myhill_Nerode** theorem
 3. R_L has finite index and indeed has smaller index then any relation R of the type mentioned above.
 
 **Index** = # of equivalence classes of a relation
+The entire set fits in at least one equivalence class. The entire divided subset is called a partition.
+
+Each equivalence class can themselves be **refined** meaning divinded again into sub equivalent classes.
+
+### Proof
+$$
+(1) \implies (2)\\
+M = (Q,q_0,\delta,F)\\
+R_m \\
+S_q := \{x \in \Sigma^*|\delta^*(s_0,x)=q\}\\
+L(M) = \cup_{q \in F} S_q
+$$
+
+Here R_L has bigger blocks than R which means that R_L is the minimum index. R is also right invariant
+$$
+(2) \implies (3)\\
+R \subseteq R_L\\
+xRy \implies x R_L y\\
+\text{Assume } xRy \ \& \ z \in \Sigma^* xz \in L\\ 
+\text{Then xz is in one of the equivalence classes of R}\\
+\implies yz \in L
+$$  
+
+$$
+(2) \implies (3)\\
+\text{We construct a machine as follows}\\
+S = \Sigma^*/R_L\\
+s_0 = [\epsilon]\\
+\delta([x],a) = [xa] \text{ well defined}\\
+x' \in [x], [x'a] = [xa] \\
+F = \{[x]|x \in L\}
+$$
+The machine we just constructed is the unique smallest machine.
+
+There is no such theorem for an NFA, p space complete.
