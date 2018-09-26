@@ -365,4 +365,4 @@ The association class can only exists when associated with all of the objects of
 #### Exercise
 ![alt text][GraphDiag]
 
-[GraphDiag]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "GraphDiag"
+[GraphDiag]: https://github.com/Elvric/ClassNotes/blob/master/Fall2018/Pictures/GraphDomainDiag.jpg"GraphDiag"
