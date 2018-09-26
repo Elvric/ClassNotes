@@ -363,6 +363,6 @@ Suppress the redundant, irrelevant, vague classes. Then look at the use cases.
 The association class can only exists when associated with all of the objects of the assocations. We can then change that as a real class that is in bettwen the objects. Note that both implemetations can be good as sometimes we many prefer one over the other. Everything depends on the implementation.
 
 #### Exercise
-![alt text][GraphDiag]
+![Graph Diag][GraphDiag]
 
-[GraphDiag]: https://github.com/Elvric/ClassNotes/blob/master/Fall2018/Pictures/GraphDomainDiag.jpg"GraphDiag"
+[GraphDiag]: https://github.com/Elvric/ClassNotes/blob/master/Fall2018/Pictures/GraphDomainDiag.jpg
