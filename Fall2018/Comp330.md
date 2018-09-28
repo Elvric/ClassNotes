@@ -520,3 +520,20 @@ $$
 The machine we just constructed is the unique smallest machine.
 
 There is no such theorem for an NFA, p space complete.
+
+---
+# 24/09/2018
+$$ L=\{a^nb^n|n \leq 0 \}$$  
+Suppose that M recognises L, so there exists a DFA with k states.  
+So now I am going to get a string in the language where n>k.
+This means that as I travel through the machine that means that somewhere I must visit the same state 2 (Pigeon hole principal). So we have gonne along a loop now consider the loop has length l. Which means that the machine can only count n-l and my b's number = n. that means that the machine accepted n-l a and n states which is not possible this is called the pumping lemma
+
+## Pumping lemma
+If L is a regular language then:
+$$
+\exists p > 0 \text{ s.t } \forall w \in L \text{ with } |w| \geq p\\
+\exists x,y,z \in \Sigma^* \text{ s.t w } = xyz \land |xy| \leq p \land |y| >0\\
+\forall i \in \mathbb{N} \ xy^iz \in L
+$$
+
+If a language is regular then it can be pumped, if a language is not regular then it cannot be pumped.

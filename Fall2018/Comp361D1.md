@@ -144,3 +144,28 @@ See the 533 notes most likely.
 # 21/08/2018
 ## Association
 In UML we just draw a full name with a black arrow pointing to the object that contain the other in a way I think?
+
+---
+# 26/09/2018
+### Gas station use case
+Secondary actor: fuel gun
+
+1. Driver insert its credit car in the system
+2. System sends credit card details to the backend
+3. System checks credit card details and verify that the balance is high enough.
+4. The system unlocks the fuel gun
+5. Fuel gun inform system that fuel is ready to be dispensed
+6. System tells the pump to pump
+7. The fuel guns inform the system that a certain amount has been dispenced  
+   *Step 4 to 6 are repeated until driver stops or fuel gun detects overflow*
+8. Fuel gun informs the system that it is back to the holster
+9.  System locks the fuelgun
+10. System informs back end of fuel quantity dispensed
+11. Back ends debit the amount on the card
+12. System request credit card reader to return the card to the user 
+
+#### Extensions
+3a. Credit card back end informs system that credit card is not valid.
+3a.1 System request credit card reader to eject card
+
+VOIR LES NOTES DE 533 DU MEME JOUR

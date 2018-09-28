@@ -782,3 +782,64 @@ Uses 2n MRSW register. And is the smallest number for FIFO that we can reach.
 
 ### Summary
 In order to do better than this we need to have a better hardware that allow us to perform other operations than just read write. 
+
+---
+# 27/09/2018
+# Concurrent objects
+FIFO queue in a multi threaded environment
+
+### Use locks
+We have a circular array lets say and any thread that wants to access such an array has to modify acquire the lock.
+
+### Two threads no waiting
+In this case we have 2 threads one only enqueues the other one only dequeus and we let them access the array at the same time.
+
+## Object specification
+### Correctness and Progress
+We need to specify both safety and the liveness properties of an object. We need to define a way to see an implementationa and the condition in which the algorithm is going to garentee progress.
+
+## Sequential objects
+Each object has a state, given by a set of fields. And each object has a set of methods used to manipulate the state.
+
+### Sequential specification
+if (precondition) the object is in such state  
+Then (postcondition) the method will return a particular value  
+and (postcondition) the object will be in a different state at the end of the method.
+
+In our case:  
+- Precondition:  
+    - queue is empty  
+- Postcondition:  
+    - Throughs empty excetpion  
+- Poscondition:  
+    - State unchanged
+
+This is easy since each method can be described in isolation, state of the object is only meaningfull between method calls. We can add a new method without changing the descritption of new methods.
+
+## Concurrent objects
+### Concurrent specifications
+Not the same can be said.  
+Method take time in real life which can cause problems as two methods perform actions on the same object. Since there can be an overlap that could mean that such an object never exists between method calls.  
+Everything can potentially interact with other things which means that even the documentation can be more complex when adding a new method.
+
+#### Big question
+What does it mean for a concurrent FIFO queue. It means strict temporal order but with concurrency we have an ambiguous concurrent order since methods overlap.
+
+### Linearizability
+Each method should:
+- take effect
+- Be instentaneous
+- Between invocations and response events
+
+An object is correct if its sequential behavior is correct any such object is linearizable. This means that all possible executions of an object are linearizable.
+
+### Formal model of execution
+We are going to split method calls into 2 events. Invocation and response.
+
+### Annotations
+Invocation: A q:enq(x) (A = thread, q = objects, enq = method, x=arguments)    
+Response: A q: void (A = thread, q = objects, void is return)  
+Match: Is said when an invocation and response event match on thread name and object name.
+
+### History of execution
+Represents a vew that we have from the outsided world where we can see everything that happens to the program. History can be denoted as H. If we want to see what happens to object q then we project the history onto the object H|q. We can do projections on threads as well. An invocation is pending if it has no matching response and pending otherwise. The sequential history occurs when it looks like there is no intervals between matching and method calls.

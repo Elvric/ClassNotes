@@ -365,4 +365,7 @@ The association class can only exists when associated with all of the objects of
 #### Exercise
 ![Graph Diag][GraphDiag]
 
-[GraphDiag]: https://github.com/Elvric/ClassNotes/blob/master/Fall2018/Pictures/GraphDomainDiag.jpg
+[GraphDiag]: https://github.com/Elvric/ClassNotes/blob/master/Fall2018/Pictures/GraphDiag.png
+
+# Domain model constrains
+Used to add constrains that cannot be demonstrated with domain models.

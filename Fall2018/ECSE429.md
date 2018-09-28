@@ -497,4 +497,45 @@ From the abstract syntax tree we can use Document Object Model it includes javaP
 
 The patte based static checks are derived from the DOM. Fun fact when we refactor we actually refactor first in the DOM tree that then modifies the abstract syntax tree that itself then changes the source code.
 
-Our pattern-based static analysis find erroneous cases by graph pattern matching. It then finds faulty graph patterns in the DOM graph by having node and edges criterion that can be used to detect faulty graph stucture in the entire graph.
+Our pattern-based static analysis find erroneous cases by graph pattern matching. It then finds faulty graph patterns in the DOM graph by having node and edges criterion that can be used to detect faulty graph stucture in the entire graph. If there are no matches then there are no violations.
+
+A good practice is too cache the violation results so then when they get updated it is easier to validate.
+
+This is a lightweight static analysis it is important to remember that we may have false alarms (presence of a defect/issue that would not cause a failure) and false negatives.
+
+---
+# 28/09/2018
+# Abstract Interpretation for static analysis
+
+## Testing vs Static analysis
+Testing investigate one run of the program for particular, execution context. Static analysis reason about all runs of a program without executing it for any impur and execution process.  
+Results of testing are pass/fail. For static it is safe/error/incomplete.
+
+## Complexity issue
+Can a static analyser detect whether with imput I a certain program will terminate. The hating problem, it is not possible to right a program that works for all inputs.
+
+Perfect static analysis is impossible but can still be very usefull and is widely used today.
+
+## Soundness VS Competness
+Soundness: means that if a prover says that some property holds then the property is true. SA says nothing.
+SA, if program is error free to it then it is really error free, alarm does not implie defect.
+
+Completness: if property is true SA says that the propery is true. SA says everything. If SA says it is erroneous then it is erroneous, the lack of error messages does not implie error freedome
+
+## Designated properties of SA
+- Precision: minimize false alarms
+- Scalable: capable of analysisn large programs
+- Understandability: Error reports are interpreted by people and hence must be easy to evaluate.
+
+## The power of abstraction
+Usufule ones, sign(+-), intervals, pointers, taint analysis (security), precise treatment by Galois connections.
+
+pros: 
+- may achieve higher coverage than testing
+- May prove abscence of defects
+- May find subtle programming flows
+
+Cons:
+- Properties are limited to correctness (no performance)
+- False alarm/ missed errors
+- may be time consuming to run or non-terminating.
