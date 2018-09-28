@@ -168,4 +168,16 @@ Secondary actor: fuel gun
 3a. Credit card back end informs system that credit card is not valid.
 3a.1 System request credit card reader to eject card
 
-VOIR LES NOTES DE 533 DU MEME JOUR
+**VOIR LES NOTES DE 533 DU MEME JOUR**
+
+---
+# 28/09/2018
+Questions:
+Explain every buttons?  
+Template game board is it alright?  
+Template set in stone?  
+Number of games that are possible to be played?
+
+## Exercise with the company
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Graph")
+
