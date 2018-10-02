@@ -305,7 +305,7 @@ The empty set is defined as
 $$ \phi$$
 Then  
 $$R+S := \{w\in R\} \cup \{w\in S\}\\
-R.S := \{w_1,w_2| w_1 \in R, w_2 \in S\}\\
+R.S := \{w_1w_2| w_1 \in R, w_2 \in S\}\\
 R^* := \{w_1,w_2,w_3,...,w_n| w_i \in R\} \cup \{\epsilon\}$$
 
 Example:  
@@ -536,4 +536,103 @@ $$
 \forall i \in \mathbb{N} \ xy^iz \in L
 $$
 
-If a language is regular then it can be pumped, if a language is not regular then it cannot be pumped.
+If a language is regular then it can be pumped, if a language is not regular then it cannot be pumped
+
+L regular implies that L can be pumped. L can be pumped does not implie that it is regular. So it can only be used to show that things are not regular.
+
+## Contrapositive of pumping lemma
+$$
+\forall p > 0 \exists w \in L, |w| \geq p\\
+\forall x,y,z \in \Sigma^*, w = xyz \land |xy| \leq p \land |y| > 0\\
+\exists i \in \mathbb{N}, xy^iz \not \in L
+$$
+
+L may be hard to pump. If R is a regular language and L is a regular language then
+$$ R \cap L$$
+is also regular.  
+Now take some R that can easily be seen to be regular and consider and L that we are not sure above than if 
+$$ R \cap L$$
+is not regular then so is L.
+
+### Example
+$$
+L = \{a^mb^n|m \not =  n\}\\
+\overline{L} \text{:L complement in this case}\\
+\overline{L} \cap a^*b^* = \{a^nb^n | n \geq 0\}
+$$
+Hence it is not regular as we have show that aboves
+
+## Languages that are not regular:
+$$
+\{a^nb^n | n \geq 0\}\\
+\{a^mb^n | n \not = m\}\\
+\{ww | w \in \Sigma^*\}\\
+\Sigma = \{a\}, \{a^{2^{n}} | n \geq 0\}
+$$
+
+---
+# 26/09/2018
+### Proof a irregularity
+$$
+\Sigma = \{1\}, \{a^{2^{n}} | n \geq 0\}\\
+$$
+
+$$
+p\\
+2^m > p\\
+p\geq|y|>0;|y| = k\\
+i =2\\
+1^{2^m+k} = \text{ new pumped String}\\
+2^m<2^m+k \leq 2^{m+p} < 2^m+2^m = 2^{m+1}
+$$
+Hence we are strictly between 2 consecutive powers of 1 so it cannot be a power of 2.
+
+### Proof on a another irregular language
+$$ L = \{a^q | q \text{ is a prime number}\}\\
+p\\
+a^n, n \geq p\\
+y = a^k; p \geq k > 0\\
+i = n+1\\
+a^{n-k+k(n+1)}\\
+n-k-k^2+kn\\
+n(k+1)\\
+$$
+Which is not prime.
+
+Important to realise that the length is 
+$$ n(i-1)k$$  
+Is the length of the String after we apply i to it.
+
+### Proof on a new language
+$$
+\Sigma = \{a,b\}\\
+L = \{w \in \Sigma^* | \#a(w) \not = \# b(w)\}
+$$
+\#a(w) = number of a's in w.  
+We are going to prove this using what we learned above.
+$$
+\{a^nb^n|n \geq 0\}\\
+\overline{L} \cap a^*b^* = \{a^nb^n|n \geq 0\}
+$$
+Hence we know that this is not regular as the complement plus the other one is not regular.
+
+
+### Proof an a rather new again language
+$$ L = \{a^ib^j|\gcd(i,j) = 1\}\\
+L' = \overline{L} \cap a^*b^* = \{a^mb^n|\gcd(m,n) >1\}
+p\\
+q > p+1 \text{ s.t q is prime}\\
+a^qb^q \in L'\\
+a^k\\
+i = 0\\
+a^{q-k}b^q
+$$
+q is a priem and q-k is less then q hence there gcd must be 1 therefore it cannot be pumped.
+
+#### Proof with MyHill-Nerod
+$$ x \equiv_L y : \forall z, xz \in L \iff yz \in L $$
+If I exihibit infinity many different equivalence classes L cannot be regular. Consider all p primes
+$$ p_1 \not = p_2 \implies a^{p_1} \not \equiv_L b^{p_2}$$
+
+---
+# 28/09/2018

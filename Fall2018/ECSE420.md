@@ -843,3 +843,45 @@ Match: Is said when an invocation and response event match on thread name and ob
 
 ### History of execution
 Represents a vew that we have from the outsided world where we can see everything that happens to the program. History can be denoted as H. If we want to see what happens to object q then we project the history onto the object H|q. We can do projections on threads as well. An invocation is pending if it has no matching response and pending otherwise. The sequential history occurs when it looks like there is no intervals between matching and method calls.
+
+---
+# 02/10/2018
+### Linearization formal description
+An invocation is pending if an invocation has no matching response in the history we have.  
+We could discard that invocation to make the thread subhistory complete.
+
+### Sequential history
+Happens when thread method calls get their output instantly in a sequential order directly in the history
+
+### Well-formed history
+Is a history where if we project the history onto a given thread it will look sequential to that thread.
+
+### Equivalence history
+Thread sees the same execution sequence in two different histroy's.
+
+### Legal history/Composability theorem
+H is legal if for any object x H|x is a sequential spec for x.
+
+### Precedence
+We say thread A preced B If the method call and return of thread A happens before the method call of B.
+
+## Notation
+$$ m_0 \rightarrow_H m_1$$
+If m_0 precede m_1 in the history
+
+## Linearizability
+History H is linearizable if it can be extended to G by, appending 0 or more responses to the pending invocaions, discaring other pending invocation. Such that G is a subset of S where S is legal sequential history.
+
+## Locking and Linearization
+Here we could say that the linearization point or end point of the method call for a given object is when the thread unlocks. (Provided that the locking mechanism makes sense)
+
+## Sequential consistency
+Same as the linearizability except that now we do not require G to be a subset of S. We no longer need to respect the sequential ordering of thread method calls since hardware can reorder instructions.
+
+However this does not result in composable systems.
+
+## Instruction reordering at hardware level
+Compiler are allowed to reorder information when the memory instructions are different and there is no concurrency.
+
+### Memory barriers
+Instructions that can ask the hardware not to reorder the memory accesses. This make cost us some more time though. In java this is done by declaring a volatile variable to ensure that it happens in program order for that variable.

@@ -178,6 +178,12 @@ Template game board is it alright?
 Template set in stone?  
 Number of games that are possible to be played?
 
+SEE the notes 533
 ## Exercise with the company
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Graph")
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/CompanyDiag.png
+"Pic")
 
+## Reinfication
+The process of making an object or a class. It is important because some entities sudenly gets an identity.
+
+A flight is a reification of an aircraft scheduled on some route on some weekday. A person owns a car. 
