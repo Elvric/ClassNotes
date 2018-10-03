@@ -187,3 +187,6 @@ SEE the notes 533
 The process of making an object or a class. It is important because some entities sudenly gets an identity.
 
 A flight is a reification of an aircraft scheduled on some route on some weekday. A person owns a car. 
+
+---
+# 03/10/2018
