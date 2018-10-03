@@ -343,7 +343,7 @@ It is a stricter form of agreagation represented by a black rhumbus. for example
 Can be added to the arrow as such {order}. By default it is unordered.
 
 ### Association with subsets --->
-So we can have two relations ships going both ways with different objects. We can draw an arrow between the two to show that the relation on the left must be a subset of the relation on the left.
+So we can have two relations ships going both ways with different objects. We can draw an arrow between the two to show that the relation on the left must be a subset of the relation on the right. Does not work for operation that are not of the same number (double vs third)
 
 ### Derived association
 If a department is a composition of the company and I work for the company then I am also emplotyed by that company, I cannot be employed by any other company. This can be shown by putting this info at the bottom of the graph.
@@ -369,3 +369,11 @@ The association class can only exists when associated with all of the objects of
 
 # Domain model constrains
 Used to add constrains that cannot be demonstrated with domain models.
+
+---
+# 03/10/2018
+### Example
+Sketch a domain model where a person can work at multiple companies, each person or compagnie can own a car, a bank can give a loan to buy a car.
+![Graph Diag][AnswerDo]
+
+[AnswerDom]: https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/GraphDiag.png

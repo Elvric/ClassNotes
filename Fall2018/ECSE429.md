@@ -539,3 +539,44 @@ Cons:
 - Properties are limited to correctness (no performance)
 - False alarm/ missed errors
 - may be time consuming to run or non-terminating.
+
+---
+# 03/10/2018
+# White box testing
+Focus on systems internal logic, does not look at the specifications just focus on the code.
+
+Advantage is that we check the source code itself but not very affective in detecting missing functions.
+
+## Control flow analysis
+Directed graph where nodes are block of sequential statments and edges are transfers of control. Edges may also be labaled with predicate representing  the condition of control transfer. It is not required to show intermediate statments
+
+Basically it is the graph seen in comp 303 where we branch out on if statments.
+
+Nodes that correspond to a branching should not contain any assignments or operations.
+
+### Coverage criteria
+Node coverage: cover every node in the test. Our goal is to minimize the number of test cases that provide a given coverage. Here our goal is to execute all nodes we do not care about going through every path. 
+
+### Branch or edge coverage
+Achieve a 100% if we have tranversed each edge of the control graph at least once. Note that if you cover all branches then you covered all the nodes.
+
+### Condition coverage
+Each condition constituent need to be evaluate to true and false at least once. This does not garenty 100% branch coverage.
+
+### Condition/Decision coverage
+Combine branch and condition coverage.
+
+### Multiple condition coverage
+Investigates all combination of condition substituent in decisions.
+
+### Condition/decision coverage
+Each condition must be true at least one and false at least once. There exists a pair of test cases where only one condition changes and the outcome changes too. require n+1 test cases.
+
+### Path coverage
+Have a test case for each possible path in the program. But some path may be infinit or infeasible.
+
+## Loop coverage
+Test zero times, 1 time and 2 times or more.  
+minimum-1, minimum, minimum+1,typical,maximum-1,maximum,maximum+1
+
+### Nested loops
