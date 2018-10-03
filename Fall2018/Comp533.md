@@ -374,6 +374,26 @@ Used to add constrains that cannot be demonstrated with domain models.
 # 03/10/2018
 ### Example
 Sketch a domain model where a person can work at multiple companies, each person or compagnie can own a car, a bank can give a loan to buy a car.
-![Graph Diag][AnswerDo]
 
-[AnswerDom]: https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/GraphDiag.png
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/classexercise.png "Logo Title Text 1")
+
+### Conclusion
+Do not hesitate to split the domain model in different parts if it becomes too big.
+
+# Concern orientated reuse
+## Decomposition in Soft Eng
+### Vertical decomposition
+Done according to the levels of abstractions. Using models to reason about these levels. top down, bottom up
+
+### Horizontal decomposition
+Design from the premier and existing artifacts are adapted overtime. Additional scenarios, additional features, additional qualities and concerns are added along the way.
+
+## The vision of core
+When we want to develop a new app we can use a librairy filled with generic reusable concern units. We then look at the __Interactive guidelines__ to see the variation of the concerns we can apply and their implications on the system goals. We can then add some composition instructions can then be followed and we can even call a concern specialist in certain cases.
+
+### Concern characterisitics
+Domain specific
+- encapsulate related to specific developmetent concerns
+- Each artifact uses the most apporpriate formalism to express the concern's properties.
+
+Generic: integrate all relecent (functional) variations and (architectural, design) solutions.
