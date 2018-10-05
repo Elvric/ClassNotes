@@ -885,3 +885,97 @@ Compiler are allowed to reorder information when the memory instructions are dif
 
 ### Memory barriers
 Instructions that can ask the hardware not to reorder the memory accesses. This make cost us some more time though. In java this is done by declaring a volatile variable to ensure that it happens in program order for that variable.
+
+---
+# 04/10/2018
+## Progress condtions
+Deadlock-free: some thread that tries to acquire a lock will get it.  
+Starvation free: Every thread that wants to acquire the lock will eventually get it.  
+Lock-free: some thread calling method will eventually return.  
+Wait-free: every thread calling a method will return at some point.
+
+# Fundation of shared memory
+### Register
+So far we know that a thread can read or write to a register. 
+```java
+public interface Register<T> {
+    public T read();
+    public void write (T object);
+}
+```
+There are single read single writer register.  SRSW
+Multi reader single writter register.  MRSW
+Mult reader, multi writer register. MRMW
+
+## Safe registers
+If there exists some valid sequence of actions such that the read write can occur. Some valid value is read when overlapping
+
+## Regular register
+When there is an overlap it returns a value that was neither the old nor the new value then it is not regular. It is important to realize that regular is not linearizable.
+
+## Locking within registers
+Not interested to rely on mutal exclusion for registers. We want the register to achieve mutual exclusion.
+
+### MRSW safe boolean register safe
+```java
+public class SafeBoolMRSWRegister implements Register<Boolean> {
+    public boolean read();
+    public void write (boolean a);
+}
+```
+One way of achieving that is to use SRSW safe registers and multiply them so we have enough registers for the number of reading thread. Then we add only on writter thread. So when the writter threads wants to write, we make it wirte the new value to all the SRSW registers. When done every other thread will read the new values
+
+```java
+public class SafeBoolMRSWRegister implements BooleanRegister {
+    private SafeBoolSRSWRegister = new SafeBoolSRSWRegister[N];
+    public void write (boolean a) {
+        for (int i = 0; i < n; i++)
+            r[i].write(a);
+    }
+    public boolean read() {
+        int i = ThreadID.get();
+        return r[i].read();
+    }
+}
+```
+
+### MRSW regular register
+In this case if we write a 0 to the regiter that already contains a 0 other register could read a 1 which is not allowed for regular register. Our solution is to keep the value of the register saved else where for the thread such that when the thread is about to write something it can check wether or not it is useful to write that new value.
+```java
+public class RegBoolMRSWRegister implements BoleanRegister {
+    private SafeBoolMRSWRegister value;
+    threadLocal boolean old;
+    public void write (boolean a) {
+        if (old != a) {
+            value.write(a);
+            old = a;
+        }   
+    }
+    public boolean read() {
+        return value.read();
+    }
+}
+```
+### Regular Multi-Value MRSW registers
+We are going to represent m Values in the register for example 1001010 then bit[0] = 1 bit[2] = 3 and so on so we have an array of bits. When a writer thread wants to write a number then it goes to its coresponding bit after that it writes 0 backwards.
+
+```java
+public class RegMRSWRegister implements BoleanRegister {
+    private RegBoolMRSWRegister[M] bit;
+    public void write (int x) {
+        this.bit[x].write(true);
+        for (int i = x-1;i i >= 0; i++) 
+            this.bit[x].write(false);
+        }   
+    }
+    public boolean read() {
+        for (int i = 0 ; i < m; i++) {
+            if (this.bit[i].read())
+                return i;
+        }
+    }
+}
+```
+
+### Atomic SRSW from SRSW regular
+We are going to use a time stamp. The writer writes a value but uses a counter to indicate the order in which writes happen. When a reader reads, it saves the time stamp and last value.

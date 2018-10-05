@@ -190,3 +190,37 @@ A flight is a reification of an aircraft scheduled on some route on some weekday
 
 ---
 # 03/10/2018
+Librairy example in class
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/librairy.png
+"Pic")
+
+# Requirements specification phase
+Produce a complete, consistent and unambiguous description of problem domains and functional requirements of the system.
+
+Models are produced which describe the environment model and the concept model.
+
+#### Environment
+describe the interface and the boundaries of the system with operations (communication diagram)
+
+#### domain
+Looks at the static structure of the system.
+
+## Environment model
+Defines the system interface. It shows a black-box view of the system. Determining how the system functionality is mapped onto individual operations. Designed based on the domain and use case models. Technical information a requirde for the quantity of information data sent to and away from the system (traffic).
+
+The system is modelled as a reactive entity that interacts with other active, reactive and passive entities called actors. (system is just a name for the analysed actor, environment is the set of all actors that interact with the system).
+
+Communication is done through input messages and output messages. Input is always sent by an actor nevor by an object in the system.
+
+__A message__ is an instantaneous and atomic unit of communication between the system and the environment. The communication is asyncronous (the sender does not wait for the message instance to be received). The sender may supply parameters (values, objects) with the message instance.
+
+The mesage arrives at the system, triggering an event that itself triggers a system operation.
+
+__The drawing is called a UML communication diagram__
+Time triggered events are embedid in the rectangle with <<>> quotes
+
+### System operations
+Process a input event, change of the system state and the output of messages. the effect associated with an imput event is called a system operations. A system operation is performed instentaneously.
+
+### Environment model
+The set of input messages the system can recieve. 

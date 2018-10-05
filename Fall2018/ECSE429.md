@@ -579,4 +579,84 @@ Have a test case for each possible path in the program. But some path may be inf
 Test zero times, 1 time and 2 times or more.  
 minimum-1, minimum, minimum+1,typical,maximum-1,maximum,maximum+1
 
-### Nested loops
+---
+# 05/10/2018
+### Nested Loop
+Start at inner most loop, set all the outerloops to their minimal values. Set all the other loops to there typical value. Then perform the dedicated tests for that specific loop.
+
+Move up nested loop level.
+
+## white box test process
+1. Set coverage goals
+2. Derive control flow graph (CFG) of source code
+3. Determine path to obtain coverage goals
+4. For each path, sensitize path with imput values use specification for output and watch for unfeasible path
+5. Run test cases
+6. Check coverage
+
+### Path sensitizing
+Find the set of imputs that will force the selected path.
+Backward (exit to entry) or forward (entry to exit) strategy. Some path may be infeasible which may involve some rewritting.
+
+### Path conditions
+Conjunction of branch predicate required to hold afor all the bracnhes along path (what values must be true for that path to be executed). This is done through symbol evaluation (x_1,x_2).
+
+To solve such condtions and equations we can use certain tools like Solver designed by microsoft.
+
+### Path conditions with while loops
+In this case variables are written with x_1.1,x_1.2 and so on.
+
+# Data flow analysis
+Uses control flow graph and focuses on the assignment of values to variables and their uses (where data is defined and used).
+
+It analysees the occuruences of variables, define the occurence.
+- __Predicate__ use: variable used to decied whether predicate is true
+- __Computational use__: compute a value for defining other variables or output value.
+
+### Example
+```
+x = y + z (this statment defines variable x and uses variable
+y and z)
+scanf("%d",&x) (defines variable x)
+printf("%d",x) (uses variable x)
+```
+
+## c-use
+Define computational used, meaning that the variabl is used as part of an assignment, an output a paramter for a function call
+
+## p-use
+Is the occurence of a variable in a condition branch statement.
+
+## Basics of data flow analysis
+We will use these labels
+- d(v,n) a value v is assigned at node n (definition)
+- c-use(v,n) variable v used in a computation at node n
+- p-use(v,m,n) variable v used in predicated from node n to m
+- k(v,n) kill, variable v is dealocated at node n.
+
+Then we can use a tree diagram to see the regular use of nodes and their regular transitions, if we have transitions that are not in the graph in our code then we could label these as potential defects or warning.
+
+### General check list
+ dd suspicious
+- [ ] dd suspicious
+- [ ] dk probably defect
+- [ ] du normal use
+- [ ] kd okay
+- [ ] kk probably defect
+- [ ] ku a defect
+- [ ] ud okay
+- [ ] uk okay
+- [ ] uu okay
+
+First occurence of action on a variable
+- [ ] k suspicious
+- [ ] d okay
+- [ ] u suspicious (may be global)
+
+Last occurence:
+- [ ] k okay
+- [ ] d suspcious
+- [ ] u okay (but maybe deletion frogoten)
+
+## Data flow graph
+We add the data flow nomenclature to the regular control flow graph.
