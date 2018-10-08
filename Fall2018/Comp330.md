@@ -1,4 +1,4 @@
-# COMP 330 Theory of computation
+z# COMP 330 Theory of computation
 ---
 # Lecture 1 05/09/2018
 ## Course Info
@@ -636,3 +636,32 @@ $$ p_1 \not = p_2 \implies a^{p_1} \not \equiv_L b^{p_2}$$
 
 ---
 # 28/09/2018
+## Does a system do what it is suppose to do?
+Usually somebody right down a **SPEC** written in natural language which can be vague. To get a better feel for such models we want to write some logic. The logic defines a behaviour which is just a system of actions.
+
+## Model Checking
+We can check system with
+$$ 10^{600}$$
+States can be checked.
+
+### Famous pentium bug
+Was a mistake in the design of a chip in 1994. Which because of the design did mutliplication incorrectly. Mistakes only appeared when multiplying very big numbers. Intel lost millions of dollars with new slogan such as "Intel redefining mathematics!".
+
+### Questions
+Are sequences of actions good enough to capture all aspects of behaviour?
+
+### Vending machine
+$$ \Sigma = \{1\$,COF,TEA, \overline{COF}, \overline{TEA}\}$$
+Actions may be rejected compare to our DFA that would read every symbol we gave them. Systems may be undetermintate. i.e we do a certain action and what the next state is, is not defined. 
+
+Sequences do not acapture all ascpects of behaviour. (by sequencing we mean steps throught the machine). We need to capture branching!
+
+## Def Bisimulation An equivalence relation on states 
+$$
+s \sim t\\
+\forall a \in Action \ s \xrightarrow{a} s' \exists t' \ s.t \ t \xrightarrow{a} t' \land s' \sim t' \\
+\& \forall a \in Action \ t \xrightarrow{a} t'' \exists s'' \ s.t \ s \xrightarrow{a} s'' \land s'' \sim t''
+$$
+Every state is obviously bisimilar to itself.
+
+If two states are bisimilar then no interactive experiment can reveal the difference.
