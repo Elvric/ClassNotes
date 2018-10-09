@@ -979,3 +979,83 @@ public class RegMRSWRegister implements BoleanRegister {
 
 ### Atomic SRSW from SRSW regular
 We are going to use a time stamp. The writer writes a value but uses a counter to indicate the order in which writes happen. When a reader reads, it saves the time stamp and last value.
+
+This is there to stop the following situations, one register gets written to and during that time the same register reads it twice during that time. This is when we use the timer, if the time stamp is smaller than the time stamp of that register alredy has then it will not read the regiter as it would read an old value.
+
+---
+# 09/10/2018
+### Atomic SRMR
+We solve that by using a 2 dimensionaly array of register where each thread gets its own column to write and its own row to read. So the writer thread gets column 0 and the other thread reads every row and writes to their own column to inform threads they read a new value. If a thread reads an old value while a thread writes it is fine as we can still linarize it since a thread does not return until it finishes writting to its row.
+
+### MRMR atomic FROM MR atomic
+Each writter comes allong and read the register time stamp, each writer reads all then writes Max+1 to its register. If two time stamp overlap then they use the thread ID to break the tie. Otherwise they always read the value of the latest time stamps.
+
+### Atomic snapshot
+How far can we push this idea before we reach a plateau.
+A thread wants to read multiple registers and get an atomic snapshot of what happends at a certain time.
+- Array SWMR atomic registers
+- Take instantaneous snapshot of all
+- Generalizes to MRMW registers
+
+```java
+public interface Snapshot {
+    public int update(int v);
+    public int[] scan();
+}
+```
+- Collect read the values one at a time
+- Problem incompatible concurret collects result not linearizable.
+
+#### Clean collects
+Collect during which nothing changes if we go back and read again is it possible to detect that?
+
+The idea is to use time stamps, scan once then go back and do another scan if we see the same value with the same time stamp on the second run that means that we have a clean collect. (we use time stamps as otherwise a clean collect may be artificial not really clean the same value was seen yet it was not written at that same time)
+
+However this does not garentee that we can get a clean collect.
+
+```java
+public class SimpleSnapshot implements Snapshot {
+    private AtomicMRSWRegister[] register;
+
+    public void update(int value) {
+        int i = Thread.myIndex(x);
+        LabelValue oldValue = register[i].read();
+        LabelValue newValue = new LabelValue (oldValue.label+1, value);
+        register[i].write(newValue);
+    }
+
+    private LabelValue[] collect() {
+        LabelValue[] copy = new LabelValue(n);
+        for (int i = 0; i < n; i++) {
+            copy[i] = this.register[j].read();
+        }
+        return copy;
+    }
+
+    public int[] scan() {
+        LabelValue[] oldCopy, newCopy;
+        oldCopy = collect();
+    }
+    collect: while(True) {
+        newCopy = collect();
+        if (!equals(oldCopy, newCopy)) {
+            oldCopy = newCopy;
+            continue collect;
+        }
+        return getValues(newCopy);
+    }
+}
+```
+
+### Wait free snapshot
+The idea is to include a scan along with any update that we do.
+A scans once, then looks at B scan realise the the B row was updated, then if we collect again and B is updated again that means that the second write happened during A scan so we can update that cell to the new value in A scan.
+
+#### Observations
+We have unbounded counters which could cause overflow. 
+
+## Summary
+We saw we could implement MRMW multi valued snapshot objects
+From SRSW safe registers. But what is the next step to attempt with read-write register?  
+
+The __great challenge__ what about doing atomic writes to multiple locations? Write many then snapshot? The answer so far is __NO__.
