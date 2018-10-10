@@ -228,3 +228,20 @@ The set of input messages the system can recieve.
 ---
 # 10/10/2018
 Graph domain model
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/graphdiagbetter.png
+"Pic")
+
+### Communication
+Sometime it is hard to know from where a message was sent and to whom the response must be delivered. One way to solve this is to send the indentity of the sender as a parameter to the message. This information can also be used to send the message back.
+
+When there is an operation that require an interaction between 2 actors then it becomes more complicated. Such as a manager than needs to interact with a system that will then send some messages to the clients. This means that in the system, there must be some information about the procedure through which we can contact clients.
+
+## Iterative development
+When creating environment it usually starts with high level abstractions such as the bank sends a  message to the clients. But overtime it could get more complicated with the bank having to print the letters and then send them to a postal service that then sends the message to the clients.
+
+#### Environment model question
+Provide declarations for the entities needed to describe the exchange of information by messages between a system and a terminal "actor".
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/graphdiagbetter.png
+"Pic")
+
+## Concept model
