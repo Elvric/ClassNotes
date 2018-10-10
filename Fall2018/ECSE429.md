@@ -660,3 +660,82 @@ Last occurence:
 
 ## Data flow graph
 We add the data flow nomenclature to the regular control flow graph.
+
+Predicate use always happen on the edges the rest are labeled on the nodes
+
+---
+# 10/10/2018
+## Data flow graphs
+#### Complete path
+initial node is the start node and final node is the exit node
+
+#### Simple path 
+all nodes except possibly first and last are distinct
+
+#### Loop free path
+All nodes are distincts
+
+#### Def clear path
+with respect to v: any path starting from a node at which variable v is defined and ending at a node where v is used without redefining v anywhere else.
+
+#### Du pair
+d nodes where v is defined u nodes where v is used, def clear path from d to u.
+
+## Data flow coverage criteria
+
+### All definitions
+We select at least 1 def-clear path from every dfining nodes of v to at least one use of v regardless of p or c use.
+
+### All uses
+For all variables v therse should be one def clear path from every defining node of v to every (reachable) use of v
+
+### All p-uses some c uses
+For all variable v we have one def clear path from every defining node of v to every reachable p-use if def v has non then we go to c-use.
+
+### All c-uses some c uses
+Same idea than above but reversed
+
+### All DU paths
+All du paths covered for all variables v to all c/p use of variabl v.
+
+# Mutation testing  
+Who tests the test?  
+Fault based testing: directly towards "typical" faults that occur in a program.
+1. Take a prorgam and test data generated for that program
+2. Create a number of **similar** programs (mutant) each with a small changes (change operators which mimiks regular dev errors)
+3. The original tests data run through the mutants
+4. If test data detecs all differences in mutants then the mutants are said to be dead, and the test set is adequate.
+
+## Mutants survival
+Remains alive either because it is equivalent to the original program or the test set is inadequate to kill the mutants. 
+
+## Types of mutants
+
+#### Stillbord mutant
+Syntatically incorrect, killed by compiler
+
+#### Trivial mutant
+Killed by almost any test case
+
+#### Equivalant mutant
+Always produce the same output than the original program.
+
+None of the above are interesting. We want to detect mutants that represent hard to detect faults.
+
+## Mutation coverage
+
+Complete equates to killing all non-equivalent mutants.  
+The mutation score (ration of dead mutants over all non-equivalent mutants)  
+We can see each mutant as a test requirement  
+The number of mutants depends on the definition of mutation operators and the software syntax/structure.  
+Number of mutants tend to be large even for small software (random sampling)?
+
+### Design tests input that will kill mutants
+- Reach the fault seed during execution (reachability)
+- Cause the program state to be incorrect (infection)
+- Cause the program output to be incorrect (propagation)
+
+### Assumption
+Competent programmer assuption: the programmer will give us a product that is correct or only differs from the program by a combination of simple errors.
+
+Coupling effect assumptions: test data that distingishes all programs differing from a correct one by a simple error is so sensitive that it also implicitly distingishes more complex errors.

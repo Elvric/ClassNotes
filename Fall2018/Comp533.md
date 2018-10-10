@@ -397,3 +397,6 @@ Domain specific
 - Each artifact uses the most apporpriate formalism to express the concern's properties.
 
 Generic: integrate all relecent (functional) variations and (architectural, design) solutions.
+
+---
+# 10/10/2018
