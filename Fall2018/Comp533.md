@@ -400,3 +400,74 @@ Generic: integrate all relecent (functional) variations and (architectural, desi
 
 ---
 # 10/10/2018
+How general should be the string  
+How about the logger
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/reivewdomainmodel.png)
+
+## SPL
+Set of software systems that share a common, managed set of features satisfying the specific needs of a particular market segment. Which makes them develop with the same core features.
+
+Traditionally divided in 2:
+#### Domain Engeneering
+Focus on the family of product in particular, thinking about the commun aspects to develop production facility. Building tools specifically for that domain
+
+#### Application Engeneering
+Produce the family members productus, using the provided tools.
+
+### SPL and reuse
+In advance we commit effort to understand the domain its different solutions, its different product and what can be shared between them. This involves more investments but structured in a way that makes it easier to add variance or build new configuration in the family. 
+
+Scalability is a chalange, combining 320 independs optional features have more variance than atom arrangments in the univers.
+
+### Features
+A prominent or distinctive user-visible functionality, aspect, quality or characteristic of software of system.
+
+A distingishible characteristic of a concept.
+
+### Feature models
+Tree diagram is used to visually depicts a feature of a solution in groups of increasing level details. The root of the tree denotes the concept (car) and the child the different domains.
+
+Parent child
+- Mandatory 
+- Optional
+- OR
+- XOR
+
+Cross features:
+- X requires Y, if X is selected so is Y
+- X exludes Y, if X is selected then not Y
+
+The tree itself can be seen as logical parent child set of constrains.
+
+**Feature conflict** refer to the situation where 2 or mor features cannot be selected simutaneously. Can be specified using XOR branches or excludes constrains (not the child of the same parent case)
+
+**Feature interactions** when two features put together display exhibit unexpected behaviour that does not occur when the features are used in isolation. These need to be identified and resolve them.
+
+## Goal modelling
+Goals are the driver for requirements elaborations. Yet, stakehilders goals and objectives are complex and will conflict.
+
+Goal modelling helps us understand stalkholder goals and potential conflicts. (answer the why questions)
+
+Then we decompose high level goals into alternative solutions called **tasks**. (operationilization)
+
+# Goal oriented requierment language
+ITU standard. GRL provids clear tracability from strategic objectives to technical requierments. Allow reuse of higher level stable goals when the system evolves.
+
+## GRL simplified 
+Objective/Qualities oval shaped  (high level goal)  
+Feature/tasks feature is a rectangle, tasks is a stretch losange (low level goals)  
+Model actors and stakeholders persons, link objective and stalkholder to actors  
+Contribution links: Quantify the impact that lower level goals have on higher level goals, arrow from low to high with the number of on the arrow.
+
+## Advanced GRL
+(not seen in this class)
+
+# CORE variation inteface
+Expresses both goals and featuress at the same time. This is done by showing features and the impact that each feature has on non-functional properties/qualities by means of a goal model.
+
+This is done by linking the feature model to the goal model.
+
+### Impact evaluation
+When a choice is made the tool can evaluate the impact. Value ranges from 0 to 100 defining the satisfaction value of each goal that choosing this feature would make.
+
+# Concern-Oriented (Domain) Modelling

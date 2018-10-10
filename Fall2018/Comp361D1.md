@@ -224,3 +224,7 @@ Process a input event, change of the system state and the output of messages. th
 
 ### Environment model
 The set of input messages the system can recieve. 
+
+---
+# 10/10/2018
+Graph domain model
