@@ -241,7 +241,15 @@ When creating environment it usually starts with high level abstractions such as
 
 #### Environment model question
 Provide declarations for the entities needed to describe the exchange of information by messages between a system and a terminal "actor".
-![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/graphdiagbetter.png
-"Pic")
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/EnvironmentModelTerm.png)
 
 ## Concept model
+Contains the set of classes and associations modelling the system's conceptual state.
+
+It must contain all conceptual system state needed in order to provide the required system functionality.
+
+### Domain to concept model
+The concept model only contains the classes and relationships of the Domain Model required for the project we want to build.
+
+#### Actors
+Belongs to the environment, association to connect them to the system corresponds to communication paths between actors. In the concept model there will be one huge class named <<System\>> hand have all the other classes inside that system.
