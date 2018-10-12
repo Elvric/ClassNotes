@@ -258,7 +258,34 @@ Belongs to the environment, association to connect them to the system correspond
 # 12/10/2018
 Bellow are examples of the model for an elevator
 ## Environmental model
-![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/EnvironmentModelTerm.png)
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/EnvironmentalModelExample.png)
 
 ## Concept model
-![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/EnvironmentModelTerm.png)
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/ConceptExamp.png)
+
+
+## System operations
+Precondition must be true before, postcondition must be true after. It is considered to be a black box no information about intermediate states.
+
+## Operation model
+#### Operation
+the entity that gives the operation aka name of the system, followed by the name of the operation
+and a parameter list and the type of the returned message
+
+#### Scope
+All classes and assocaition frm the cinceot model defining the name space of the operation.
+
+#### Messages
+The clause declares all hte message types that are outpu by the operation togeth with their desitnations.
+
+#### New
+This clauses declares names ofobjects that might be created by this system.
+
+#### Pre
+(optional) describe the condition that must be me for the operation to make sense.
+
+#### Post
+Description of the effects of the operation on the conceptual system state.
+
+#### Use cases
+This clause cross-references to related use case.
