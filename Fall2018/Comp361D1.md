@@ -256,3 +256,9 @@ Belongs to the environment, association to connect them to the system correspond
 
 ---
 # 12/10/2018
+Bellow are examples of the model for an elevator
+## Environmental model
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/EnvironmentModelTerm.png)
+
+## Concept model
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/EnvironmentModelTerm.png)
