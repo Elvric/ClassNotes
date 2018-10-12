@@ -665,3 +665,140 @@ $$
 Every state is obviously bisimilar to itself.
 
 If two states are bisimilar then no interactive experiment can reveal the difference.
+
+---
+# 12/10/2019
+## Anti-patters/code smells
+Oppsit of design patter, identifies poor solutions to recurring design problems.
+
+Grouped into 3 categories
+1. Classic bad smells
+    1. Obscure test
+    2. Hard to test code
+    3. Test code duplication
+2. Behaviour smell
+    1. Assertion rouletter 
+    2. Erratic Testing
+3. Project Smells
+    1. Buggy tests (lots of test fails are regularly found)
+    2. Dev not writting automated test
+    3. High test maintenance costs (too much effort kept to maintain existing tests)
+    4. Production bugs (too many bugs found during formal test or productions)
+
+## Test Code smalls (classic bad smell)
+## Obscure test
+Hard to understand what a test does at a glance. Can lead to high test maintenance.  The causes are usually, wrong information in the test or too little or too much.
+
+### Eager tests
+Tests verifies too much functionality in a single test method. It is better to have a suite of independent single condition tests.
+
+### Mystery Guest
+A filename of an existing external file. The content of a database source. Such that the test reader is not able to see the fixtures (cause effect) between the test result and what is tested. This is fine when testing the database or data structure but when testing other features this is bad testing.
+
+Normally files must be read from a setup phase.
+
+### General Fixture (UNIT TEST)
+Has two tests code that have the same setup. Use minimal fixture as much as possible in unit testing.
+
+### Hard-Coded Test Data
+The output is tested based on hard coded value can be problematic
+
+### Conditional Test logic
+Use of itteration or if statment that makes the test code contains information on code that may not be tested.
+
+Causes: flexible texts , test code verifies different functionalilty depending on where and when it is called.
+
+Multiple test condtions: use parametrized tests.
+
+### Hard to test code
+Code is difficult to tests which makes it hard for us to verify its quality.
+
+### Test code duplication
+Same test code is duplicated, this makes it a maintenance nightmare.
+
+### Test logic in production
+Using different data purposly for testing then in real production. Opening the door to new bugs, makes SUT more complex
+```
+if (testing) {
+    return hardCodedData;
+}
+else {
+    return gatheredData;
+}
+```
+
+## Behaviour tests
+**SUT**: Software under tests. 
+### Assertion roulette
+Multiple asserts of the same time like assertEquals which makes us unable to know which one failed especially for automated tests.
+
+### Erratic tests
+Sometimes the same test passes other times it fails.
+
+Impact: tempted to remove the tests from the test suites causing tests lost.
+
+Caused by interating tests/test suit. Resource leakage. Test wars: test fail randomely when the tests are run simutaneously.
+
+### Fragile test
+The test fails to run when the SUT s changed in ways that do not affect the part where the test is exercised. 
+
+Due to:
+- Change in the test interface (part of the interface changed so test does not compile)
+- Test fails because data was modified
+- context: the context in which the test is executed has changed
+- Behavior sensitivity: changes in SUT causes other tests to fail. (regression testing )
+
+### Frequent debugging
+Manual debugging is required to determine the cause of most test failures.
+Caused: missing unit tests or component tests.
+
+### Manual Intevention
+The test requires a personto perform some manual action each time it runs. 
+Caused by: manual injection, result verification.
+
+### Slow tests
+Taking too long to run.
+Caused:
+- Slow component usage of SUT
+- General fixture: Tests slow because eahc test builds the same fixture.
+
+# Principals of good practices
+The test auomation manifesto, containing 13 criteria
+1. Write the test first
+2. Design testybility
+3. Use the front door first (public interface)
+4. Communicate intent
+5. Do not modify SUT
+6. Isolate the SUT
+7. Keep the tests independent
+
+### verify one condtion per test
+The bad idea many tests require a specific initial state. Many operation changes this to a new test and we reuse the new state for a second test. This is bad practice because if one of the tests fails all the ones after will not run.
+
+#### Good test code structure
+1. SetUp test fixture
+2. Exercise teh SUT
+3. Verify Expected outcome
+4. Tear down test fixture
+
+### Naming conventions
+Name test classes + methods systematically
+
+Test class + test methods should convey:
+- Name of SUT class
+- Name of method/feature being exercised
+- Important characteristics of any input values related to exercising the SUT
+- Anything relevant about the state of the SUT or its dependencies
+
+### How to organize test case classes
+Could be different based on the design choice either:
+- 1 test case class per class
+- 1 test case class per feature
+    - method 
+    - per user story
+- 1 test class per fixture
+
+### Code reuse: Parametrized tests
+We pass information needed to do the fixture setup and result verification to a utility method that implements the entire life cycle. For example item iteration is done externally and each item is sent to the same test method.
+
+# Black-Box Component Testing

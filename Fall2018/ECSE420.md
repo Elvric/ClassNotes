@@ -1049,7 +1049,7 @@ public class SimpleSnapshot implements Snapshot {
 
 ### Wait free snapshot
 The idea is to include a scan along with any update that we do.
-A scans once, then looks at B scan realise the the B row was updated, then if we collect again and B is updated again that means that the second write happened during A scan so we can update that cell to the new value in A scan.
+A scans once, then looks at B scan realise the the B row was updated, then if we collect again and B is updated again that means that the second write happened during A scan so we can update that cell to the new value in A scan. The idea is that every writter takes a snapshot of the array before writting.
 
 #### Observations
 We have unbounded counters which could cause overflow. 
@@ -1059,3 +1059,86 @@ We saw we could implement MRMW multi valued snapshot objects
 From SRSW safe registers. But what is the next step to attempt with read-write register?  
 
 The __great challenge__ what about doing atomic writes to multiple locations? Write many then snapshot? The answer so far is __NO__.
+
+---
+# 11/10/2018
+Implement a FIFO queue that is wait free and linearizable with atomic registers and without any locks.
+
+# Consensus
+Each thread has a private input. They can communicate, after communication they have to agree on one thread's input.
+
+## Theorem
+The is no wait-free implementation of n-thread concesensus for read and write register.
+
+Implicates that asyncronous computability is different from Turing computability.
+
+### Protocal history as thread transitions
+Change the method call into transitions between different states.
+
+In our case if we have 2 threads then the only transitions available are between the 2 threads method calls. The translates into a bianry tree. 
+
+To illustrate that lets consider a 2 thread and a binary tree of hight 4 as we only allow each thread to perform 2 moves before terminating.
+
+A state is bivalent if the outcome from that states is still undetermined. Univalent means the opposit.
+
+Critical state: The state that is just before some univalent states (needs to be all the substates to be univalent).
+
+Table of interactions of critical states
+
+|       |x.read()|y.read()|x.write()|y.write|
+|-------|-------|--------|---------|-------|
+|x.read()| no |no|no|no|
+|y.read()|no|no|no|no|
+|x.write()|no|no|no|no|
+|y.write()|not|no|no|no|
+
+Hence using atomic registers we cannot achieve consensus.
+
+## Consensus object
+```java
+public interface Consensus<T> {
+    T decide(T value);
+}
+```
+We consider only one time use of the method, the first thread that calls that method wins.
+
+```java
+public abstract class ConsensusProtocol<T> implements Consensus {
+protected T[] proposed = new T[N];
+protected void propose(T value) {
+    proposed[ThreadID.get()] = value;
+}
+abstract public T decide(T value);
+}
+```
+The protocol is we show up propose our value to the array, go to a queue, dequeue the element if the element is red the thread decides its value, if we get a black then we return the other threads value. In our case we only have 2 threads.
+
+```java
+public class QueueConsensus<T> extends ConsensusProtocol<T>{
+    private Queue queue;
+    public QueueConsensus() {
+        queue = new Queue();
+        queue.enq(RED);
+        queue.enq(BLACK);
+    }
+    public T decide(T value) {
+        propose(value);
+        Ball ball = this.queue.deq();
+        if (ball == RED {
+            return propose[i];
+        }
+        else {
+            return proposed[1-ij];
+        }
+    }
+}
+```
+
+### Consensus Numbers
+An object X has a consensus number N if it can be used to solve N thread consensus.
+
+Atomic read right register have consensus number 1.
+
+Multi dequeuer FIFO queue has consensus number at least 2.
+
+If we can implement X from Y and X has consensus c then Y has consensus number at least c. **Certain exeptions apply**

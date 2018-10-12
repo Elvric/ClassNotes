@@ -253,3 +253,6 @@ The concept model only contains the classes and relationships of the Domain Mode
 
 #### Actors
 Belongs to the environment, association to connect them to the system corresponds to communication paths between actors. In the concept model there will be one huge class named <<System\>> hand have all the other classes inside that system.
+
+---
+# 12/10/2018
