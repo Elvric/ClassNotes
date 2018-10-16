@@ -1142,3 +1142,134 @@ Atomic read right register have consensus number 1.
 Multi dequeuer FIFO queue has consensus number at least 2.
 
 If we can implement X from Y and X has consensus c then Y has consensus number at least c. **Certain exeptions apply**
+
+---
+# 16/10/2018
+### Consensus theorem
+If we can implement object X from Y and X has consensus c then Y must have at least consensus c. (weird exceptions exists like quantum computers)
+
+## Multiple assignment problem
+Write multiple assignment then take a snapshot. With atomic registers this is not possible.
+
+### Proof
+take an array of 3 elements. Thread A writes to slots 0 and 1 B writes to 1 and 2 and any thread can read to any location. 
+
+If thread A reads thread B value at slot 1 or slot 3 is value is empty it won the race and its value is proposed. If thread B reads thread A value at slot 1 or no value at slot 0 then it won and we use its value. 
+
+Hence this structure can be used to implement 2 thread consensus therefore we cannot use read-write atomic register for that structure. 
+
+## Read-Modify-Write Objects
+Method call, return x prior value
+
+```java
+public abstract class RMWRegister {
+    private int value;
+    public int synchronized getAndMumble() {
+        int prior = value;
+        value = mumble(value);
+        return prior;
+    }
+}
+```
+In our case we want mumble to be non-trivial like adding 1 to it. just reading is not enough.
+
+### Theorem
+Any non-trivial RMW object has consensus of at least 2.
+
+#### proof
+Subclasses of consensus have propose(x) method which stores x into proposed[i] built-in method with a decide(object value) to determine which thread value wins.
+
+```java
+public class RMWConsensus extends ConsensusProtocol {
+    private RMWRegister r = v;
+    public T decide(T value) {
+        propose(value);
+        if (r.getAndMumble() == v) {
+            return proposed[i];
+        }
+        else {
+            return proposed[j];
+        }
+    }
+}
+```
+This cannot be implemented with RWM register as here we solve 2 thread consensus.
+
+### Generalize to more that 2 threads
+Let F ba set of functions such that for fi and fj either
+- fi(fj(v)) = fj(fi(v)) commute
+- fj(fj(v)) = fi(v) overwrite
+
+`Claim is any set of RMW objects that commutes or overwrites has consensus of exactly 2.`
+
+#### Examples
+- test-and-set getAndSet(1) f(v) = 1 Overwrite
+- swap getAndSet(x) f(v,x) = x Overwrite
+- fetch-and-inc getAndIncrement() f(v) = v+1 commute
+
+#### Proof
+Assuming that the function commutes A applies fa B applies fb C runs solo 0-valent  
+Assuming tha tthe function cummetes B applies fb, A applies fa c runs solo 1-valent must be decided.  
+In these 2 cases to thread c both of these look the same, it cannot distingish between the two states hence this is cannot have concensus number 3.
+
+Assuming the function overwrites. A applies fa, c runs solo and decides 0-valent  
+B applies fb first then A applies fa, c runs solo and must decide 1-valent.  
+But to thread c these two states look identitcal so we cannot do 3 thread consensus.
+
+## Compare and Swap CASObject
+```java
+public abstract class CASObject {
+    private int value;
+    public int syncronized getAndSet(int v) {
+        int prior = value;
+        value = v;
+        return prior;
+    }
+}
+```
+
+## Compare and set
+```java
+public abstract class CASObject {
+    private int value;
+    public boolean syncronized compareAndSet(int expected, int update) {
+        if(value==expected) {
+            value = update;
+            return true;
+        }
+        return false;
+    }
+}
+```
+
+This code above has infinit consensus number.
+
+```java
+public class RMWConsensus extends ConsensusProtocol {
+    private AtomicInteger r = new AtomicInteger(-1);
+    public T decide(T value) {
+        propose(value);
+        r.compareAndSet(-1,i);
+        return proposed[r.get()];
+    }
+}
+```
+
+## Consensus Hiarchy
+1. Read/Write registers, snapshot
+2. getAndSet, getAndIncrement  
+inft. comparAndSet
+
+We can reach anything in between using atomic k-assignment slots solves consensus of 2k-2
+
+## Lock-Freedom
+Lock-free:  
+In an infinite execution often some method call finishes. So some thread may starve but there will be no deadlock. It is a pragmatic aproach.
+
+## Wait-free
+Each method call takes a finite number of steps to finish
+
+Lock free and wait free are the same if the method execution is finite.
+
+## Universality
+If there is an object that can do consensus for n thread. Then out of that object we can build anything we want wait-free/lock-free linearizable n-threaded sequentially specified objects.
