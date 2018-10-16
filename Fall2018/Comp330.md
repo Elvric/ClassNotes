@@ -809,7 +809,7 @@ $$
 q_O= row(\epsilon)\\
 Q = row(s) \mid s \in S\\
 F = \{row(s) \mid s \in S \land T(s\epsilon)=1\}\\
-\delta(row(s),x)-row(sx), x \in \Sigma
+\delta(row(s),x)=row(sx), x \in \Sigma
 $$
 #### Example
 |row(s)\x|a|b|
@@ -818,6 +818,54 @@ $$
 |row(a)=01|row(aa)=10|row(ab)=00|
 |row(aa)=10|row(aaa)=00|row(aab)=00|
 
-Based on that table we can construct the following DFA using the states and so on:
-![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/classexercise.png)
+Based on that table we can construct the following DFA using the states and so on which is done in polynomial time:
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/MachineLearningPic.png)
 
+The observation table has 2 properties:  
+**Closed**
+$$\forall transition \in S.\Sigma \exists s\in S \ s.t \ row(transition)=row(s)$$ 
+
+**Consistent**:  
+$$s_1,s_2 \in S,row(s_1)=row(s_2) \implies \forall x \in \Sigma row(s_1x)=row(s_2x)$$
+
+### L* algorithm
+$$
+\Sigma = \{a,b\}\\
+L =\{a^mb^n\mid m,n \ even\}
+clumn = \epsilon
+$$
+Hence our first operation table will look like this:
+$$S = \{\epsilon\}\\
+S.\Sigma = \{a,b\}\\
+column = \epsilon
+$$
+This table is not close so we add the following
+$$S = \{\epsilon,a\}\\
+S.\Sigma = \{b,aa,ab\}\\
+column = \epsilon
+$$
+Now the table is closed and consistent.
+
+Whenever we have thar we build a DFA from the operation table above and ask the teacher if that DFA is equal to L.  
+Here the teacher responds No with the counter example bb.
+
+We are then going to append the counter example with all of its prefixes to the observation table which give us.
+$$S = \{\epsilon,a,b,bb\}\\
+S.\Sigma = \{aa,ab,ba,bbb,bba\}\\
+column = \epsilon
+$$
+But this table is not consistant with a=b=0 where aa=1 but ab=0
+So we must add some columns which gives us:
+$$S = \{\epsilon,a,b,bb\}\\
+S.\Sigma = \{aa,ab,ba,bbb,bba\}\\
+column = \epsilon,a
+$$
+Is this table close yes is this consistent yes
+
+Now we create the second conjecture to ask the teacher. The teacher responds no with abb so we get the new table:
+$$S = \{\epsilon,a,b,bb,ab,abb\}\\
+S.\Sigma = \{aa,ba,bbb,bba,abba,abbb,aba\}\\
+column = \epsilon,a
+$$
+
+The algorithm can finish in polynomial time for any regular language.
