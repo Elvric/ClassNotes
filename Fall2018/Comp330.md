@@ -667,138 +667,157 @@ Every state is obviously bisimilar to itself.
 If two states are bisimilar then no interactive experiment can reveal the difference.
 
 ---
-# 12/10/2019
-## Anti-patters/code smells
-Oppsit of design patter, identifies poor solutions to recurring design problems.
+# 10/03/2018
+# Specification of behaviour
+The description has to encompass dynamic changes of state in time
 
-Grouped into 3 categories
-1. Classic bad smells
-    1. Obscure test
-    2. Hard to test code
-    3. Test code duplication
-2. Behaviour smell
-    1. Assertion rouletter 
-    2. Erratic Testing
-3. Project Smells
-    1. Buggy tests (lots of test fails are regularly found)
-    2. Dev not writting automated test
-    3. High test maintenance costs (too much effort kept to maintain existing tests)
-    4. Production bugs (too many bugs found during formal test or productions)
+## Temporal logic
+### Linear Temporal logic (LTL)
+Give me a data sequence and I will tell you something about it.
 
-## Test Code smalls (classic bad smell)
-## Obscure test
-Hard to understand what a test does at a glance. Can lead to high test maintenance.  The causes are usually, wrong information in the test or too little or too much.
+#### Examples
+Concurrent programming brings the problem of competition to the table as some threads may compete for the same resources which brings mutual exclusion. Say p1 means P1 has access and p2 means P2 has access.
 
-### Eager tests
-Tests verifies too much functionality in a single test method. It is better to have a suite of independent single condition tests.
+$$always[(p_1 \implies \neg p_2 \land p_2 \implies \neg p_1)]$$
 
-### Mystery Guest
-A filename of an existing external file. The content of a database source. Such that the test reader is not able to see the fixtures (cause effect) between the test result and what is tested. This is fine when testing the database or data structure but when testing other features this is bad testing.
+If I request a service to a server then eventually I will get that service.
 
-Normally files must be read from a setup phase.
+If you request a service from the server you cannot make a second request until the first one has been granted.
 
-### General Fixture (UNIT TEST)
-Has two tests code that have the same setup. Use minimal fixture as much as possible in unit testing.
+We need logical statments for these:
 
-### Hard-Coded Test Data
-The output is tested based on hard coded value can be problematic
+$$
+\circ \text{ : next}\\
+\Box  \text{ : always}\\
+\Diamond \text{ : eventaually}\\
+\vartheta \text{ : until}\\
+\circ p \text{ next step p is true}\\
+\Box p \text{ p is always true }\\
+\Diamond p \text{ p will be true at some point}\\
+p \vartheta q \text{ p is true until q becomes true}
+$$
+Here p is true until q does not means that p has to change when q but it could at that point.
 
-### Conditional Test logic
-Use of itteration or if statment that makes the test code contains information on code that may not be tested.
+Going back to our threads for mutex we get  
+$$ 
+\Box (p_1 \iff \neg p_2)\\
+\Box (request \implies \Diamond granted)\\
+\Box (request_1 \implies (\neg request_2 \vartheta granted_1))
+$$
+It is possible to automatically check whether a finite state satisfies the LTL specification.
 
-Causes: flexible texts , test code verifies different functionalilty depending on where and when it is called.
+#### Temporal logic on words
+$$\Sigma = \{a,b\}\\$$
+We can now write LTL formulas interpreted on words. A formula looks at the position in the word  
+$$
+Q_a \text{: this letter is an a}\\
+Q_b \text{: this letter is a b}\\
+w = abbababb\\
+Q_a\text{:holds}\\
+w \models Q_a\\
+w \models \circ Q_b\\
+w \models \circ \circ Q_b\\
+w \models \Box(Q_a \implies \Diamond Q_b)
+$$
+Now consider this word:  
+$$
+w=ababab\\
+w \models \Box((Q_a \implies \circ Q_b) \land (Q_b \implies \circ Q_a))
+$$
+But this is not always true the end is an edge case so we are going to introduce a new symbol for false:  
+$$\perp$$
+$$\circ \perp \text{: these is no next step}$$
 
-Multiple test condtions: use parametrized tests.
+Hence we can change our formula above to:
+$$w \models \Box((Q_a \implies \circ Q_b) \land (Q_b \implies (\circ Q_a \lor \circ \perp)))$$
 
-### Hard to test code
-Code is difficult to tests which makes it hard for us to verify its quality.
+But the string bab is still accepted hence we have to change that to:
+$$w \models \Box(Q_a\land((Q_a \implies \circ Q_b) \land (Q_b \implies (\circ Q_a \lor \circ \perp))))$$
 
-### Test code duplication
-Same test code is duplicated, this makes it a maintenance nightmare.
+So we may think that given a TL formula there is a set of string that satisfy that formula. Is this always a regular language? The answer is **YES**. 
 
-### Test logic in production
-Using different data purposly for testing then in real production. Opening the door to new bugs, makes SUT more complex
-```
-if (testing) {
-    return hardCodedData;
-}
-else {
-    return gatheredData;
-}
-```
+But now are all regular language describable by TL. And the answer is **NO**. Consider the following:
+$$\Sigma=\{a,b\}$$
+And we want every odd position to have an a with reg we get
+$$(a(a+b))^*(a+\epsilon)$$
+For this case there is no TL formula that can express this.
 
-## Behaviour tests
-**SUT**: Software under tests. 
-### Assertion roulette
-Multiple asserts of the same time like assertEquals which makes us unable to know which one failed especially for automated tests.
+First order logic is undecidable so you can give up on algorithm that is why we limit ourselves to temporal logice as we can still decide things.
 
-### Erratic tests
-Sometimes the same test passes other times it fails.
+---
+# 05/10/2018
+## Learning automata
+Given a data set we want to learn the underlining structure of that data set. The hole point is to make hypothesis from a source of data.
 
-Impact: tempted to remove the tests from the test suites causing tests lost.
+### Passive learning
+Is when your learning algorithm is given a fix and finite data set from which it is trained.
 
-Caused by interating tests/test suit. Resource leakage. Test wars: test fail randomely when the tests are run simutaneously.
+We have our data set with inputs (set of words) labeled as in the language and not in the language and we run the machine automata on these words. 
 
-### Fragile test
-The test fails to run when the SUT s changed in ways that do not affect the part where the test is exercised. 
+This was proven to be NP-Hard for fixed and finite sets of labeled words. 
 
-Due to:
-- Change in the test interface (part of the interface changed so test does not compile)
-- Test fails because data was modified
-- context: the context in which the test is executed has changed
-- Behavior sensitivity: changes in SUT causes other tests to fail. (regression testing )
+### Active learning
+The wording algorithm can ask something (teacher) information about the unknown language. The whole key to active learning is to optimaly ask questions. Based on the answer given by the teacher we want to figure out what are the best questions to ask next.
 
-### Frequent debugging
-Manual debugging is required to determine the cause of most test failures.
-Caused: missing unit tests or component tests.
+We have a minimally adequate teacher 
+$$T^*$$
+And based on its answer we want to find L which is represented by a DFA.
 
-### Manual Intevention
-The test requires a personto perform some manual action each time it runs. 
-Caused by: manual injection, result verification.
+There is an algorithm created called
+$$L^*$$ 
+that is entierly deterministic and is not based on probability.
+It can ask 2 type of questions:
+#### a member ship querry
+Input a word w and the teacher says either w belongs to L or it does not
 
-### Slow tests
-Taking too long to run.
-Caused:
-- Slow component usage of SUT
-- General fixture: Tests slow because eahc test builds the same fixture.
+#### conjecture querry
+Hypothesis about the unknown language. Takes as imput the DFA build by the
+$$L^*$$ 
+algorithm. The teacher responds yes if the DFA is equal to the unknown language and no otherwise with a counter example.
 
-# Principals of good practices
-The test auomation manifesto, containing 13 criteria
-1. Write the test first
-2. Design testybility
-3. Use the front door first (public interface)
-4. Communicate intent
-5. Do not modify SUT
-6. Isolate the SUT
-7. Keep the tests independent
+### How do we store these information?
+We are going to use observation tables that are data structure that we are going to increase in size over time to store these informations.
+Considere the alphabet  
+$$\Sigma = \{a,b\}$$
 
-### verify one condtion per test
-The bad idea many tests require a specific initial state. Many operation changes this to a new test and we reuse the new state for a second test. This is bad practice because if one of the tests fails all the ones after will not run.
+The observation table will look like this,
+Rows represent potential state that our algorithm L* think are in the DFA and the columns are going to represent experiments performed on these states. We do not duplicate any string in the rows.
 
-#### Good test code structure
-1. SetUp test fixture
-2. Exercise teh SUT
-3. Verify Expected outcome
-4. Tear down test fixture
+|S union S.Sigma\E| epsilon | a |
+|--------------|------------|---|
+| S epsilon|0|T(a) = 0|
+| S a |0|1|
+| S aa |1|0|
+|S.Sigma b|
+|S.Sigma ab|
+|S.Sigma aaa|
+|S.Sigma aab|T(aab epsilon)=0|
 
-### Naming conventions
-Name test classes + methods systematically
+Initially we have each row and columns all equal to epsilon.  
+Then we use a function to fill in every cell call that **T** represents the membership query function.
 
-Test class + test methods should convey:
-- Name of SUT class
-- Name of method/feature being exercised
-- Important characteristics of any input values related to exercising the SUT
-- Anything relevant about the state of the SUT or its dependencies
+$$T((S\cup S.\Sigma).E) = \{0,1\}, T(S,E) = 1 \iff SE \in L$$
 
-### How to organize test case classes
-Could be different based on the design choice either:
-- 1 test case class per class
-- 1 test case class per feature
-    - method 
-    - per user story
-- 1 test class per fixture
+We are also going to use the row function, it takes the value of the row in it.  
+$$row : (S \cup S.\Sigma) \rightarrow (E \rightarrow \{0,1\})\\
+row = T(se) \forall e \in E
+$$
+So in a way row defines a tupple.
 
-### Code reuse: Parametrized tests
-We pass information needed to do the fixture setup and result verification to a utility method that implements the entire life cycle. For example item iteration is done externally and each item is sent to the same test method.
+For the DFA we define our first state as:  
+$$
+q_O= row(\epsilon)\\
+Q = row(s) \mid s \in S\\
+F = \{row(s) \mid s \in S \land T(s\epsilon)=1\}\\
+\delta(row(s),x)-row(sx), x \in \Sigma
+$$
+#### Example
+|row(s)\x|a|b|
+|--------|-|-|
+|row(epsilon)=00|row(epsilon,a)=01|row(epsilon,a)=00|
+|row(a)=01|row(aa)=10|row(ab)=00|
+|row(aa)=10|row(aaa)=00|row(aab)=00|
 
-# Black-Box Component Testing
+Based on that table we can construct the following DFA using the states and so on:
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/classexercise.png)
+
