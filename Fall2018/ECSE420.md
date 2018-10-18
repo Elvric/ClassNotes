@@ -1273,3 +1273,162 @@ Lock free and wait free are the same if the method execution is finite.
 
 ## Universality
 If there is an object that can do consensus for n thread. Then out of that object we can build anything we want wait-free/lock-free linearizable n-threaded sequentially specified objects.
+
+---
+# 18/10/2018
+# Spin Locks and contention
+## Kinds of architecture
+- SISD (Uniprocessor)
+    - Single instruction stream
+    - Single date stream
+- SIMD (Vector/multiple processor doing the same thing on different data)
+    - Single Instrunction
+    - Multiple data
+- MIMD (multiprocessor doing different thing on different data)
+    - Mulitinstruction
+    - Multidata
+
+## MIMD architecture
+We have a bunch of cores that share some memory in cache. They all access the same space as we get more processor we need to change the structure.
+
+Distributed system have their own independent cache but can still access each other cache.
+
+Issuses
+- Memory contention
+    - If all the processor want to access memory in the same location we are going to get some delays
+- Communication contention, one processor can broadcast a message at a time which can slow things down.
+- Communication latency
+     - How long does it take to access the memory.
+
+## What to do when not getting a lock
+Keep trying, known as spin or busy-wait good if delays are short. Could be good for multiprocessor
+Give up the processor, known as blocking, good if delays are long, always good on uniprocessor.
+
+### Basic spin lock
+Lock suffer from contentions as thread just try to access the same memory space (checking if the lock is available).
+
+### Test and set instruction
+Has a boolean value, set it to true with current value, return value tells if prior value was true or false. Can be reset by just writing false.
+```java
+public AtomicBoolean {
+    boolean value;
+    public synchronized boolean getAndSet(boolean newValue) {
+        boolean prior = value;
+        value = newValue;
+        return prior;
+    }
+}
+```
+The code above is part of the ``java.util.concurrent.access`` 
+
+```java
+AtomicBoolean lock = new AtomicBoolean(false);
+boolean prior = lock.getAndSet(true);
+if (!prior) {
+    //enter critical section
+    lock.getAndSet(false);
+}
+else {
+    //try again
+} 
+```
+Can be implemented that way:
+```java
+class TASlock {
+    AtomicBoolean lock = new AtomicBoolean(false);
+    void lock() {
+        while(lock.getAndSet(true)) {}
+    }
+    void unlock() {
+        lock.set(false);
+    }
+}
+```
+
+#### Space complexity
+N thread spin-kicj uses O(1) thread. As oppose to O(n) peterson/bakery. Overcomed by using MRMW.
+
+#### Performance
+Take n threads and set the counter to a million. And every interation takes 1 unit of time. Then with 1 thread it will take a million. Idealy increasing the thread should not change anything. But with our TAS lock the more thread we use the longer it takes.
+
+## Test-and-test-and-set locks
+Lurking stage, wait until the lock looks free.
+
+Pouncing state, as soon as lock loocks avaialbe 
+
+```java
+class TTASlock {
+    AtomicBoolean lock = new AtomicBoolean(false);
+    void lock() {
+    while(true)
+        {
+            while(lock.get()) {}
+            if (!state.getAndSet(true))
+                return;
+        }
+    }
+    void unlock() {
+        lock.set(false);
+    }
+}
+```
+This one does better as thread does not write to the memory location over and overagain but why?
+
+### Understanding memory with processor
+We have 3 layers of memory, first shared cache, processor access it through the bus (10 ms random access, broadcast medium one at a time), then local cache that is unique to each processor. (L1 not shared, L2 shared).
+
+L1 is small and very faset, L2 is larger and slower 10s of cycle to access.
+
+### Jargon
+Cache hit, found what we needed.  
+Cache miss, did not find the info in cache hence we have to go to other memory location.
+
+#### Cave Canem
+This model is still a simplification.
+
+### Cache becomes full
+When it is full we may need to make space for new entry by evicting older entres. Hence we must have a replacement policy.
+
+#### Fully associative cache
+Any line can be anywhere in the cache, so super flexible with what we can evict, hard to find lines.
+
+#### Direct map cache
+When someting is brought from memory it can only go to one place in cache (HashMap?). So it is easy to find a line, disadvantage is that we must replace fixed lines.
+
+#### K-way set associative cache
+Each slot holds k lines. Uses the best of both worlds, easy to find a line and some choice in replacing lines.  
+
+k is increasing overtime as more and more cores share data.
+
+### Cache coherence
+A and B are both accessing cache address x, A writes to x (update cache). How does B finds out? Many cache coherence protocols in literature.
+
+#### MESI protocol
+Modified cached data, must write back to memory, so we mark it as **M**.
+
+Exclusive **E**, the thread has the only copy and it has not been modified yet.
+
+Shared **S**, not modified yet my be cached by someone else sometime soon.
+
+Invalid **I**, cache content is no longer up to date.
+
+### Write through cache
+Update the value in the other location imediatly as soon as we update the value of our cache. Bus traffic, must writes back to main memory, most writes back to unshared data.
+
+### Write back cache
+Accumulate the changes we make in cache and write it back when a new process wants it or we need the cache for somthing else.
+
+## Mutal exclusion what to opptimize?
+- Bus bandwith used by spinning threads
+- Release/Acquire latency
+- Acquire latency for idle lock
+
+### The TASLock seen above
+Everytime we do a testAndSet opperation we invalidate cache lines. Miss in cache so all other threads have to use the bus to get the data. When thread wants to release the lock delayed behind the spinners that keep updating the value.
+
+### Test-and-test-and-test
+Wait until lock looks free, spin on local cache hence no need to use the bus while lock busy. The only issue is when the lock is released all threads are going to want to check the new value causing an invalidation storm. Forcing each thread to access the new value is main memory.
+
+### Solution Introduced delay
+Quiescence time: measure the time taken for acquire lock, pause without using bus, using the bus to get the new value increases linearly with the number of threads.   
+If the lock looks free but I fail to get it, then I will delay myself by time x, if I fail again double the sleep time
