@@ -871,7 +871,7 @@ $$
 The algorithm can finish in polynomial time for any regular language.
 
 ---
-# 19-10-2018
+# 15-10-2018
 # Linguistics
 The idea is to generate strings. This will be done by something called a grammar.
 
@@ -921,6 +921,77 @@ Note that the above structure forbids us to have leading 0.
 Sequences do not tell the story we produce trees!  
 Let's try to generate 2*3+5 as a tree
 
-![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/MachineLearningPic.png)
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/contextTree.png)
 
-We can see in the tree that we grouped together the * together before the +. The grammar above could also generate a tree with the + linked more tightly together than the *. This is a criteria for a bad grammar. More formally the grammar is said to be ambiguous. 
+We can see in the tree that we grouped together the * together before the +. The grammar above could also generate a tree with the + linked more tightly together than the *. This is a criteria for a bad grammar. More formally the grammar is said to be ambiguous if there are two distinct parse tree for the same String.
+
+Languages for which it is impossible to design an unambigous grammar are called inherently ambiguous languages. It is hard to prove it though.
+
+---
+# 17-10-2018
+Update the tree:  
+$$
+V = \{<e>,<t>,<f>\}\\
+S = <e>.\\
+<e> \rightarrow <e>+<t> \mid <t>.\\
+<t> \rightarrow <t>*<f> \mid <f>.\\
+<f> \rightarrow (<e>) \mid <num>
+$$
+Hence that forces + to go before * in the tree order. Tree structure is important for meaning example when translating.
+
+#### Example of context free language
+$$ L = \{a^nb^{2n} \mid n \geq 0\}\\
+S \rightarrow aSbb \mid \epsilon $$
+
+L = balanced set of parenthesis
+Idea:
+$$ S \rightarrow (S)\mid ()S \mid S() \mid \epsilon$$
+
+#### Palindrome context free
+$$L = \{x \mid x=x^{rev}\}, \Sigma = \{a,b\}\\
+S \rightarrow \epsilon \mid aSa \mid bSb \mid a \mid b $$
+
+#### context free language same number of a and b
+$$ L = \{x \in \Sigma^* \mid \text{ x has as many a as b}\}\\
+d(x) = \#_b(x)-\#_a(x)\\
+L = \{x\mid d(x) = 0\}\\
+u=aw \in L, d(w) = 1\\
+\text{Let x be the shortest prefix such that } d(x)=0, x \in u\\
+\text{Last letter of x has to be a b}\\
+x = a.vb\\
+u = avby\\
+v,y \in L\\
+S \rightarrow aSbS \mid bSaS \mid \epsilon\\
+S \rightarrow aSb \mid bSa \mid \epsilon \mid SS$$
+
+##### Proof
+1. Every word generated is in L
+2. Every word in L can be generated
+ 
+Claim: every word generated has equal number of a's and b's (easy to see).  
+Any word with equal numbers of a's and b's can be generated.  
+By induction on the number of a's.
+
+Base case:
+$$\epsilon$$
+
+Inductive step:  Assume any String with up to n a's can be generated and consider a String with n+1 a's.  
+
+awb, bw'a. If the whole string as equal number of a and b then so does w and w'. by doing
+$$ S \rightarrow aSb \rightarrow ... \rightarrow awb\\
+S \rightarrow bSa \rightarrow ... \rightarrow aw'b$$
+
+Now suppose w begins and ends with a, w=aw'a, w' has 2 more b than a's.   
+Lets look at w': must be split into two pieces w1 and w2 such that these 2 words have an extra b. So w=aw1w2a and aw1 has n a's so we can generate aw1 and w2a. We repeat the same process for b.
+
+#### Fact
+If we have a function like d which can only change by + or - one at each step and it starts out negative and ends up positive it must hi 0.
+
+## Chemsky normal form
+Every CFL has a grammar in which the rules are of a very restricted form:
+$$ NonTerminal \rightarrow Terminal\\
+NonTerminal \rightarrow 2*NonTerminal
+$$
+The only non terminal allowed to go to epsilon is the start symbol.
+
+Note that the example above does not respect the rule but it can be done. But considering this grammar for context free language we can use it to prove things about context free language as we know that any of them can be maped to this grammar.
