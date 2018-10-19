@@ -869,3 +869,58 @@ column = \epsilon,a
 $$
 
 The algorithm can finish in polynomial time for any regular language.
+
+---
+# 19-10-2018
+# Linguistics
+The idea is to generate strings. This will be done by something called a grammar.
+
+## Context free grammar (Chomsky)
+A CFG consists of 4 things.
+1. A set of symbles (Sigma, T) called terminals (Analog of the alphabet)
+2. Another set of symbols disjoint from the first call non terminals V (V and T is empty) V can represent Strings
+3. A special non terminal usually called S in V the start symbol
+4. A finite set of rules or productions of the form
+
+$$A \in V, A \rightarrow \alpha, \alpha \in (V \cup T)^*$$
+
+#### Example
+$$
+T = \{a,b\}\\
+V = \{S\}\\
+S \rightarrow \epsilon\\
+S \rightarrow aSb
+$$
+**Given a grammar the set of String we can generate is called the language of the grammar.**
+$$S \rightarrow aSb \rightarrow aaSbb \rightarrow aaaSbbb \\\rightarrow aaabbb$$
+The language generated is hence 
+$$ \{a^nb^n \mid n \in \mathbb{N}\}$$
+
+So context free languages do not need to be regular. But all regular languages can are context free.
+
+An example of a language that is not context free is:  
+$$ a^nb^nc^n$$
+
+``Fun fact, context free languages can be represented by a finite stat machine and a stack``
+
+These context free language can be used to define programming languages, all of them are specified this way like java and so on. HTML was especially designed to be context free.
+
+#### Example for legal arithmetic expressions in programming languages
+< exp >=start symbol, < num >=generate numbers symbol, < nz >=non zero digits, < n >=generate digits including 0.
+$$
+T = \{0,1,2,3,4,5,6,7,8,9,+,*,(,)\}\\
+V = \{<exp>,<num>,<nz>,<n>\}\\
+S = <exp>.\\
+<exp> \rightarrow <exp>+<exp> \mid <exp>*<exp>.\\ \mid <num> \mid (<exp>)\\
+<num> \rightarrow <nz> \mid 0\\
+<nz> \rightarrow 1<n> \mid 2<n> \mid ... \mid 9 <n> \mid \epsilon\\
+<n> \rightarrow 0<n> \mid 1<n> \mid ... \mid 9 <n> \mid \epsilon\\
+$$
+Note that the above structure forbids us to have leading 0.
+
+Sequences do not tell the story we produce trees!  
+Let's try to generate 2*3+5 as a tree
+
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/MachineLearningPic.png)
+
+We can see in the tree that we grouped together the * together before the +. The grammar above could also generate a tree with the + linked more tightly together than the *. This is a criteria for a bad grammar. More formally the grammar is said to be ambiguous. 
