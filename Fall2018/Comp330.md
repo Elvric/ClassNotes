@@ -1,4 +1,4 @@
-z# COMP 330 Theory of computation
+# COMP 330 Theory of computation
 ---
 # Lecture 1 05/09/2018
 ## Course Info

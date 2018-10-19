@@ -875,4 +875,96 @@ Could be different based on the design choice either:
 ### Code reuse: Parametrized tests
 We pass information needed to do the fixture setup and result verification to a utility method that implements the entire life cycle. For example item iteration is done externally and each item is sent to the same test method.
 
+---
+# 19-10-2018
+
 # Black-Box Component Testing
+Testing without having insight into the underlying code. It is based on the system specification as opposed to its structure. But coverage can still be measured based on the specification of the block we can outline the different ways the block can be executed representing the coverage.
+
+It helps functional testing by categorizing inputs and derive expected outputs. 
+
+- Adventages
+    - No need for source code
+    - Wide applicability, unit to system level testing
+
+- Disadvantage
+    - Does not test hidden functions
+
+## Equivalence partitioning
+Partition the input set based on equivalence classes. Aiming for completness (aim for all the input space). Avoid redondancies (have equivalence class overlap).
+
+In practice it is difficult to find perfect equivalent classes most of the time heristic algorithm or best guess.
+
+### Weak/Strong Equivaelent Class Testing
+We need to generate test cases based on equivalence classes.
+
+**Weak**: choose one variable value from each class for every input.
+
+**Strong**: Based on the cartesian product of all equivalent classes of all the input of the function and combine them
+
+i.e we have 3 variables A,B,C and A has 3 equivelent classes same for C, B has 4. Well weak will take just 4 test cases to cover all the equivalent classes of A,B and C. But strong would have 3x3x4 test cases.
+
+#### Exercise
+Find the equivalence classes for years between 1812 and 2012. Including leap years divisible by 4 when not a century, centuries have to be divisble by 400 to be a leap year.
+
+|equivalence classes|
+|-------------------|
+|year == 1900|
+|1812≤year≤2012 and year ≠ 1900 and year mod 4 =0|
+|1812≤year≤2012 and year mod 4 ≠ 0|
+
+### Equivalen classes new Ideas
+If error condition are high priority we should extend strong equivalence class testing to include both valid and invalid input.
+
+### Heuristic for identifying EC
+For external input:
+1. If input is in range of valid values
+    1. One valid Ec within the range
+    2. Two invalid EC outside each end of the range
+2. In input is a number N of valide values (array), define:
+    1. One vaile EC
+    2. Two invalid EC (none and more than N)
+3. If input is an element from a set of valid values, define:
+    1. One valid EC (in the set)
+    2. One invalid Ec (outside of the set)
+4. if input is must be
+    1. One input that satisfies the condition
+    2. One input that does not satisfy the condtition
+5. If there is a reason to think that element of EC are not handle the same
+    1. Create sub EC's
+6. Consider creating an EC for null, none, empty, 0 values
+
+### Myer's Test Selection Approach
+1. Until all valid EC have been covered by tests cases, write a new teast case that covers as many of the uncovered valid ECs as possible
+2. Do the same thing for invalid EC's
+
+#### Advantages of equivalence
+Small number of test cases, probability of uncovrering defects with the selected test cases is higher than that of randomly chosen test suits.
+
+#### Limitations
+Strongly type languages eliminate the need for consideration of invalid inputs. Equivalent classes are as good as the quality of the specifications. Myer's test selection appreach is weak when input variables are not independent. Brute-force definition of test case for every combination of the inputs ECs provides good coverage testss but is inpractical in practice
+
+## Boundary value analysis
+Typical programming errors tend to occur near extreme values (boundaries between different classes). This is what this focuses on, testing boundaries value
+
+Works well for data types with boundaries conditions
+
+Conventions min,min+,nom,max-,max. Hold all other values of the other variables at nom setting. **For each boundary condition**
+
+The same idea can be applied to output conditions.
+
+This costs generally **4n+1** test cases (n=number of variables), note that we are not counting values outside of the range yet.
+
+#### Example findPrice()
+Takes two values item code between 99 add 999 and quantity between 10 and 100.
+
+Go and look at the slides they were not posted when I took the notes
+
+### Robustness testing
+Add min- and max+ to the boundary value analysis which gives us **6n+1** number of tests
+
+### Worst case testing
+When we set all variables to extream values at the same time all min+. **5^n** test cases.
+
+### Robust worst test testing
+Combines both things above. **7^n** test cases.
