@@ -995,3 +995,28 @@ $$
 The only non terminal allowed to go to epsilon is the start symbol.
 
 Note that the example above does not respect the rule but it can be done. But considering this grammar for context free language we can use it to prove things about context free language as we know that any of them can be maped to this grammar.
+
+# 19-10-2018
+# Push Down automata/ Stack machine/ DFA + 1 stack
+$$\{a^nb^n \mid n \geq 0\}$$
+
+CFL = recognized by PDA
+$$
+Q: \text{ States }\\
+\Sigma: \text{ input alphabet }\\
+\Gamma: \text{ Stack alphabet }\\
+q_0: \text{ start state }\\
+F \subseteq Q: \text{ accept states }\\
+\Sigma_\epsilon = \Sigma \cup \{\epsilon\}, \Gamma_\epsilon = \Gamma \cup \{\epsilon\}\\
+\delta: Q \times \Sigma_\epsilon \times \Gamma_\epsilon \rightarrow PowerSet(Q\times \Gamma_\epsilon) 
+$$
+
+Look at input and top of the stack and may pop the stack, push a new simbole, change state.
+
+We decorate arrows with 
+$$a,b \rightarrow c$$
+See a in input and b on top of the stack, then replace b with c on top of the stack, any of these could be the empty string.
+
+#### Example for the anbn irregular language
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/contextTree.png)
+

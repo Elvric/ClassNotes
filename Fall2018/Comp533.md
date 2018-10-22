@@ -470,4 +470,40 @@ This is done by linking the feature model to the goal model.
 ### Impact evaluation
 When a choice is made the tool can evaluate the impact. Value ranges from 0 to 100 defining the satisfaction value of each goal that choosing this feature would make.
 
+---
+# 22-10-2018
 # Concern-Oriented (Domain) Modelling
+Question about extension?
+Questions about verifies?
+
+## Product derivation
+During dev of SPL any artifact is linked to the appropriate features of the SPL.
+
+Positive variablilty: Individual artifiacts realizing the selected features are composed.
+
+Negative Variability: From 150% artifacts, then look at which ones applay what feature.
+
+### Incremental modelling (positive)
+- Start one part
+- Augment the features with additional information.
+If the language does not support increments then we can only add things that can be alighed with system boundaries.
+
+### Aspect oriented modelling
+Define new featurs that allow the modularization of crosscutting. 
+
+### Class diagram composition
+Model elements with the same signature are merged. Merging gives us the union of properties done on:
+- Classes: Class name
+- Operation: Operation name+parameter
+
+The model can be asked to combine the two models into just one.
+
+#### Example (Register vehicle)
+Things that are linked to registration
+- Vehicle licensePlate
+- Person
+- Account
+- Transponder id
+
+### Tips on nomenclature
+When wanting to be general write able, athentificable. Or ed for certain cases such as Logged.
