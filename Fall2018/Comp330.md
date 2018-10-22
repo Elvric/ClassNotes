@@ -1018,5 +1018,7 @@ $$a,b \rightarrow c$$
 See a in input and b on top of the stack, then replace b with c on top of the stack, any of these could be the empty string.
 
 #### Example for the anbn irregular language
-![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/contextTree.png)
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/PDAsimpleEx.png)
 
+#### Example
+$$L = \{a^ib^jc^k \mid i,j \geq 0 \land i=j \lor i=k\}$$
