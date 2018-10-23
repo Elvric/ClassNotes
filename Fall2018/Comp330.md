@@ -1022,3 +1022,9 @@ See a in input and b on top of the stack, then replace b with c on top of the st
 
 #### Example
 $$L = \{a^ib^jc^k \mid i,j \geq 0 \land i=j \lor i=k\}$$
+
+![alt text](https://raw.githubusercontent.com/Elvric/ClassNotes/master/Fall2018/Pictures/PDAwNonDet.png)
+
+### Theorem
+1. Every CFL is recognized by some PDA
+2. Every language recognized by a PDA is a CFL

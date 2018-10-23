@@ -1432,3 +1432,151 @@ Wait until lock looks free, spin on local cache hence no need to use the bus whi
 ### Solution Introduced delay
 Quiescence time: measure the time taken for acquire lock, pause without using bus, using the bus to get the new value increases linearly with the number of threads.   
 If the lock looks free but I fail to get it, then I will delay myself by time x, if I fail again double the sleep time
+
+---
+# 23-10-2018
+## Queuing idea
+Avoid useless invalidation by keeping a queue of threads, each thread notifying next in line when lock is free.
+
+## Anderson queue lock
+Atomic variable next with an array. Each thread gets its own slot in the array. 
+
+When a thread is done, it calls the getandIncrement on n method getting the first value of the array which is set to True so thread has the lock, incrementing n by one. Then if another thread comes along it will get the next slot on the array which is false so it spins on a while loop there, then when the first thread finishes it updates the next slot to true, messaging the next thread in line without disturbing the others
+
+```java
+class Alock implements Lock {
+    boolean[] flags={true,false,..,false};
+    AtomicInteger next = new AtomicInteger(0);
+    ThreadLocal<Integer> mySlot;
+
+    public void lock() {
+        mySlot = next.getAndIncrement();
+        while(!falgs[mySlot%n]) {};
+        flags[mySlot%n] = false;
+    }
+    public voi unlock() {
+        flags[(mySlot+1)%n] = true;
+    }
+}
+```
+The issue is that cache line could be shared by the threads in the array if we update our value we update the cache of all threads. One solution is to use padding (dummy values) between each real thread/queuing location to ensure that every update only update one area of the cache where only one thread looks at. Memory ineficient but removes the contegency problem.
+
+#### Issues
+- Space ineficient (1 thread per cache line)
+- What if there is not that many contender?
+- What if we have an unknown number of threads
+
+## CLH lock
+Initinally we have a tail the points to false. To acquire the lock, the thread creates a new slot for itself set to true, does an atomic move of the tail pointer to the previous slot and gets a pointer to look at the prev slot. Setting the taile to its own new cell.  
+Another thread comes, creates a cell for itself setting it to true, then moves the tail pointer to its slot and keeps a pointer to the previous slot and spins on it.  
+When the first thread is done with the lock, it will set its slot to false.
+
+This structure can be recylced by a new thread that gets the slots of thread that finished executing on the queue. Once a cell is done with we can recycle it (C,C++).
+
+### Space useage
+- L = number of locks
+- N = number of locks
+- ALock(LN)
+- CLH lock O(L+N)
+
+```java
+public class QNode {
+    AtomicBoolean locked = new AtomicBoolean(true);
+}
+
+public class CLHLock implements Lock {
+    AtomicReference<QNode> tail;
+    ThreadLocal<QNode> myNode = new QNode();
+    public void lock() {
+        Qnode pred = tail.getAndSet(myNode);
+        while(pred.locked) {}
+    }
+    public void unlock() {
+        myNode.set(false);
+        myNode = pred; //for reuse
+    }
+}
+```
+
+The only is that this does not work well for certain architecture (large server with no cache).
+
+### NUMA and cc-NUMA architercture (Non-Uniform Memory Access) (cache coherent)
+- Illusion flat shared memory
+- Truth: no cache sometimes, some memory region faster than others
+
+Structure looks like a lot of processors with its own cache, but memory is shared between processors in a network of nodes. So everytime we want to check if the value is false, then it will have to access the value from far away.
+
+## MCS Lock
+Solves that for spinning on local memory.  
+The idea is the same, the only difference is that the node that we are on actually has a pointer to the next node.
+
+So we have a taile that points to the next node set to false that itself points to nothing. The thread creats its own node se to true. Then set the tail to its own node, set the previous node to its own node.  
+
+When another thread comes allong it does the same thing. So it spins on its own value. 
+
+When the previous thread is done it goes to the next node if there is one and updates it. O
+
+```java
+public class MCSLock implements Lock {
+    AtomicReference tail;
+    public void lock() {
+        Qnode qnode = new Qnode();
+        Qnode pred = tail.getAndSet(qnode);
+        if (pred==null) {
+            qnode.locked=true;
+            pred.next=qnode;
+        }
+        while (qnode.locked) {}
+
+    }
+    public void unlock() {
+        if (qnode.next == null) {
+            if(tail.CAS(qnode,null)
+                return;
+        while(qnode.next==null) {}
+        }
+        qnode.next.locked = false;
+    }
+}
+```
+
+## Abortable lock
+### Back-off lock
+Aborting is trivial, just return from the lock
+
+### Queue locks
+This is harder to quite as the next in line waits for that thread to gets signaled.
+
+### Abortable CLH locks
+The idea is to have the successor deal with it.  
+Here the node itself holds a boolean but also the address of a next node (can be null if there is no node or a special identifiable node that tells the thread it can acquire the lock).
+
+Thread arrives sets its own node, which points to null, then it make the tail points to its node and keep a reference to where the taile with pointing from. 
+
+If it sees that that node points to the special node then it can acquire the lock.
+
+When a thread whishes to leave the queue it makes its node point to the previous node it held the reference to. So that the next thread can see that the node it spins on no longer points to null, so it will move to the node it points to and spin on that.
+
+## Lock Data Access in NUMA Machine
+Works by node
+
+### Hierarcical backoff lock
+A thread wishing to acquire Back off by a smaller number if the thread that accessed the lock is on the same node than if the thread that acquire the lock is on a different node.
+
+Disadvantage is that it adds unfairness.
+
+## Hierarchical CLH lock (HCLH)
+Have a global tail. The a local queue per node, the last thread on the queue points to the next local queue in a new node.
+
+## Lcok Cohorting
+Use a local lock (based on thread) and global lock (locked for the cohort) on the server.  
+First a thread accesses a local lock, then acquires a global lock.
+
+When it is done it releases the local lock of its node, if a thread acquires it then it can die othewise it releases the global lock as well.
+
+### Thread Oblivious
+Means that a thread can be release by a different thread than the one that acquired it originally.
+
+GLOBAL lock: has to be thread oblivious 
+
+LOCAL lock: has to have a field that tells the previous thread if a thread is trying to acquire the lock.
