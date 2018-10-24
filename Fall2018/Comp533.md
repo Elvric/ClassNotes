@@ -507,3 +507,59 @@ Things that are linked to registration
 
 ### Tips on nomenclature
 When wanting to be general write able, athentificable. Or ed for certain cases such as Logged.
+
+---
+# 24-10-2018
+# OCL (mainly part of the midterm) History and goals
+## Constrain definition
+A constrain is a restriction on on or more values of an object oritented model system.
+
+The use of OCL is to better document these constrains in visual models. Also adding precisions as it can be verified for coherence and type checked making them are unambiguous.
+
+OCL have no side effects on the model, it does not change the state of the system due to the evaluation of the constrains. Either the model can or cannot respect the constrain asked by the OCL. Their evaluations are atomoc
+
+This allows the modeller to not have to bother with the validity of the OCL statement regarding its models. 
+
+## OCL types
+- Boolean
+- Integer
+- Real
+- String
+- Collection
+- Set (use rightarrow to make operations on sets)
+- Bag (like a set but contains duplicated)
+- Sequence
+- User defined types (anything in the model)
+
+We can use almost all boolean constrails, not, if then else endif, =, or, and, xor, imples.
+
+Operation or integer such as max,min,div,mod,floor,round (for boolean)
+
+Strings: 'apple','test': toUpper, toLower size, substring
+
+## OCL description
+Can navigate over association links inv (invarient), 
+```OCL
+context Company  
+inv: self.budget>50 or 
+
+context c:Company  
+inv: c.budged>50
+
+CreditCard class has a relationship validFrom and goodUntil with date and a
+fonction is before then we get:
+context c:CreditCard
+inv: c.validFrom.isBefore(c.goodUntil)
+
+Enunarations
+context Customer
+inv: self.myGender = Gender::Male implies
+self.call = 'Mr' (To be reviewed could not write everything)
+
+(for sets where the relation is between 0..1)
+p:Person
+inv: p.wife rightarrow notEmpty() implies
+p.wife.gender = Gender::females
+```
+
+Powerfull for sets any(boolean expressions e) pics out of a set at least one element that satisfies the boolean expressions.

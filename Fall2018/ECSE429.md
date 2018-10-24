@@ -968,3 +968,63 @@ When we set all variables to extream values at the same time all min+. **5^n** t
 
 ### Robust worst test testing
 Combines both things above. **7^n** test cases.
+
+---
+# 24-10-2018
+# Decision Table
+Helps express test requierments in a directly usable form.
+Action do not depend on prior, input or output, action depends on input variables, order of the input does not matter.
+
+## Structure
+|List of conditions (relation between decision variables)|Unique combination of condition|
+|------|----------|
+|List of resultant value|List of action selected|
+
+
+|Condition|1|2|3|
+|---------|----------|----------|----------|
+|c1|True|True|False|
+|c3|-|True|True
+|Action|
+|a0|X|X|
+|a1||X|X|
+
+\- for do not care helps reduce number of variants. Input are necessary but have no effect, imput is not necessary, mutally exclusive case.
+
+Do not happen is an assumuption however compare to do not care which is not.
+
+## Test gen strategies for decision table
+1. Test case for every explicit column with do not cares (basically each column of the table)
+2. All variants, test case for all implicit variant 2^n
+3. All true, test case for each column with output
+4. All false test case for each column with no outcome
+
+# Binary decision diagram
+Uses a tree to represent the boolean conditions of a decision table. Each level in a tree represents a condition, then we have 2 outgouing edges one the true branche for the true condtion and false branch for the false condition. Each leafe represent the value of the formula (so far the formula is a boolean).
+
+**Coninical**: compare the value of two exhisting functions in a tree by just looking at the nodes if the variables appear in the same number.
+
+## Reused and ordered binary decision diagram
+Omit redundant boolean variables, if both T and F have to be distincts for the child node. We also allow the sharing of identical subtrees.
+
+$$ f = a \land(b\lor c)\\
+f = a\rightarrow f_a,f_{\bar a}\\
+f_a = 1 \land(b\lor c) = (b\lor c)\\
+f_{\bar a} = 0 \land(b\lor c) = 0\\
+f_a = b \rightarrow f_{a,b},f_{a,\bar b}\\
+f_{a,b} = (1 \lor c) = 1\\
+f_{a,\bar b} = (0 \lor c) = c\\$$
+And so on for the c's
+
+### RBDD checklist
+1. Define an ordering of variables
+2. Make the decision along the paths
+3. Remove redondancies
+4. Merge equivalent subtrees
+5. Map RBDD to a RBDD determinant table
+6. Generate the test suits 
+
+# Cause and effect modelling 
+There is a problem statment we construct cause effect-table or graph then we define the test cases.
+
+We aim to identify causes (input, stimuli), effects (output, changes in system state)
