@@ -1028,3 +1028,43 @@ $$L = \{a^ib^jc^k \mid i,j \geq 0 \land i=j \lor i=k\}$$
 ### Theorem
 1. Every CFL is recognized by some PDA
 2. Every language recognized by a PDA is a CFL
+
+---
+# 22-10-2018
+### Important points on PDA
+1. Acceptance only happens at the end of the input!
+2. A PDA cannot decide to jam when there are moves possible.
+3. When there are choices the PDA can elect any choice it wants.
+
+We have already defined the PDA are equivalent to CFL
+
+## DPDA
+Determanistic push down automata. These DPDA corresponds to a restrictive class of context free languages we call them DCFL.
+In fact all programming languages today are DCFLs. These languages can be parsed in linear time compare to CFL that can by parsed in O(n^3).
+$$ \delta: Q \times \Sigma_\epsilon \times \Gamma_\epsilon \rightarrow Q \times \Gamma_\epsilon \lor \emptyset $$
+For every
+$$ q \in Q, a \in \Sigma, x \in \Gamma$$  
+Exactly one of 
+$$ \delta(q,a,x), \delta(q,a,\epsilon), \delta(q,\epsilon,x), \delta(q,\epsilon,\epsilon)$$  
+Is non-empty. 
+So just as a DFA even dead states that are wrong have to loop back to themselves.
+
+### Properties of DPDA's
+The intersections of a CFL and a regular language is a CFL.  
+The intersection of 2 CFLs may not be a CFL.
+
+## Algorithm for CFL
+$$L(G) = \emptyset\\
+NT \ X \text{ is genereting if: } X \xrightarrow{*} w \in \Sigma^* \lor T^*\\
+L(G) \neq \emptyset \iff \text{S in generating}$$
+
+Algorithm, calling the generatung state GEN. Now let GEN=T which is all the terminal symbol.  
+Then I am going to repeate until nothing changes. Which means that for each rule:
+$$X \rightarrow \alpha$$
+Check if:  
+$$ \alpha \in GEN^*$$
+If so add X to GEN.
+At the end if S is in GEN then L(G) is generating.
+
+There are more complex algorithm to check if L(G) is infinite?  
+This is provably impossible! The complement of a context free language may not be a CFL. But the complement of a DCFL is a DCFL.

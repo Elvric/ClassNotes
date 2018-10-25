@@ -289,3 +289,71 @@ Description of the effects of the operation on the conceptual system state.
 
 #### Use cases
 This clause cross-references to related use case.
+
+---
+# 24-10-2018
+# Distributed Architecture
+## Peer to peer
+Identical copies of the software running on different machines that are connected between each other.
+
+### Advantages
+All the peers run the same application.  
+Main loop for local player:
+- Get move from GUI
+- Verify correctness
+- Apply move to local state
+- Send move over the network
+
+Remote player:
+- Get move from the network
+- Apply move to local state
+
+Only one app to develop, gui has access to the entire game state, if needed, game state is local which increases performance
+
+### Disadvantages
+Game must be deterministic (no diversions as the states have to be in sink), Startup has to be assymetric.
+
+## Client server
+Computers talk to a server.
+
+Game is split into 2 different applications
+
+Client:
+Graphical user, Network interface  
+- it is the turn of local player
+    - get move from guii
+    - send move to the server
+- Wait for game state from server
+
+Server:
+Keeps the game states, behaviour and interface
+- wait for move from the player
+- Verfiy the move
+- Apply it to the state
+- Send the new state to clients
+
+### Advantages
+Clear sparation of concerns between game logic and gui.
+The authoritative game state is at the server
+Saving and loading is easy.
+
+### Disadvantage
+Less fault tolerant (a crash of the server can destroy the game state). Two applications to develop. As the game is remote the reaction time is slower.  
+Caching can be used but must be kept up to date.
+
+## Distributed system startup
+Always, asymetric. For the server this is centrilized, a machine is always running and when a player starts it connects to the startup machine to annonce its presence.
+
+Decentrilized: P2P, start one player machine, remember network informations, the other peer are provided with network information of the first player, when contacted the registration per forwards network information to all other registered peers. These peer may also provide broadcast functionality that allows new peers to announce themselves.
+
+## Commands solutions
+Use commands that define a move actions, each action knows how to validate and execute itself, which results in updating the game state.
+
+# System operations
+Considered to be a black box, Before Precondition must be true, After post condition must be true after.
+
+## Schema
+See the slides
+
+### Cool conventions 
+**_e** is added at the end of an exception message.

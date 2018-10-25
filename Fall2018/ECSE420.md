@@ -1580,3 +1580,92 @@ Means that a thread can be release by a different thread than the one that acqui
 GLOBAL lock: has to be thread oblivious 
 
 LOCAL lock: has to have a field that tells the previous thread if a thread is trying to acquire the lock.
+
+---
+# 25-10-2018
+## Concurrent Effects
+Contention (all threads want to access the same memory location) effects, mostly fixed by queue locks. Although it is suppose to increase performance.
+
+Problem arise when the code looks inherently sequential.
+
+### Coarse-Grained Synchronization
+Each method locks the object, so we have a sequential bottle neck as more thread stand in line. Thus adding more threads does not improve throughput.
+
+## Fine Grained synchronization
+Instead of usin ga single lock, we can have a lock for each part that needs to be synchronized
+
+## Optimistic Syncronization
+Read the objects without locking until we find what we want to modify if it is still untouched lock it and work on it else search again.
+
+Usually cheaper than locking as we lock only when we are ready to perform a critical action. Mistakes are expensive
+
+## Lazy Syncronization
+Postpone hard work. Removing components from a data structure is tricking with multithread. Checking if it is there and adding to it is alright removing something is harded. 
+
+The removal is done in 2 phases:
+- Logical removal
+    - Mark something as deleted so other threads can see that this element is technically no longer there.
+- Physical remove
+    - The object is removed physically from the data structure.
+
+## Lock-Free Synchronization
+Do not use locks at all  
+Use atomic operations like compareAndSet() & relatives.  
+This makes no scheduling assumption which is easier. However the implementation can be tricky and cause some overheads.
+
+### Reasoning about concurrent objects
+Invariant: property that always holds, when the object is created, preserved by each method at each step of the method.
+
+This definition makes sense only if objects can only be modified through its method. In terms of java this can be done with private variables.
+
+Careful with interference needed even for removed nodes, some algorithm traverses removed node, careful with malloc & free. With java again its alright as there is a garbage collector.
+
+### Representation inveriante
+Which concrete values are meaningful?  
+Sorted, duplicates?  
+It is important to ensure that the property we chose is preserved by other methods.
+
+This is a contract, all method must respect that invariant.
+
+## Linked List as a data structure
+We will view it as a concrete representation of items a set. So it has no duplicates and contains an add,remove,contains methods. We will use a hashkey to locate it in the set
+
+The list will be ordered in increasing order, the head and tail will be called sentinels and mark the min and max of our set.
+
+**Invariants**:
+- Sentinel node (the tail is always reachable from head)
+- Sorted
+- No duplicates
+
+### Coarse-Grained Locking patter on List
+We lock the head of the objects so that only one thread can access the list. The behavior is hence very similar to a sequential implementation. But we can get contention on the lock as more thread may want to access the list.
+
+Easy to implement however as we only need one lock. Can work well if the contention is low.
+
+### Fine grained Locking on list
+
+#### Hand-over-Hand-locking
+A lock exists from every node. First lock the lock of the first node, then acquire the lock of the next node, unlock the lock of the previous node at some point. 
+
+For remove we lock the previous and current node lock. Assuming the current node is the node we want to remove, then we move the pointer of the previous node to the next node. Then unlock both locks. It is important to lock both nodes in case another thread is already trying to remove the next node.
+
+To add the node we do the same thing lock the predecessor and the successor (predecessor->new node->successor). So neither of these nodes can be deleted, we can then insert our item in between them. Note that we can just lock the predecessor in this case, yet it may still be good practice to lock both incase somethign changes in other methods.
+
+At this stage this is better than using a single lock, more threads can travers the list.
+
+Not ideal as we have a long succession of acquire and release lock, also ineficient if one of the thread tries to remove a node early on the same convoy effect can happen.
+
+### Optimistic syncronization on list
+First find the node without locking, lock the nodes of interest,perform the operation.
+
+Works almost the same as hand-over-hand-locking but we do not lock any node if we are not interested in them.
+
+However to avoid ghost nodes happening while we are asleep (we find our nodes but before we lock them we go to sleep, another thread comes and deletes one of the node, when we go back we are going to add our node to a node that got deleted hence the node we just added is not actually in the list).
+
+To avoid that when we lock the nodes we go back to the head of the list and check if our nodes are still part of the list. We also check if the previous node still points to our successor node.
+
+Hence we may travers deleted nodes but the property of the list itself still holds.
+
+Performs better as we do not lock unecessary things. Travaersal are hence wait free.
+
+Issue is that we need to travers the list twice and that the contains method also need to acquire a lock.
