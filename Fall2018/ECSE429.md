@@ -1028,3 +1028,79 @@ And so on for the c's
 There is a problem statment we construct cause effect-table or graph then we define the test cases.
 
 We aim to identify causes (input, stimuli), effects (output, changes in system state)
+
+---
+# 26-10-2018
+# Cause-Effect Modeling
+Helps decision table and tree diagrams to generate test casses
+
+We right truthe statment for each effect present on the table. We also add some statement at the bottom of the graph to show which parts are mutally exclusive.
+
+Then we have to draw a cause and effect graph, on the left the causes for example on the right the effect. A line from a cause to an effect is a necessary condition for the effect to take place. If a single effect has more than one condition the relationship is annotated with or,and,xor,negation. Itermediate nodes may be used to simplify the graph and its construction.
+
+We use dash lines to represent exactly one.
+
+### Advantages
+Aids to select high yield test cases. Give an oracle and specifies constrains on input. The addition of additional constrains help restrict the graph even more. Finally it helps catch inconsistencies and ambiguities in the model.
+
+Identify causes and effect from spec, annotate model with constraints describing impossible combinations. 
+
+It can be used to generate limited entry decision table. (with annotation such as exactly 1 of and so on).
+
+#### Exercise
+The file update depends on the value of two fields, they must by 'A','B','C','D'. The value of field 2 must be a digit.
+
+|Cases| 1 | 2 | 3 | 4 | 5 |
+|-----|---|---|---|---|---|
+| Field 1| A | B | C | Not A,B,C | Any |
+| Field 2 | digit | digit | digit | any | not digit |
+| Action |
+| Updated | x | x | x | | |
+| error X12 | |  | | x | | 
+| error X13 | |  | | | x | x|
+
+## Deriving decision table
+Columns corresponds to variant, row for each cause and effect. Then we can annotate the variant removing any impossible combinations.
+
+# Integration testing
+Ensures that components interact correctly when assembled. We assume that components have already been tested. We need a component dependency structure to see what component depends on what.
+
+## What to test for
+Assuming that each components work in isolation, then we look for interface related faults, wrong method called, provide wrong parameters, incorrect parameter values, use of version that is not supported.
+
+## Strategies
+Understand how different components are assembled together. As we must look at the test component interaction and determine optimal order of integration.
+
+## Stubs
+Repaces called module: for inputs it passes test data, stub output module returns test results.
+
+They are used because we want to avoid side effects of the methods, avoid maybe communication accross distance. Stub only does things (simple) related to the integration test hence the likely hood that the stub is faulty is lower.
+
+Conventions:
+- must be declared/invoked as the real module
+- Same name as replaced module
+- Same parameter list
+- Same return type as replaced module
+- Same modifier (static, public, private)
+
+### Function of a stub
+- Display/log trace messaged
+    - parameters for exampe
+- Return value according to test objectives
+    - From a table
+    - From an external file
+    - Based on a search according to parameter values
+
+## Driver modules
+Used ot call tested methods (tested modules). Passes parameters and handles return values. Junit for example provides us with drivers to test code. Junit can be used for integration testing as well, to set up multiple components and there integration.  
+But by default it does not provide with stubs.
+
+## Integration srategies
+### Big-Bang Integration
+Non incremental strategies. Once everything has been tested independently we test all the integration at the same time.
+
+Convenient for small stable system
+
+Yet fault localization are harder, 
+
+### Top-Down integration

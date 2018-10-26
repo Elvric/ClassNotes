@@ -357,3 +357,34 @@ See the slides
 
 ### Cool conventions 
 **_e** is added at the end of an exception message.
+
+---
+# 26-10-2018
+## Protocol model
+All the messages and the way information flows through the syetem is described in the operational model. That tells us the individual stories between the messager and the messagee, the protocol model explain in which order the flow of information and state changes occurs. This model describes the correct sequence of interactions that the system may have with its environment. For this purpose we are going to use the Use Case Map model.
+
+## Basic structure
+Start Node which is just a dot, then we have the bar which is the end point. Crosses on the line represent an responsability. We can split the paths in 2 direction or-fork/join. And-fork join where the path split but will not carry on until both ends of the path have reach the end point. Rombus represent stop points when the map gets too big saying that the flow of the graph continues on another UCM. We can use arrows from the line to loop back to a certain point.
+
+#### Stub
+Is the rhombus mentioned above. 
+- Static in out line
+- Statuc multi multiple out paths
+- Dynamic stubs (different follow up graph conditins)
+    - Drawn with dash lines
+    - Dynamic sync stubs (Add an S in the center of the rhombus)
+        - Used to say that all executing map of the stub to execute before carrying on.
+- Stub with conditions with dark circle underlined with a black bar that itself receives another path which is the exta imput required for the conidtion
+    - The stub has to wait for something to carry on specific condition
+- Timer
+    - represented by a clock with a underlined black bar and two exit path same as above for the bar actually.
+    - One where the timer exits when out of time
+    - One where you go if the path carries on before the time ends
+  
+We can add a start point for failure that can intersect with the path and draw an arrow from that start point to the path.
+
+We add a sort of triple barr symbol on the path when we want to verify if the failure occur, if it does then the execution is moved to the failure paths.
+
+If we want everything on the paths to stop when a failure occurs, any concurrent flow must be stoped then we add a lightning arrow at the bottom of the failure node.
+
+Inputs and outputs are marked as <<in\>> and <<out\>>  
