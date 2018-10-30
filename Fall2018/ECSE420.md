@@ -1666,6 +1666,81 @@ To avoid that when we lock the nodes we go back to the head of the list and chec
 
 Hence we may travers deleted nodes but the property of the list itself still holds.
 
-Performs better as we do not lock unecessary things. Travaersal are hence wait free.
+Performs better as we do not lock unecessary things. Travaersal are hence wait free. Optimial if cost of scanning twice is lower than cost of scanning once.
 
 Issue is that we need to travers the list twice and that the contains method also need to acquire a lock.
+
+---
+# 30-10-2018
+## Lazy list syncronization
+Removing nodes causes trouble so lets do that part lazily.
+
+Here the remove() scans the list as before, lock the predecessor and the current node but the deletion is going to happen in two phases. First phase is logical, we mark that node as removed but it stays in the list. Then we physically remove the node as before.
+
+The main improvement is in the validation process, there is no need to rescan, check the pred, cur, and pred points to curr without having to scan the list again.
+
+So now we can make the contains method lock free
+```java
+public boolean contains(T item) {
+    int key = item.hasCode();
+    Node curr = head;
+    while (curr.key < key) {
+        curr = curr.next;
+    }
+    return curr.key == key && !curr.marked;
+}
+```
+
+This is what is actually use in java for the java concurrent contrainers.
+
+However the remove and add calls must re-traverse the list if contended.  
+Traffic jam if one thread delays. Let say a thread gets the loc,gets a page fault, descheduled, everyone else using the lock is stuck.
+
+## Lock free data structure
+Garentees minimal progress in any execution.
+
+The contains method is already wait free so we only need to think about add and remove implementation.
+
+### Using compare and Set
+Reminder when an object implement compare and set, it has a method that check if the value in the method is the expected value entered, if it is, it updates that value with the one wanted. This should be done atomically. This is implemented in hardware in most architecture.
+
+#### Removal
+We are going to combine our marked bit and the pointer to the next node into one object in Java we call that ``AtomicMarkableReference``. Which allows to do a compare and set on two things at the same time, it make us as we do compare and set on the reference also do a compare and set on the marker and thus see that the node is being removed. 
+
+It atomically swing reference and update flag.
+```java
+public Object get(boolean[] marked) {
+    // boolean is used to read the marked bit
+    // reference is returned by Object
+}
+
+public boolean isMarked() {
+}
+
+public boolean compareAndSet(Object expectedRef;
+    Object updateRef;
+    boolean expectedMark;
+    boolean updatedMark) {
+}
+
+public boolean attemptMark(Object expectedRef, 
+                           boolean updateMark) {
+}
+```
+
+When we find a logically deleted node in our path when scanning we finish the job by physically deleting such nodes.
+
+This is the window class that keeps information about the list that we are interested on
+```java
+class Window {
+    public Node pred;
+    public Node curr;
+    public Window(Node pred, Node curr) {
+        this.pred = pred;
+        this.curr = curr;
+    }
+    Window window = find(head, key);
+    Node pred = window.pred;
+    Node curr = window.curr;
+}
+```

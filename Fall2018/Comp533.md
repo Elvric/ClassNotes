@@ -563,3 +563,36 @@ p.wife.gender = Gender::females
 ```
 
 Powerfull for sets any(boolean expressions e) pics out of a set at least one element that satisfies the boolean expressions.
+
+---
+# 29-10-2018
+OCL for super types
+```
+oclType() // return the type of the ocl class
+ocllsKindOf(OclType t) // true when the type matches t or subclass
+ocllsTypeOf(OclType t) // true if the object is of type t
+oclAsType(OclType t) // type cast the object to type t
+ocllsUndefined() // return true if the object is undefined
+.allInstance() // user defined get the set of all objects of a given class
+```
+
+. operation from something to a property, arrow to apply something to a set.
+
+### Let in OCL
+```
+let x = self.jobs.salary->sum() in 
+```
+
+### Fonctions
+```
+context Class::FunctionName : returnType
+post:
+    result = self.employee->select(p.gender=="female")
+
+context Name
+def sumOfSalaries(c: Company): Real
+```
+
+## Midterm
+- Domain model
+- Invarience
