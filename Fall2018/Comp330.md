@@ -1068,3 +1068,53 @@ At the end if S is in GEN then L(G) is generating.
 
 There are more complex algorithm to check if L(G) is infinite?  
 This is provably impossible! The complement of a context free language may not be a CFL. But the complement of a DCFL is a DCFL.
+
+---
+# 24-10-2018
+## Compiler
+Firts string enter a tokanizer that is actually a DFA (lexical analyser). This technology is understood so well that we just need to know which ones are the reserved words and there is a progam that generates the DFA for us. i.e Lex
+
+These tokens go through a parser that generates the parse tree checking that the grammar is correct this is a DPDA. 
+
+### Example 
+Consider the language:
+$$ S \rightarrow (S)S \mid \epsilon$$
+
+Then we have the follwing code to read it:
+```
+Tree parseString(str) {
+    T = parseS(str)
+    if not cos(st) then error('Extra tokens", str)
+    else return T;
+} 
+```
+
+### Grammar example
+LL(1): grammar uses a one-symbol symbol look ahead to decide which rule to use. (top down)
+LR(1): grammars work bottom up and also use one symbol look ahead.  
+LALR(1): is a hybrid and the most popular choice.
+
+## Deciding if a word is in a CFL algorithm (Cocke Kasami-Younger)
+Consider G as a generique CFL and w as a word, w in L(G)?
+
+The first thing we do is convert G into Chomsky normal form. 
+$$ X \rightarrow AB\\
+X \rightarrow a$$
+Every single context free grammar can actually be written in this form.  
+This may cause exponential blow up but we shall not worry about that right now.  The structure of the tree will hence be a binary tree. We can then generate all trees which takes exponential time and generate all trees with deps |w| or depts n  where w can be written, checking if w is in one of them. 
+
+We can do better by keeping track of partial derivation along the way to see which ones can lead to w, this is call dynamic programming. Which reduces the time complexity to n cubed.
+
+In order to achieve the above we are going to index a 2 index family of subsets of V (set of non terminal).  
+$$X_{ij} := \{A \in V \mid A \xRightarrow{*} a_i...a_j \}\\
+X_{ii} := \{A \in V \mid A \rightarrow a_i \}\\
+b \in X_{ik} , c \in X_{k+1,j}, A \rightarrow BC\\
+\implies A \in X_{ij}, A \rightarrow BC \xrightarrow{*} a_i...a_j  
+$$
+
+So at the end we check, is  S in X1n.
+
+There is the **EardCay** algorithm that shows how to do the algorithm in the regular form.
+
+# Pumping Lemma for context free languages
+The finite idea is that there are only finitly many variables and many rules.
