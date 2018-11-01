@@ -1746,3 +1746,36 @@ class Window {
 ```
 ---
 # 01-11-2018
+## Queues, stacks
+Now we are going to see how to apply the locking systems to queues and stacks. These structures can be unbounded or bounded. Blocking (remove from empty structure then we block it) making it go to sleep as there is no point for it to hold the resource same thing when the strcture is full. The other variation is non-blocking where we through exceptions instead.
+
+# Queues
+enq() and deq() work at different ends of the object. Problem arises when the queue is empty or full or when the queue is small and both head and tail pointer point to the same location which can cause problems.
+
+## Bounded queue
+We are going to have a lock for the dequeu end (deqLock). Similarly we are going to have an enqLock. We also need a way to know the size of the queue, so a counter that counts the number of items in the queue (atomic integer here to avoid acquiering another lock).
+
+Enqueu thread acquires the enque lock, then it checks the size ensuring the queue is not full. It then adds the node to the queue. Swing tail to the new node plus the previous tail to the new node. It then increments the size of the queue then release the lock (we might want to add the feature that the thread also notifies the dequeue lock that something has been added to the queue). 
+
+Dequeuer thread showes up, acquires the dequeue lock, read the santinel next field **santinel is the head of the queue that contains something we are not interested in**. If there is a next field then it goes to it, copy the value of the field carried by that node and finally swing the prev node pointer to the node that the node of interest pointed to. Then we release the dequeu lock and decrement that size.
+
+## Condition review
+```java
+public interface Condition {
+    public void await();
+    public void signal();
+    public void signalAll();
+}
+```
+``q.await()``. Releases the lock, sleep to give up the processor, awake when getting signaled, reaquire the lock and finish the run. 
+
+Interesting each java class has a bilt in lock syncronized then if we just call wait() in that method then it is the equivalent of await. Same with notifyAll() and signalAll().
+
+Issues can arrise in the implementation when having conditions where the signaling of just one thread is not done properly which can cause lost wake up calls. The solution is to use signaAll() everytime.
+
+## Bounded queue improved
+This time we are going to split up the conters, the enqueue method is only going to increment the counter.  And the dequeue will only decrement the counter. 
+
+Hence we create 2 different counters one that gets incremented the other one gets decremented.
+
+When the enqueue size rechease its capacity. Then it will acquire the dequeue lock and get its number and take the difference between its counter and the dequeue counter. We do the same thing for the dequeue counter. One down side however is that both thread have to acquire both locks however.
