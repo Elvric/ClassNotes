@@ -1101,6 +1101,114 @@ Non incremental strategies. Once everything has been tested independently we tes
 
 Convenient for small stable system
 
-Yet fault localization are harder, 
+Yet fault localization are harder, easy to miss interface faults, does not allow parallel development.
+
+---
+# 31-10-2018
+## Quizz 2
+Black box testing and integreation testing
 
 ### Top-Down integration
+Firs test the higher level components before testing lower levels in respect to some dependency relation. Imagine a tree we do a breadth first search testing each level one after the other. The order can still be twicked to test components earlier if they are more critical or if they include input and output. 
+
+Note that we keep each layer on every test if we test for ABC then next will be ABCDFG with ABC still present.
+
+#### Advantages
+It is incremental, mistakes can be discovered layer by layer, no need to write drivers. Allows for parallel development. Major design flaws found first. Allows for early prototypes to be tested.
+
+#### Disadvantage
+Need a lot of stubs when implementing. Potential reusable componenents at the bottom of the hiarchy will not be tested at every stage making them less throughly testing
+
+### Bottom up strategy
+The same idea as above testing the lower level components. More like a depth first search test.
+
+#### Advantages
+Does not need that many stubs, reusable components testing throughly. Developement can be done in parallel.
+
+#### Disadvantage
+Needs drivers, High level components tested at the very end and the least. No concept of early skeleton system (early prototype)
+
+### Sandwich integration
+Combines top down and bottom up implementation.  
+Split into 3 layers, 
+- Logic (top) tested top-down
+- Middle
+- Operational (botoom) tested bottom up
+
+So the top layer are tested throughly and vice versa with bottom layers.
+
+### Risk driven integration startegy
+Integrate components based on criticality. More critical elements will be integrated first.
+
+### Function/tread based integration
+Integrate components according to threads/function they belong to.
+
+# Testing object oriented systems
+Expert says object orientation while it helps analysis and design of systems. Requires more and not less testing for OO software.
+
+Usually unit and integratin testest are the most affected tests as they are more driven by the structure of the software under test.
+
+## Main difference
+### Procedural language
+based components: functon procedure. Testing method based on input and outputs
+
+### Object oriented
+Basic components = class. Instances of classes must be tested. Correctness cannot be just defined by input/output relations but must also include the object state.
+
+The complexity lies a lot in method interaction. 
+
+Test cases have to be defined based on object state, it is important to understand how to complement output and input relations with state infroamtion to define the tests.
+
+Must think of how to manipulate object state without violating the encapsulation which can be hard.
+
+Polymorphism and dynamic bidings leads to one-to-many possible invocation of the same interface.
+
+Each exeption must be tests, what about null pointer exception.
+
+## New fault models
+- Using wrong instance of method in inheritance
+- Wrong redefinition of attributes
+- Wrong intance of operation called to do dynamic binding and type error.
+
+## Integration levels
+Basic unit tests which the test of a single method of a class (intra method).  
+Unit testing: the testing of methods within a class. Claimed that any significant unit test cannot be smaller than the instantiation of of one class.
+
+### Intra class testing
+We perform the white and black box testing along with the new:
+- Raise execpetion at least once
+- Each interrupt forced to occur at least once (mouth click)
+- Each attribute set and got at least once
+- state base testing
+- Big bang when methods are tightly coupled togther
+- Alpha-omega cycle (constructors, get methods, boolean methods, set methods, interator, destructor)
+
+### Integration testing
+Classes introduce different scope of integration testing. In OO we think about inter-class testing. association, composition, inheritance.
+
+Cluster integration:
+- Tow or more classes through inheritance. Incremental test of inheritance hiarchy.
+- Integration of two or more classes through containment
+- Integration of two or more associated classes/clusters to form a components (subsystem)
+- Integration of componenents into a single application. (subsystem/system integration)
+- Server client integration.
+
+We then based our strategy based on the cluster choosen and parse things based on the cluster.
+
+Commun strategy separate classes into subsystems and test the integration of these subsystems.
+
+## Mock Objects
+The reinterpretation of stubs in an object oriented context.  
+Generaly we have tests the acts on the (CUT) code under tests that depends on certain other classes.  
+It is difficult to write the stubs as depending on the test done the stub must change to match the test type. So for the same integration test (split into 4 test lets say) then we have 4 stubs.
+
+This is where Mock objects come in. They are a form of stubs based on the interface of that dependent object. Easier to set up and control, Isolate code from details that may be filled later. Can be refined overtime by replacing actual code.
+
+So the new image is tests acts on CUT that depends on interface that is implemented by both the actual code CUT depends on and the mock class. Then the test execution framework is responsible to decide which object does the CUT depends on at run time. In this case the CUT may call a factory method or allow to change the object that changes the service. Hence at the end the test itself controls the mock behavior.
+
+### How to create them
+Manually which gives more control but more work
+
+Framworks are available such as Mockito, PowerMock, EasyMock.
+
+## Integration strategies

@@ -388,3 +388,6 @@ We add a sort of triple barr symbol on the path when we want to verify if the fa
 If we want everything on the paths to stop when a failure occurs, any concurrent flow must be stoped then we add a lightning arrow at the bottom of the failure node.
 
 Inputs and outputs are marked as <<in\>> and <<out\>>  
+
+---
+# 31-10-2018

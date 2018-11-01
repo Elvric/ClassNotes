@@ -596,3 +596,56 @@ def sumOfSalaries(c: Company): Real
 ## Midterm
 - Domain model
 - Invarience
+
+---
+# 31-10-2018
+### OCL example
+```
+context c:car
+inv: c.carLoad =< c.maxLoad
+
+context t:train
+inv: t.cars->size()+t.engines->size() < 26
+
+context t:train
+inv: t.units->select(u:Compartment | u.oclKindOf(Engine))->size() > 0
+
+context t:train
+def totalWeight() : Positive
+= t.units->collect(weight)->sum()
+// easier way t.units.weight->sum()
+
+context Train::totalTraction(Train t)
+post
+return t.units->select(u:unit | u.oclKindOf(Engine)).traction->sum()
+
+context t.train
+inv: totalTraction(t) >= t.totalWeight() + t.units->select
+(u:Unit | u.oclKindOf(Car)).currentLoad->sum()
+```
+
+### Library model example
+```
+context m:Member
+inv: m.borrowedBook->sum() =< m.memberCategory.maxNumberBooks
+
+context m:Member
+invL BookCargory.allInstances()->forAll(bcL BookCategory |
+m.bookOnhold->select(b|b : Book | b.BookCategory = bc)->size()
+=< 5) //due to for all that is a boolean
+
+context bc:BookCategories
+inv: bc.allInstances()->forall(bc |
+memberCategory.allInstances()->forall(mc |
+lp.allInstances()->exists(lp | lp.bookcategory = bc and lp.membercategory=mc)))
+
+//Easierway
+LoanPerido.allInstances()->size() = bc.allInstances()->size()
+*mc.allInstances()->size()
+
+context bc:BookCopy
+inv: bc.onReserve implies bc.currentHolder->isEmpty()
+```
+
+# Requirement Elicitation and Requirements specification
+Here we will not be asked to draw them but asked to understand them.
