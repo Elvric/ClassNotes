@@ -1169,7 +1169,7 @@ L'=\{ww^{rev} \mid w \in \Sigma^*\}$$
 Here L' is context free but not the other.  
 Consider 
 $$ \hat{L} = L \cap a^*b^*a^*b^*\\
-= \{a^mb^na^mb^b \mid m,n \geq 0 \}
+= \{a^mb^na^mb^n \mid m,n \geq 0 \}
 $$
 This easier to see that it is not context free using the lemma describe above.
 
@@ -1182,3 +1182,50 @@ A \rightarrow CAC \mid a\\
 B \rightarrow CBC \mid b\\ 
 C \rightarrow a\mid b
 $$
+
+---
+# 29-10-2018
+Lets show that L complement is context free then we can build the following grammar:
+$$
+S \rightarrow AB \mid BA \mid A \mid B\\
+A \rightarrow CAC \mid a\\
+B \rightarrow CBC \mid b\\
+C \rightarrow a \mid b
+$$
+
+Hence context free languages are not closed under complementation.
+
+Now if L1 and L2 are both context free what can we say about their intersection. Nothing, it is not necessarly context free.  
+What about their union: context free yes. (Consider their grammar, just add an extra rule where S -> L1 | L2 and we are done).
+
+Now what about concatenation: I would say context free (remplace every epsilon by L2 start non terminal and boom we have the two languages concatenated yet still context free). Even easier mentioned by the prof just S -> L1L2.
+
+## More pumping lemma proofs.
+Suppose:
+$$ \Sigma = \{a\}$$ 
+Just one letter then regular languages are equivalent to context free languages. (Not easy to prove).
+
+Now the exercise with A= adversary, I means me and arrow means pick
+$$\{0^i1^j \mid j = i^2\} \text{ not a CFL}\\
+A \rightarrow p\\
+I \rightarrow 0^p1^{p^2}\\
+A \rightarrow u,v,w,x,y \ uvwxy = 0^p1^{p^2} \ \mid vx \mid > 0 \ \mid vwx \mid \leq p\\
+$$
+Cases:
+$$
+(a) \ vwx = 0^* \lor 1^* \text{ then } i = 0\\
+(b) \ v \lor x = 0^n1^k , i=2\\
+(c) \ v = 0^n, x = 1^m, \mid x \mid \lor \mid y \mid = 0, i=2\\
+(c) \ v = 0^m, x = 1^q, \mid x \mid \land \mid y \mid = \not 0, i=2\\
+s = 0^{p+n}1^{p^2+q}\\
+(p+n)^2 = p^2+2pn+n^2\\
+2pn>p, \ 2pn+n^2>p>q\\
+p^2+2pn+n^2 > p^2+q
+$$
+Hence there are not equal so we are out of the languages.
+
+#### Interesting chalenge
+$$\{a^p \mid p prime\}$$
+Prove this using CFL pumping.
+
+$$L = 

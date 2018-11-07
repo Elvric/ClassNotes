@@ -1105,7 +1105,7 @@ Yet fault localization are harder, easy to miss interface faults, does not allow
 
 ---
 # 31-10-2018
-## Quizz 2
+## Quizz 1
 Black box testing and integreation testing
 
 ### Top-Down integration
@@ -1211,4 +1211,85 @@ Manually which gives more control but more work
 
 Framworks are available such as Mockito, PowerMock, EasyMock.
 
-## Integration strategies
+---
+# 02-11-2018 Last part for quizz2
+# Integration strategies
+## Cluster integration
+Integrating together a subset of classes. It is important to have a class dependency tree. Which one is on top which ones inherit form what,
+
+### Big Bang
+From there we take the entire tree as a whole like discussed.
+
+### Bottom up
+Moving up dependency tree. This allow to test the reusable components more frequently and require less stubs. This is applied in the context of a cluster.
+
+### Top down
+Go down the dependency tree
+
+### Scenario based operation
+Based on an interaction diagrams, choose a sequence of collaboration to be tested. Test the scenario wanted.
+
+### Client/Server Integration
+Tests each client with stub server, then do the opposit for one client at a time with the server. Then test pair of client type with server. Then remove all stubs and test the entire system.
+
+### Client/server Integration + a tier in between
+1. Test each client type with middle-tier stub
+2. Test server with middle-tier stub
+3. Test each client with middle-tier and server proxy
+4. Test server with middle-tier and client proxy for each client type
+5. Test each client with middle-tier and the actual server.
+
+## Integration order problem
+As big bang is not advice, integration must be done in a simple manner but this leads to stubs. It is not always easy to construct a stub that is simpler than the actual function. They cannot be automated as it is required to understand the sementic of the stimulating function.   
+Hence stubs could lead to a higher level of unstability than the actual fonction, it is important to try to reduce the number of stubs as much as possible.
+
+On the other hand class dependencies are not aleays a tree but a complex graph. A lot of systems may contain cycles such as:
+- ATM
+- Ant
+- SPM
+- BCEL
+- DNS
+
+### Kung and al. Strategy
+Aims to produce a partial ordering of testing levels based on class diagrams.
+
+Classes under test at a given level should only depend on classes previously tested in order to reduce the number of stubs.
+
+#### Object relation diagram (using static information what is the real type of an object)
+This is what is created to generate a graph. Node represent the classes and edges represent inheritance, composition and association. Edges are labled I (sublcass), C means composed origin composes instances of destination, A for assocation where origin assocates with destination.
+
+### Class Firewall CFW()
+The set of classes that could be affected by a change to class X, which means they should be retested when testing for class X. Assuming the ORD is not modified by the change **kung** argue that this means testing association, compostion, inheritance.
+
+#### Class firewall derivation (à ma sauce)
+Keep adding classes that could be affected by classes affected by X and so on. Known as fixed point algorithm, it operates on some set, start with the empty set, apply the algorithm on each element with the empty set, then try again with the new set. Until the new set no longer changes.
+
+### Test Partial order
+The desirable trait is to test independent classes to minimize stubs. Then test the dependent classes based on their relationships. Subclasses tested after their superclass, test class C first if D depends on C.  
+
+The reason why it is partial is that sometimes it is not possible to order every class in a specific order.
+
+### Integration for Acyclic
+Then no stubs are required when testing with partial order we still may have several classes at the same level. We can use the topological sorting.
+
+### Dynamic binding
+Class F associates with G which is a parent of H. Then the behavior of F can change if it is associated with G or H. So now we should test F with H as well. This is represented by a * to represent dyamic cases. In the follwing maner next to the tree: F/H = F*. We then include that in our dependency tree.
+
+### Abstract class
+It is infeasible to test for an abstract class with a dependency on it as it cannot be instanciated. As such if we have A as abstract class, B depends on A and E inherits form A yet E depends on B. Then we right it this way E(A)-><-B to show the new relationship. This is represented as a merge in the graph. This can lead to nodes containing 2 classes.
+
+### Cyclic ORDs
+We have a cluster (strongly connected components in graph theory). We need to break these cylces and this is done through the removal of edges.
+
+#### Which edge to remove?
+We should remove association edges, theorem says there should be at least one association classes in the cycle. Select the association the leads to the developement of the smallest stub poosible. At the end of the tree used to perform the test cases we write all to show that we have tested all real code without the stubs.
+
+Where the cycle is broken can change the test tree.
+
+### Type that are represented but not subclass, assocation and composition
+Factory method, passing object as a parameter, creating object in a method. These dependencies should be associated by an edge in the dependency graph.
+
+# Final info
+- No multiple choice
+- Question may include things in tutorial, such as what is a paramtrized test and so on but nothing really language or grammar specific.
+- Expect exercises which are not very far from what we had to do in assignments or in the project deliverable. More likely assignments.

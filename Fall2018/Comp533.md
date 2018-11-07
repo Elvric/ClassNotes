@@ -649,3 +649,34 @@ inv: bc.onReserve implies bc.currentHolder->isEmpty()
 
 # Requirement Elicitation and Requirements specification
 Here we will not be asked to draw them but asked to understand them.
+
+---
+# 05-11-2018
+Final test
+- Feature
+- goal
+- domain/concept
+- concerns and OCL
+
+```
+c.unitUnderConstruction.isKindof(SeeUnit) implies 
+c.sectoroclKindOf(CoastSector)
+
+context su:SeaUnit
+su.producingcity.sector.isKindof(Coast)
+
+context lu:LandUnit
+inv
+lu.transportedBy->notEmpty() implies lu.currentSquare = 
+lutransportedBy.currentSquare
+
+context a:AirUnit
+inv:
+a.speed() > LandUnit.allInstances().speed->max() 
+
+context: p:Player
+def availTanks(n: int) : int = 
+p.conqueredCities.Production->select(prod | prod.daysLeft =< n && prod.UnitUnderConstruction.oclIsKindOf(Tank)).size()
+
+```
+

@@ -1779,3 +1779,79 @@ This time we are going to split up the conters, the enqueue method is only going
 Hence we create 2 different counters one that gets incremented the other one gets decremented.
 
 When the enqueue size rechease its capacity. Then it will acquire the dequeue lock and get its number and take the difference between its counter and the dequeue counter. We do the same thing for the dequeue counter. One down side however is that both thread have to acquire both locks however.
+
+---
+# 06-11-2018
+# A lock free queue
+First we have a head pointer, pointing to the sentinel node and the tail pointer pointing to the same sentinel when the queue is empty.
+
+We are going to be using compare and set as atomic machine instructions,
+
+## Enqueuer
+Thread 1 wants to enqueue something, it does a compare and set on the tail and if the tail pointer points to a node that points to null then we swing the last node to poins to our node (logical enqueue). Then we check the tail to see if it points to the same node then we can swing the tail pointer to our new node. If we look at the tail node and happens to have a non null next field then we do a compare and set on the queu head pointer to make it point to the actual last node of the queue.
+
+### Final actions
+Logical enqueue, faile then restart. Physical enqueue, fails then ignore it as it means that some other thread did it for us.
+
+## Dequeuer
+Looks at the head, reads the value making a copy of it, then it is going to make that node the new sentinel by doing a cast on the head pointer and swing it to point to the node it just dequeued. Hence we can reuse our previous sentinel.
+
+### Final actions
+For java it will cleanup that memory automatically with the garbage collector. In other languages the simplest thing to do is to have each thread keep a list of unused nodes in a local pool. And allocate pop from the list with free node push into the list.
+
+#### Issues
+Let say a thread is about to dequeue something so it knows about the sentinel and the head node but it goes to sleep. Then other thread comes along and perform some dequeuing, recycling the sentinel node again.
+
+##### Called Dreaded ABA fail
+IBM goes arround it by using a specific cache store the even when the thread sleeps ensures that it gets updated if the list information changes
+
+#### Solution
+In java we use a AtomicStampedReference class, allows to do a compare and set on two things, 1 the address of the object and 2 a stamp that can be a number.
+
+# Concurrent Stack
+```
+push(x)
+pop()
+```
+## Lock free implementations
+Same as the queue initially with a top pointer but without sentinels.
+
+### Push thread
+A thread comes creates a node places the item in there by pointing to the top of the stack and make the top pointer point to the top of the stack.
+
+### Pop thread
+Copies the first node and move the top pointer to the next node. 
+
+### TryPush()
+This is what we must use when implementing a lock free stack, this method returns true or false if it succeeds.  
+First we get a pointer to the top node, then it will get the next node after the top. Finally it does a compare and set on oldtop node and the new one. Trying to swing the pointers.
+
+This method is implemented in push, we trypush if it works we go out of the method else we backof for sometime then come back to actually do it at some point.
+
+- advantages
+    - No locking
+- disadvantages
+    - fear ABA
+    - without backoff huge contention at the top
+    - in any case no paralellism
+
+## Making Stacks parallelisable
+We are going to look into an elimination-backoff stack
+
+### Observations
+After an equal number of pushes and pops the stack will look the same. 
+
+So we have an array that we associate with the stack (elimination array), when pushing we push at random on the array and pop at random on the array if they both collide we are good else we wait for out item to either be picked up at somepoint or go to the stack when freed. So when a thread is working on pushing or poping something in the stack then we use the array instead. So while they back of the use the elimination array.
+
+### Dynamic range and delay
+#### Optimization
+Pick a random range and the max time we want to wait, we go to the array try, nothing happen so we go back to the stack but there is still contention so we go back to the elimination array with a wider stack and a longer back of time.
+
+##### Asymetric rendez vous
+The pop thread finds the next vacant slot (for pop pointers) in the array waiting and what the pushers do, they go to the elimination array find the first pop thread taken space and then put their item there.
+
+### Linearizability
+Before the stack was linearizable as mentioned, so the issue comes when looking at the array. If we assume that the pop and push call overalap at the array then we can linearize them.
+
+### Beauty of elimination array
+We turn something that use to be sequential to something that can now be parallelised. As well as cuting on the number of thread that want to access the stack. The more contention on the stack we get the more parallel we can be.
