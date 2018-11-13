@@ -1228,4 +1228,168 @@ Hence there are not equal so we are out of the languages.
 $$\{a^p \mid p prime\}$$
 Prove this using CFL pumping.
 
-$$L = 
+$$L = \{a^ib^jc^k \mid c<i<j<k\}\\
+A \rightarrow p\\
+I \rightarrow a^pb^{p+1}c^{p+2}\\
+(a) \ v \lor x \text{ Stradle boundary } i = 2 \text { out of order}\\
+(b) \ v = a^k \land x = b^j k,j > 0 i = 2\\
+a^{p+k}b^{p+1+j}c^{p+2}\\
+p+1+j \geq p+2\\
+(c) \ v = a^k, x = \epsilon i = 2\\
+a^{p+k}b^{p+1}c^{p+2}, p+k \geq p+1\\
+(d) \ \text{ Similar for for x is not empty or b's or c's }$$
+
+# Limits of computability
+1. There is a single universal machine, all other machines can be simulated by it. In fact machines can be described symbolically and treated as data (software).
+2. Software
+3. Unsolvability of Halting problem. There exists unsolvable problems. 
+   
+This gave a compelling notion of what computation means.
+
+# 31-10-2018
+An algorithm is a precise specification in terms of basic steps (easily doable). With a termination proof?  
+The definitive answer was given by Alan Turing through the Turing machine.
+
+## Turing machines
+$$
+Q \text{ set of state }\\
+\Sigma \\
+\Gamma \supset \Sigma \cup \{\_\} \text{ tape alphabet }\\
+\delta: Q \times \Gamma \rightarrow Q \times \Gamma \times \{L,R\}
+$$
+The tape has a starting point but no end points, in each cell we can write any symbol from our set alphabet.  
+There is also a read head that reads one cell at a time that reads one symbol at a step.  
+The transition function does multiple thing it is in a state and reads a tape letter then it can do three things at the same time:
+1. Change the state
+2. Write something different on the tape location
+3. Move the tape left or right
+
+The input starts with a finite word on the type but the working size of the tape has no limit (the tape comes with something written on it ending with the _ symbol)
+
+There is a special state called qa accept that and a special state called qr that is reject but there is always one accept state and one reject state, both these states are halting states, once reached this is the end. It may go back and forth forever.
+
+A transition can only depend on a finite amount of information.
+
+## Halting problem
+There is no algorithm that can take the description of a program and the input to that program and decide whether the program halts on that input. (Does not depend on the structure through which the algorithm is described)
+
+### Proof based on modern programming concern
+Suppose S -> program  
+\#S -> code of S  
+S(x) -> run programming S on input xS  
+S(x) downarrow -> terminates  
+S(x) uparrow -> diverges  
+H(#s,x) -> yes S(x) downarrow or No S(x) diverges
+
+Assume H exists  
+```
+P(x) := if H(x,x) then loop else halt
+P(#P) does it halt?
+```
+Assume it does then H(#P,#P) -> true but then we end up looping so it is not correct.  
+Assume it does not then K(#P,#P) -> false but then we halt which means that it is not possible. 
+Hence there is no such program H.
+
+## Models of computation
+A turing machine with extra tapes is very handy. So saying that I have 17 tapes moving with their own head. This has the same power than an ordinary turing machine. This is true I believe as we can always move back as many times as wanted on our tape. Also adding non determinism does not increase the expressive power.
+
+What about a 2D tape? Same power as ordinary Turing machine
+
+## RAM (Random access machine)
+This is equivalent in power to Turing machine which is the same as lambda calculus which is the same as a two stack machine which is the same as 2-counter machines which is equivalent to while and if then else which is equivalent to java, c, c++, C#, F#
+
+### Is there a more powerfull model?
+So far we do not know but we think not.
+
+From now on we will use if then else
+
+---
+# 02-11-2018
+## What is a language accepted by a Turing machine?
+$$ L(M) := \{w \in \Sigma^* \mid \text{ M halts on w and accepts} \}$$  
+If a word is not in L(M) then a turing machine may reject it or fail to halt. Such langugages are called Turing Recogonizable or computably enumerable.
+
+There is a subclass called **Turing Decidable/comuputable** which is a strict subclass, never equal. These are turing machine that always halt and give a yes or no answer. All context free languages are turing decidable.
+
+A computational device is abstractedd as a function when we consider the tteps it does to achieve the result as a black box. If we have two fonctions we can still view them as just one function (we compose them this is the central idea of fonctional programing).
+
+However partial fonctions are very important.
+```
+If f is a partial function then f(x) = y is one possibility
+or f(x) many not be defined.
+```
+$$
+dom(f) = \{x \mid \text{ f(x) is defined}\} \subseteq X\\
+range(f) = \{y \mid \exists x, f(x) = y\}
+$$
+
+If dom(f) is equal to all possible X then f is a total function.
+
+Input maybe integer, Strings or anything else, it does not really matter we will use what is convenient.  
+2 integers can be represented as just one integer
+$$ (n,m) \rightarrow 2^n3^m \\
+(n,m,p) \rightarrow ((n,m),p) \rightarrow 2^{2^n*3^m}*3^p\\
+\mathbb{N} \times \mathbb{N} \rightarrow \mathbb{N}
+$$
+<m\> = encoding of a TM  
+<m,x\> = ecoding of M with input x.
+
+### Language that is not turing decidable but turing recognizable
+$$ A_{tm} = \{<M,x> \mid \text{ M accepts x}\}\\
+H_{tm} = \{<M,x> \mid \text{ M halts x}\}
+$$
+
+## Infinity
+- A set x is infinite if it is bijective with a proper subset of itself.
+- A set is countable if it is bijective with natural numbers.
+
+**fact**:  
+There is no bijection between 
+$$\mathbb{N}, 2^{\mathbb{N}}$$  
+
+A countable union of countable sets is still countable.  
+
+There are countably many turing machines hence only countably many algorithms. Hence only countably many computable functions, so only countably java programs, RAM machines.
+
+#### Example
+Natural number is an infinite set, take all the even number of that set we can build a one to one and onto correspondance with itself.
+
+---
+# 05-11-2018
+## Computability
+A function is *computable* if there is an algorithm A to compute it.
+
+A set is decidable if there is an algorithm which always halts and asnwers yes or no to the membership query. (Does such element belong to that set?).
+
+We know that the number of algorithms is countable as we can code the algorithms as Strings. But there are uncountably many sets so most sets are undecidable.
+
+## Turing recognizable
+This is equivalent to computablly enumerable. This means that a Turing machine will list all the member of the set if an element is in sych a set we will see it eventually but if it is not in the set we might wait forever never knowing if it is in the set.
+
+## First Theorem (computable and countable functions)
+An infinite set x subset of natural numbers (does not really matter) is decidable if and only if there exists f a total computable non decreasing function whose range is x.
+
+### Proof
+Suppose x is the range of a TCF, f with algorithm A. A always halts since f is total. Here is a decision procedure for membership in x, given m we want to know if mnis in x or not. Run n on all natural numbers, then it will halt every single time so we look at the output, if one of them is n we say yes. if we get an output m>n then we know that n is not in x.
+
+Now lets do the reverse: suppose x is decidable then we have b which is an algorithm that decides if a given input is in x. b must halt as it is decidable, then we can define f as follows, run B on all natural numbers, every time we get a number in x we add it to a list, when we have n elements on the list we output it. This is defined to be f(n).
+
+## Other definition 
+Suppose we have a set x, we define a function as indicator function this way, 1 if n is in x and 0 if n is not in x. known as **indicator/charcteristic** function usually known as S.
+
+**Semi characteristic function** is the same idea excepts that now only one of the two options is defined.
+
+## Theorem of CE
+A set x subset of natural numbers is CE if and only if any of the following equivalent conditions hold:
+1. x is the domain of a computable function
+2. Sx is computable
+3. X is the range of a computable function
+
+### Proof
+2 implies 1  
+CE implies 1 (CE=there exists an algorithm that when running just gives out all the member of x)  
+Given an enumerator we want to know if Sx(n) = 1. The way it works is we run the enumerator algorithm and just wait for n to be outputed if we see n then we say yes else no. 
+1 implies CE. Suppose we have an algorithm B to compute f and dom(f)=X. 
+
+#### Dove tailong 
+We give B(0) run it on one step then stop same thing for B of 1 and so on moving up a step for each already inputed variables. Any single one of these may run forerver but if any B(n) halts we will find out.

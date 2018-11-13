@@ -1293,3 +1293,119 @@ Factory method, passing object as a parameter, creating object in a method. Thes
 - No multiple choice
 - Question may include things in tutorial, such as what is a paramtrized test and so on but nothing really language or grammar specific.
 - Expect exercises which are not very far from what we had to do in assignments or in the project deliverable. More likely assignments.
+
+---
+# 07-11-2018
+# System testing
+Broken into many regions:
+- Functionality and usability
+- Performance and stress
+- Configuration and compatibility
+- Security
+- Reliability
+
+Security and usability may however be tested on lower testing levels.
+
+## Acceptance test
+User acceptance test where the test is done by the customer verifiying the system works according to its specification.
+
+### Alpha testing
+Perform on a system that may have incomplete features, performed by an in-house testing panel including end users
+
+### Beta testing
+end user testing performed in the user environment. (take operating condition of the software system and ask user to play arround with it).
+
+## System level functional/black-box testing
+Ensure that the functional requirements are met by the system.
+
+### Use cases derived scenarios
+1. Develop a scenario graph
+2. Determine all possible scenario
+3. Analyse and rank them
+4. Generate test case to cover these scenarios
+5. Execute test case
+
+### Scenario graph
+It is dervied from a use case, nodes represent points where we wait for a transition event to occur (can come from environment, user, system).
+
+- There is a single starting node
+- End use case, finish node
+- Edge corresponds to event occuring, conditions, special looping edge.
+- Scenario = path from start node to finish node.
+
+### Test case
+```
+Test Case: TC1
+Goal:
+Scenario Reference:
+SetUp
+Course of test case:
+Derived at a table, describe externam event and the expected system reaction.
+Pass Criteria:
+```
+
+### Force Error tests
+Aim to investigate that error messages are all handled and displayed appropriatly.  (message match exepcted, no grammatical error, user gets offered reasonable options for getting arround or recovering)
+Source:
+- List of error messages from the developers
+- Interview dev
+- Inspect string data in a resource file
+- Retrieve information from specification
+- Use utility to extract script out of binary or scripting resources
+
+#### Flow
+1. Force error
+2. Check the error detection
+3. Change the handling logic
+4. Check the communication
+5. look for further problem
+
+### Usability testing
+- Accessibiliy: can user enter, navigate and exit system with ease
+- Responsivness: can users do what they want when they want in a convinient way.
+- Efficiency: can users carry tasks in an optimal fashion
+- Comprehensibility: can user quickly grasp how to use the system, its help functions, associated documentation (can go all the way in recording brain waves).
+
+## Performance testing
+- throughput (number of requests addressed or served per second)
+- response time (the average time needed to serve one request)
+- memory utilization
+- input/output
+
+1. planning phase (objectives, work load, environment, acceptable response time, what performance to collect, with a control test)
+2. Testing phase
+    1. Generate test date
+    2. Setup test bed
+    3. run tests
+    4. collect result data
+3. Analysis phase (machine learning testing)
+4. Verify that the test objectives are met.
+
+### Stress testing
+Focus on a system behavior, near, beyond or at overloading conditions. Until the system is pushed to failure checking for graceful failures, non-abrupt performance degradation.
+
+#### Load testing
+Aimes to verifiy how the system handles a particular load while maintaining appropriate response time.
+
+#### Durability testing
+Putting the system in extreme operating conditions, dust, sudden electrical failures, voltage spikes, extrem cold, extrem hot.
+
+### Configuration test
+Check system configuration including all supported hardware configurations. Run a set of test under different configuration.
+
+We must decide the type of hardware to be tested, 
+
+### Compatibility testing
+Which versions of hardware and connections between units work,
+
+#### Backward/forward compatibility
+Compatible with previous version, compatibility with future version.
+
+#### Combinatorial method
+Combine all possible features and come up with test cases but it is not proactical
+
+Pairwise:
+1. Identify variables
+2. Identify their values
+3. Identify the unique combinations of variables **one pair at a time**
+4. Create the table

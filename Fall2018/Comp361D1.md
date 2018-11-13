@@ -1,4 +1,4 @@
-# COMP 361D1 Software Engineering Project
+ # COMP 361D1 Software Engineering Project
 ----
 # Lecture 1 05/09/2018
 ## Info
@@ -390,4 +390,14 @@ If we want everything on the paths to stop when a failure occurs, any concurrent
 Inputs and outputs are marked as <<in\>> and <<out\>>  
 
 ---
-# 31-10-2018
+# 07-11-2018
+# Behavioral design
+Specify solution that satisfiy the requierments previously speciified.
+
+## Interaction model
+Sequence diagram 
+
+## Dependency Model
+Description diagram that supports the sequence diagram.
+
+The most important thing in design is to focus on responsabilities.
