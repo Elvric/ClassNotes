@@ -1855,3 +1855,158 @@ Before the stack was linearizable as mentioned, so the issue comes when looking 
 
 ### Beauty of elimination array
 We turn something that use to be sequential to something that can now be parallelised. As well as cuting on the number of thread that want to access the stack. The more contention on the stack we get the more parallel we can be.
+
+---
+# 13-11-2018
+# Matrix multiplication
+The most obvious way to parallelise that we can do it for one entry of c we compute with an independent thread the aik and kj entries in A and B. 
+```Java
+class Worker extends Thread {
+    int row, col;
+    Worker(int row, int col) {
+        row = row;
+        col = col;
+    }
+    public void run {
+        double dotProd = 0.0;
+        for (int i = 0; i < c[0].length; i++) {
+            dotProd += a[row][i]*b[i][column];
+        }
+    }
+}
+```
+This is good if we have a small matrix but as soon as the matrix size increases the number of threads required increases in a square fashion.
+
+Also each Thread takes resources, memory for stacks, setup teardown, scheduler overhead. Some Threads are short lived as the work is not equal.
+
+## Thread pool
+It makes more sense to have a pool of thread, Thread are assigned a short task, run it, rehoin the pool then wait for the next assignment.
+
+It also provides and abstraction, the type of machine size does not really matter in this case writing the program the same way on a big server or a regular computer. This gives more portable code.
+
+### Executor Service
+Is what is used in Java.
+java.util.concurrent  
+Runnable object, call run method (when not needing a result)  
+Callable<T> object so it returns a value of type T when using the task with call() menthod.
+
+```
+Callable<T> task = 
+Future<T> future = executor.submit(task);
+T value = future.get();
+```
+This sends to the executor to go ahead and execute the call method of this task object, Future<T> is used to retrieve the value afterwards.
+
+If we submit a Runnable task then we can just use Future<?> then use future.get() to block the execution of our main thread until the runnable task has computed.
+
+## Matrix addtion
+Can be done in parallel by breaking down a n by n matrix into an n/core matrix to get a thread computing a region of the matrix per core.
+
+```Java
+classs AddTask implements Runnable {
+    Matrix a,b;
+    public run() {
+        if (a.dim == 1) {
+            c[0][0] = a[0][0] + b[0][0]
+        }
+        else {
+            // partition here multiple times (see slides if unclear)
+            Future<?> f00 = exec.submit(AddTask,(a[0][0],b[0][0]));
+            f00.get();
+        }
+    }
+}
+```
+
+### Dependencies
+Matrix example is not typical as each Task is independent which is unusual, often tasks are not independent such as fibonacci
+
+## Fibonacci
+The following implementation is inefficient but explains our idea with dependencies.
+
+```java
+public class FibTask implements Callable<Integer> {
+    int arg;
+    int answer;
+    public FibTask(int n) {
+        arg = n;
+    }
+
+    public Integer call() {
+        if (arg > 2) {
+            Future<Integer> left = executor.submit( new FibTask(arg-1));
+            Future<Integer> right = executor.submit( new FibTask(arg-2));
+            answer = right.get()+left.get();
+        }
+        else {
+            answer = arg;
+        }
+    }
+}
+```
+
+Using a DAG graph we can see the recursive approach of the program. 
+
+## How much parallelism?
+- Work: Total time on one processor
+- Critical-path length: longest dependency path (if we had infinit processor what is the longest path that we will have to make to compute the results)
+
+### Notation watch
+Tp = time on P processor
+T1 = Work on one processor
+Tinf = longest path if we had infinitely many processor.
+
+#### Work Law
+$$T_p \geq \frac{T_1}{P}$$
+
+#### Critical law
+$$T_p \geq T_{\infty}$$
+
+## Performance measure
+- Spead up P processir
+    - Ration T1/Tp
+- Linear speed up
+    - T1/Tp = Theta(P)
+- Max speedUp
+    - T1/Tinft
+
+## Matrix addition calculation
+Work is:  
+$$A_1(n) = 4A_1(n/2) + \Theta(1) = \Theta(n^2)$$
+Which is the same as double loop stimulation
+
+Critical path:
+$$ A_\infty(n) = A_\infty(n/2)+\Theta(1) = \Theta(\log(n))$$
+
+Max SpeedUp:
+$$\frac{A_1}{A_\infty}$$
+
+## What about matrix multiplication
+Work is:  
+$$M_1(n) = 8M_1(n/2)+A_1(n) = \Theta(n^3)$$
+
+Critical path:
+$$M_\infty(n) = 8M_\infty(n/2)+A_\infty(n) = \Theta(\log^2(n))$$
+
+Max SpeedUp:
+$$\Theta(n^3/\log^2(n))$$
+If we had a 1000 x 1000 matrix then the maximum speed up would be:  
+$$10^7$$  
+Showing that this is highly paralizable.
+
+## Shared memory Multiprocessors
+Here we do not have direct access to the processors, threads are scheduled by the system.
+
+### Ideal
+Tasks are scheduled by a User-level scheduler to the processor.
+
+### Reality
+Taks are first schedule by user-level scheduler then these threads are then schedule by kernel-level scheduler processors.
+
+## Uncertainty example
+Initially all P processors available for the application
+
+Then some serial computation comes along which takes one processor and that thread decides to do some I/O and gives back the processor so we havea fluctuation overtime of resources available for a given processor, thus we need to have a way of being able to deal with such changes in resources.
+
+---
+# 15-11-2018

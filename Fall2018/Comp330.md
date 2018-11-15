@@ -1391,5 +1391,69 @@ CE implies 1 (CE=there exists an algorithm that when running just gives out all 
 Given an enumerator we want to know if Sx(n) = 1. The way it works is we run the enumerator algorithm and just wait for n to be outputed if we see n then we say yes else no. 
 1 implies CE. Suppose we have an algorithm B to compute f and dom(f)=X. 
 
-#### Dove tailong 
-We give B(0) run it on one step then stop same thing for B of 1 and so on moving up a step for each already inputed variables. Any single one of these may run forerver but if any B(n) halts we will find out.
+#### Dove tailing 
+1 implies CE  
+We give B(0) run it on one step then stop same thing for B of 1 and so on moving up a step for each already inputed variables. Any single one of these may run forerver but if any B(n) halts we will find out. If B halts on any input we print it and continue.
+
+## Theorem of Union and Interesection
+The union and intersection of 2 CE sets x,y is CE.  
+To see this run the enumerator for x,y in parallel, then any time we see an output, we output it, for intersection we can just compare.
+
+## Post Theorem 1
+if X is computable then it is CE.  
+If X is CE and X opposit is also CE then X is decidable
+
+## Post Theorem 2
+Remember pairs of numbers can be coded as a single number, In short there is a one to one and onto map from 2 numbers to a single number.
+<n,m/> means n,m as a Single number. fst(<n,m\>) = n and snd(...) = m
+
+A set X made of natural number is **CE** if and only if there exists a computable set Y subset of N cross N such that 
+$$\forall x \in X, x \in X \iff \exists y \in \mathbb{N} <(x,y) \in Y>$$
+
+### Proof
+If we had such a Y we can easily see that we can get X as Y is decidable.  
+Suppose X is CE, how do we construct Y:
+$$Y=\{<x,n> \mid A \text{ enumerate x in n steps}\}$$
+We know we have A as X is CE and we can count how long A runs then we code up <x,n\> and put that in Y. 
+
+# 11-07-2018
+# Reduction
+The ability to transform a problem into a similar problem to solve them or show certain properties
+
+## Halting and acceptance problem
+### halting problem is a subset of the acceptance problem
+We give an inmput M for the turing machine and x for the input
+Construct a new machine M' on the input x it stimulates M with input x and if M halts on x then accept x. Then we can take the code for M' and the word x and pass that to the box that solves the acceptance problem asking if M' accepts x, if so then we say that M halts on x else we say otherwise.
+
+### Acceptance problem is a subset of the halting problem
+We have a turing code M and an input x, then we can feed M and x to the Halting machine, if it does not halt then we return false other waise we run x on M and just output the answer given by the machine.
+
+### Halting problem is a subset of the Emptyness problem 
+Means that M is a turing machine that recognizes 0 word, this must be known without any input, the language of the turing machine is the Empty set called E_TM representing the set of turing machines that rejects every single word.
+
+Take M as the turing machine and x as the input, Define M' such that M' run x on M if it halts then accept input, if M does not halt then M' is an empty language else if M halts on x then M' accepts all inputs.
+
+### Acceptance problem to the Emptyness problem
+Recieve M and x, first run emptyness algorithm with M if M is empty then ouput no 
+
+Otherwise let M' be a turing machine that takes as imput w, if w=x then it runs x on M else it rejects x, Give it to the empty problem algorithm, if M accepts x then M' accepts x as well thus if the algorithm ouputs no we say thatthe wordd is accepted, else then M' is the empty set thus we reject x.
+
+### ATM is a subset of an algorithm that defines if the language is regular
+Take as a turing machine code M and as input x, Construct a turing machine M' such that for an input w
+1. check if w = a^nb^n if yes then accept
+2. Else stimulat M on x
+3. If M accepts x then accepts w
+
+Pass M' to the regular algorithm checker, if M accepts x then M' accepts every word thus M' is regular if M does not accept x then M' accepts w thus it is irregular so we can give M' to the algorithm and decide on x.
+
+### Empty set machine is a subset of EQtm which is if two M1 and M2 accepts the same language
+Take M, then create a Turing machine that reject every word call that M, feed it to the EQ_tm algorithm if they are the same then return true else return false.
+
+### Others:
+1. L(M) = L(M') where M' always halts
+2. L(M) is context free
+3. |L(M)| < infinity
+4. L(M) = sigma Star
+
+## Co-CE
+It will halt if the answer is no but it will not halt if the answer is yes

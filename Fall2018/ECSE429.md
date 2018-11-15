@@ -1409,3 +1409,113 @@ Pairwise:
 2. Identify their values
 3. Identify the unique combinations of variables **one pair at a time**
 4. Create the table
+
+---
+# 14-11-2018
+# Security Testing
+Focuses on vulnerabilities including, data, network, computing resources.
+
+Threat modeling: to evaluate the system for security issues, identify areas that can be exploited for security attacks.
+
+1. Assemble a Team (developers, tester, security experts)
+2. Identify potential targets
+3. Understand the boundaries of the system, access priviliges
+4. Identify how the data flows through
+5. Identify methods for security breaches
+6. Identify the threat, target and counter measures
+7. Rank them in order of increasing priority
+
+### DREAD
+D: Damage potential  
+R: Reproducibility  
+E: Exploitability  (How often is the attack a success)
+A: Affected users  
+D: Discovery (How easy to find the vulnerability)
+
+## Common vulnerabilities
+1. Buffer overflow
+    1. Push more data than expected in order to have them execute in the system
+    2. Test all bufers
+    3. write special and escape characters
+    4. Use safe string functions are used
+    5. Enforce data size test data with data-1,+1
+2. Languages Weakness: SQL injections, cross-site, scripting attack.
+    1. Avoidance of injection-related issues: Input sanitizing, escape/quotsafe input (Do not pass instructions create them in an object and the pass it)
+3. Back door
+    1. Alternate way of accessing a system
+    2. exploited for denial of service attack
+4. Command line (Shell) execution
+    1. HighJack exectution privileges
+5. Password cracking
+    1. Use password cracking tool technologies
+6. Unprotected access
+7. Information leak
+    1. Hard code password and ID
+    2. revealing error messages
+    3. directory browsing
+
+## Testing methods
+### Penetration testing
+Try to penetrate a system by hiering white hats
+
+### Program forensics
+Leave a trail for analysis of what happend (from security attack) to trace what happens when investigating
+
+# Reliability testing
+Requierments:
+- Probability of no failure in a specific time interval
+- Expected mean time failure
+- number of failure over time t
+- Failure intensity the number of failure per time unit at time 
+t
+
+Note that reliabilty assumes a specified environment, to make any test and results on reliability, the test conditions must be similar to field conditions.
+
+Model how user use the software:
+- Environmnent
+- Type of instalation
+- inputs distribution over input space.
+
+## Statistical testing
+Testing based n operatinal profiles (usage model). Select a sample from the population that will use the software to identify then test, system functions that will be used the most.
+
+1. Dev of the usage model
+    1. Possible usage of software in different conditions
+    2. Can be represented as transition graph with the nodes as states
+    3. Identify what and who can initiate the operations
+    4. Occurence rate of a specific operation happens per hour
+    5. Occurence probability: to define how often future usages occurs.
+2. Random selection/generation of tests
+    1. We have a transition model traversing it guided by probabilities (random walks)
+    2. Each test starts at a start node and ends at the exit node.
+    3. Random generator is used at each stage to determine the next stimulus.
+3. Analysis
+    1. Results in Markov Chains
+    2. Estimate long-run occupancy of each state, the usage profile as a percent of time spent in different state
+    3. Occurence probability: occurence probability of each state in the software
+    4. And many more see slides
+
+### Advantages
+Establish reliability data trying to predict what will happen in the future based on what happened in the past.
+
+### Disadvantages
+Not applicable to safety-critical system as very high reliability requ may take years to be completed.
+
+## Mutlitasking testing
+Investigate simultaneous execution of mutlitple tasks such as deadlock, starvation, race condtion.
+
+The test reproducibility is is not garanteed run multiple tests
+
+Logging can help detect problems.
+
+## Recovery testing
+Ability to recover data from failures and exceptional conditions in hardware and software or peaple.
+
+## Installability testing
+Installing the system on different machines, with different configurations.
+
+# Test automation
+## Brian Marick's matrix
+
+## Test pyramid
+Start with unit testing automated and as we go up we automate less and less
