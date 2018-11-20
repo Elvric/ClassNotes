@@ -2010,3 +2010,61 @@ Then some serial computation comes along which takes one processor and that thre
 
 ---
 # 15-11-2018
+## Speedup
+The idea is to map threads onto P processes, what if the kenrel does not cooperate?
+
+### Scheduling Hierarchy
+- User level scheduler
+    - Tells the kernel which threads are ready
+- Kernel level scheduler
+    - Syncronous
+    - Picks a thread pi and schedule them.
+
+## Greedy Scheduling
+A node is ready if all its predecessors are done, the scheduler schedules as many nodes as possible. But the optimal version would pick appropriate nodes in order to make the algorithm finish the fastest.
+
+### Greedy theorem
+The gready algorithm will finish in:  
+$$T_p \leq \frac{T_1}{P}+T_\infty$$
+
+### Theorem on ration
+Any greedy scheduler is in a factor of 2 of optimal. Comming up with an optimal scheduler is NP-hard which makes the greedy scheduler pretty good the star represents the optimal algorithm.
+
+$$T_p^* \geq \max\{\frac{T_1}{P},T_\infty\}\\
+T_p \leq \frac{T_1}{P}+T_\infty\\
+T_p \leq 2\max\{\frac{T_1}{P},T_\infty\}\\
+T_p \leq 2T_p^*$$
+
+## Work distribution
+Certain threads may finish there tasks faster than other which makes them useless.
+
+### Work dealing
+Distribute the work in an even fashion so every thread works, the issue arrises if all thread try to exchange work then they may spend a lot of time spreading the work arround in a recursive fashion which is not optimal.
+
+### Lock free work stealing
+1. Each thread is going to keep a pool of tasks it must do
+2. Remove the work without syncronizing
+3. If the thread runs out of work it steels some from another thread but from the top of the double ended queue
+
+Thread push and pop from the bottom of there queue, but steal work from the top of other queues.
+
+#### Poping and pulling out of the queue at the same time issue
+```
+popTop() fails if concurrent thread succeeds
+popBootmo() fails if concurrent thread succeeds
+```
+
+#### The ABA problem
+1. Read the top of the queue to still the job
+2. Then it will do a compare and set on the top field but it is put to sleep
+3. What if before it can do the compare and set the owner thread starts poping from the bottom and pushes new work to the queue. 
+4. Then when the stealing thread wakes up it will do a compare and set on the wrong work destroying it although it was never executed then it will execute a command that was already done,
+
+To avoid that in java we are going to use an atomic stamped reference such that every time we get an address we access a reference we also get an integer. The bottom pointer is set to be volatile. 
+
+So now we read the top of the queue and retreive the stamp, then we are going to set our new top to be oldTop+1 same for the Stamp, but we are then going to check if the bootom <= oldTop that means that the queue is empty, if not we are going to try to steal the taks by doing a compare and set on the top ensuring that we are doing a compare and set on the oldtop with the same stamp, if not then that means that some other thread took the work thus we do not perform the task.
+
+#### Variation
+Randomly balance the loads, when a thread is out of work it sends a message to other thread to verify what thread has the most work and steal work from that thread.
+
+The thread and work are kept in queues, a thread checks its work size, if there is not that much work then the thread tries to steal work at randome in order to balance the load between the victim and itself.

@@ -1416,7 +1416,8 @@ Suppose X is CE, how do we construct Y:
 $$Y=\{<x,n> \mid A \text{ enumerate x in n steps}\}$$
 We know we have A as X is CE and we can count how long A runs then we code up <x,n\> and put that in Y. 
 
-# 11-07-2018
+---
+# 07-11-2018
 # Reduction
 The ability to transform a problem into a similar problem to solve them or show certain properties
 
@@ -1457,3 +1458,73 @@ Take M, then create a Turing machine that reject every word call that M, feed it
 
 ## Co-CE
 It will halt if the answer is no but it will not halt if the answer is yes
+
+---
+# 09-11-2018
+#### Stimulation
+We can say stimulate M on w if M halts then \_\_\_\_ this is fine but you cannot do if then else as you do not know if it halts.
+
+# Mapping reduction
+Suppose 
+$$
+L_1, L_2 \subseteq \Sigma^*\\
+L_1 \leq_m L_2\\
+f: \Sigma^* \rightarrow \Sigma^*\\
+\forall w \in \Sigma^*, \text{ if } w \in L_1 \iff f(w) \in L_2
+$$
+Where f is total, then f is called the mapping reduction note that the convers of L1 can also be mapped to the converse of L2.  
+But remember that there is the opposit between L1 and L2 is not the case.
+
+Assume P is the mapping reduction of Q then
+1. If P is undecidable then Q is undecidable
+2. Q is decidable so is P
+3. If Q is CE so is P
+4. If P is not CE then Q cannot be CE
+5. If P is not coCE then Q cannotbe coCE
+
+Note that Acceptance test is not mapable to Empty as empty is CE but not Acceptance
+
+## EQtm is not in CE nor coCE
+We have shown that not Atm ≤m not EQtm then we will show that Atm ≤m not EQtm
+
+### Proof
+Atm ≤m EQtm  
+Input <M,w\>
+Construct:
+1. M1(x) ignore input & accepts
+2. M2(x) ignore input run M(w) & if it accepts, accept x
+3. L(M1) = Simga^*, L(M2)=sigma^\* if M accepts w else empty set.
+
+$$L(M1) = L(M2) \iff \text{ M accepts w}$$
+
+For the not we just do the opposit. so we make that computable. but we know that not Atm is co-CE and Atm is CE thus Eqtm is neither of both
+
+$$\mid L(M) \mid  = \infty = INF$$
+
+### not HTM ≤m INF
+Given <M,w\> we define a TM as M' with input x
+1. Stimulate M on w for |x| steps, M halts before the end of the stimulation reject x
+2. Else accept x
+
+If M does not halt on w then L(M') is infinite else L(M') is finite so:  
+$$<M,w> \in \bar{H_{TM}} \iff <M'> \in INF$$
+
+## Mortality problem
+We have a finite set of 3x3 integer matrices call that set S (S is finite).  
+This is undecidable:
+**Does there exits a sequence of matrices from S such that their product is 0?**  
+
+## Skolem's problem
+We have a recurence relation 
+$$x_{n+k}= a_{k-1}x_{n+k-1}+....a_nx_n$$  
+Is there any n such that 
+$$x_n = 0$$
+
+## Group problem
+We have a sequence of g's and wether this sequenc is equal to their identity. Same thing for having to sequences and asking whethere they are equal.
+
+---
+# 12-11-2018
+# Rice's Theorem
+Turing machines = program = algorithm  
+The set of all programs is effectively the same as the set of all turing machines.

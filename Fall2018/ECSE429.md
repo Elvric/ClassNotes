@@ -1519,3 +1519,105 @@ Installing the system on different machines, with different configurations.
 
 ## Test pyramid
 Start with unit testing automated and as we go up we automate less and less
+
+---
+# 16-11-2018
+# Gray-box testing
+## Testing VS formal verification
+||Testing|Formal Verification|
+|-----|------|-------|
+|Scope|one execution of the system trace|All possible traces of the system|
+|characteristics|can detect errors|cannot prove the abscence of errors|Can prove abscence of errors and detect errors|
+|Cost|Expensive to design cheap to execute|expensive for both|
+
+## State based testing
+### Grey box testing
+We have a limited knowledge of the internal part of the system.
+- Architecture model
+- State model
+- UML desing model
+
+The coverage is based on the models.
+
+## State model
+- concrete
+    - Combination of attribute values of attributes
+    - Can be inifite
+- Abastract state
+    - Capture by a predicate (over concreate state)
+    - One abstract state may represent many concreate state.
+
+```
+bool overdrawn_Inv() {
+    return (balance<0); 
+    }
+```
+
+### State machine model
+We have states and transition between states caused by events.
+There is an initial state denoted by a node and an arrow pointing to the start state. Rectangles represente a composite state containing multiple states, arrows represent the transition between states.
+
+The same machine can be used for code generation and test models. 
+
+- This model is used to generate either generate code for the product or use it to generate test cases
+- It is bad practice to use both cases in the same model. As we loose independence between the test cases and the implementation.
+
+### State based testing
+Tests are derived from a test model
+
+State machine execution depends on input events and data
+
+- Executability: find data to execute the test sequence which can be hard
+- Scalability (there may be a large number of concrete states)
+
+##### Fault model
+- Transfer fault (missing or incorrect transtion based on a certain input)
+- Output fault (incorrect output)
+- Corrupt state (Based on a correct input the system creates a system that does not extis)
+- Sneak path (machine accepts a valid input that is illegal for a state or unspecified)
+
+
+## Strategies all states
+**During the final we will be told which Strings are actions and which are events**
+### All states
+Testing passes through all states
+
+### All events
+Testing passes through all events (method call)
+
+### All actions
+Extra actions done when an event is launched
+
+### All transtions 
+All edges have been gone through.  
+Implies all states, events, actions coverage
+
+### N+ Test strategy
+- All state control faults
+- All sneeak paths
+- Many corrupt state
+
+1. Derive round-trip path tree from state models (flattened)
+2. Generate round trip path test cases
+3. Generate sneak path test case
+4. Senzitive transition in each test case
+
+### Round-Trip path
+Remove concurrency and hiarchy from the state
+
+Initial state is the root node of the tree, an edge is drawn for every transtion out of the intial node, with new leaf ndes representing resultatn states
+
+A leaf node is marked as terminal if the state it represents has already been drawn or is final.
+
+No more transition happen at the terminal node loops are executed only once.
+
+Tree struct
+- Depends on the order transition are traced
+- depth first search yields fewer, longer test sequence
+- The order of the tests is suppose to be irrelevant
+- Used to find sneak path, check conformance to explicit behavior model.
+
+#### Tests
+- Each test case begins at the root and ends at the leaf node, each path produces one test case.
+- The oracle is the sequence of state + their ouput with their corresponding actions assuming all of them can be observed
+- When running the test we set the object to the initial state then check all the states, all transition and final state.
