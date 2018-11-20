@@ -2068,3 +2068,86 @@ So now we read the top of the queue and retreive the stamp, then we are going to
 Randomly balance the loads, when a thread is out of work it sends a message to other thread to verify what thread has the most work and steal work from that thread.
 
 The thread and work are kept in queues, a thread checks its work size, if there is not that much work then the thread tries to steal work at randome in order to balance the load between the victim and itself.
+
+---
+# 20-11-2018
+#### Simple video game
+We want to prepare frames for display, we need to ensure at least 35 frames/second, it is alright to make certain mistakes sometimes.
+
+```java
+while (true) {
+    frame.prepare();
+    frame.display();
+}
+```
+
+But we may want to split that into multiple threads with phases so that a thread displays a phase then update the frame and display again in an "asyncronous" manner.
+```java
+while (true) {
+    if (phase) {
+        frame[0].display();
+    }
+    else {
+        frame[1].display();
+    }
+    phase = !phase;
+}
+
+while (true) {
+    if (phase) {
+        frame[1].display();
+    }
+    else {
+        frame[0].display();
+    }
+    phase = !phase;
+}
+```
+
+## Synchronization problems
+We do not want thread to display frames too soon nore too late.
+s
+
+## Barriers
+Used a lot in scientific & numeric computations
+
+Systems do not use them that often but can be used for garbage collection. 
+
+### Implementation
+- Cache coherence
+    - Spin on local cached locations?
+    - Spin on statically defined locations?
+- Latency
+    - How many steps
+    - How long do other threads have to wait before the barrier breaks?
+- Symmetry
+    - Do all threads do the same thing?
+    - If they are not on the same compuation structure (GPU, CPU) then maybe not
+
+### Sense-Reversion Barriers
+The barrier will have a falg associated with it and when that flag changes then we let the threads throught.
+
+```java
+threadSense = new ThreadLocal<boolean>
+```
+
+In java the class CyclicBarrier is the one that can be reused after usage. For just one time use we can use CountDownLatch.
+
+### Waiting to decrement
+An issue may arrise when a lot of thread queue up to decrement the barrier counter, the way arround that is to actually have multiple smaller barriers that allow threads to move up to levels. Once the last level is reached then we spread the message down the tree freeing up every threads stuck in hte tree. This causes more latency as we have to access different memory regions for different barriers, yet it causes let contagency which can be positive.
+
+Not that great for servers but alright for local computations.
+
+### Tournament Tree Barrier
+We no longer do getAndDecrement(). Since there are only 2 threads per node we can determine which thread is going to move up at each level, at each level i if i-th bit of thread is 0 move up else keep back. We also add a flag to the node when the winner thread arrives it spins on its own flag, until it flips which means that the looser thread shows up and fliped the winner thread flag so the winner thread can go to the next level. The looser thread just spins on its own flag. This is better for the server as now we know exactly where each flag location is so we can make thread spin locally with their flag. **Good for bus based architecture**.
+
+### Dissemination Barrier
+Work in rounds, each thread A notifies a thread that is 2^i+A (mod m) away. So after log(n) rounds we know that the barrier is over. The issue is that we are notifying things all over the place and in terms of cache performance it is not that great. This is a good algorithm on the ohter hand to prove certain theorems.
+
+## Multi core machine algorithm
+### Static tree Barrier
+We have one node per thread statically assigned good for server architecture so that the Threads do not have to move arround. We are going to have one global flag. Each node will have a count of how many of its children have not yet finished yet.
+
+When a node has its counter set to 0 then it decrements its parent counter by 1 then start spining on the global flag.
+
+If a node has no parent that means that it is the root of the tree thus when the counter of that node reaches 0, the thread flips the flag instead freeing all the threads. This can cause a lot of bus trafic for all thread spinning to retrieve a new value. The good thing though is that these threads did not have to go up and down the tree to figure out what node the are at and what node they should go to.
