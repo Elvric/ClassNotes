@@ -1521,10 +1521,240 @@ Is there any n such that
 $$x_n = 0$$
 
 ## Group problem
-We have a sequence of g's and wether this sequenc is equal to their identity. Same thing for having to sequences and asking whethere they are equal.
+We have a sequence of g's and wether this sequence is equal to their identity. Same thing for having to sequences and asking whethere they are equal.
 
 ---
 # 12-11-2018
 # Rice's Theorem
 Turing machines = program = algorithm  
 The set of all programs is effectively the same as the set of all turing machines.
+
+## Extentional property of a program
+A property of the function it computes. i.e: A function that sorts elements in a set.  
+Two programs are extensionaly equal if they implement the same function.
+$$P_1 \sim P_2$$ 
+We say that if they compute the same function.  
+The same applies to turing machine when they recognize the same language.
+
+An extensional property Q is a family of CE sets or a predicate on turing machines or on programs such that Q accepts M1 then:
+$$Q(M_1) \land M_1 \sim _2 Q(M_2)$$
+
+## Trivial properties 
+Q: false (nothing satisfies), Q: true (everything satisfies)  
+These are obviously decidable.
+
+# RICE Theorem
+Every non-trivial property of turing machines or programs or algorithm is undecidable.
+
+## Proof
+Let Q be a non-trival propery of TM or CE sets or programs and assume Q is extenssional. We can assume that if the language of the turing machine is empty the Q(M) does not hold. Since Q is non-trivial there is some turing machine M0 such that Q(M0) holds and hence the langauge of M0 is not the empty set.  
+Atm ≤ Lq = {Mi} Q(Mi) == true.
+Given a Turing Machine M and a word w, does M accept the word w, we build a new turing macine TM M' such that on input x stimulate M(w) if M accepts w then stimulate M0(x). If if M0 on x if M0 accepts x then so does M'.  
+Claim M(w) is an Atm if and only if Q(M') holds.  
+```
+If M accepts w then M' is equivalent to M0
+If M rejects w then M' accepts nothing
+```
+
+How to recognize L bar with PDA where L = {ww | w in Sigma^*}
+
+If the input has an odd length then we know it is in L bar.  
+Consider an even length word to be not in L we must split the words into two equal length and they must disagree somewhere.
+
+Now take the string
+x1x2x3....xi....xny1y2y3...yi...yn 
+The length from x1 to xi = i-1 the length from yi to yn= n-i  the length xi to xn = n-i the length from y1 to yi = i-1 thus the distance betwen xi and yi = n-1. 
+Now we stack all the x1 until we reach xi then we go to a state that know it has seen xi we now read the rest but pop the stack, once the stack is empty we push back ontop of it, then when we reach yi we compare it with xi and if they are different we start poping again else we reject instently if the stack is empty at the end we accept. Since this is undetermanistic at the end of the algorithm we know we have looked at all the comparaison possible so we we have derived a machine that accepts L bar.
+
+### Godle
+A language with For loops only can only express terminating algorithm. A typed higher-order function language can only express terminating programs. Any such language will also fail to express a properly terminating program.
+
+---
+# 14-11-2018
+Valid computation of a TM.  
+Given a turing machine M and a word w and we want to know if M accepts w.  
+Given M and w we can effectively construc a CFL or a PDA such that it generates/recognizes the complement of the set of valid computation.
+
+## Valid computation
+We have a state, tape, head position.  
+A configuration of a TM is a description of the state, the tape and the head position
+
+abbaab and the machine is in state q  (name of states is different from the symbol on the tape)
+
+abqbaab and looking at the cell just to its right.
+
+Now for the moves we get abqbaab\#abaq'aab showing to consecutive configurations and so on.
+
+A valid computation is a description of all the steps from the start until the machine accepts. This must generate a finite String.
+
+### Correct start state
+$$\#q_0a_1...a_n\#$$
+
+### Valid computation (must be finite) VALCOMPS(M,w)
+$$\#\alpha_0 \#\alpha_1 \#...\#\alpha_N \#$$  
+where alpha 0 is the start configuraition and alpha N must be an accpet configuration. alpha n+1 must follow from alph n according to the transition rules of M.
+
+#### Fact 
+If M does not halt or accpets on w then VALCOMPS(M,w) = empty set  
+We are going to show that complement of VALCOMPS(M,w) = CFL so given G, L(G) = Sigma^* must be undecidable.
+
+1. If z is in VALCOMPS(M,w) then z begins and ends with \# and between every pair we must have a non-empty String from the right alphabet.
+2. Each alpha i must contain exactly one letter from Q.
+3. Alpha 0 must be the start configuration of z
+4. Alpha N must be an accept configuration.
+5. For each i the difference between aplha i and alpha i+1 must agree with the rules of M.
+
+**1 through 4 can be checked with a DFA but we need a PDA for condition 5**
+
+### Step 5 checking
+The difference between alpha i and alpha i+1 should be confined to three consecutive symbols.  
+The possible values of a 3 symbol sequence can be remembered in finite memory.  
+2 paries of 3 symbols sequences are consistent if they follow the rule of M.
+
+The PDA guesses a pair of alpha_i, alpha_i+1 where the rules are violated and guesses a 3 symbol sequence where the violation occurs. 
+
+Hence now we know how to check complement of Val comp with a context free language thus if it was possible to check if it is sigma start then valcomp would be empty and we would know something impossible. 
+
+If we use the rev for certain alpha then we could use TWO PDA's to ensure that we have a VALCOMP. This is not the same thing than a turing machine since here the PDA are independent. 
+
+---
+# 16-11-2018
+# Post correspondence problem PCP
+We have a finite set of pairs of Strings S. A solution is a finite sequence of natural numbers I such that S1i1S1i2.....S1ik = S2i1S2i2.....S2ik.
+
+There is no algorithm to solve this problem.  
+Halting problem reduction to the problem above.  
+Lets first modify it: There is a special domino with which we must start.
+
+## Modified version of the PCP
+Turring machine representation #q0w1.....w#.......#x1_xkqaxk+i  
+Here the # represents a configuration of the turing machine The q represents the state being looked at the 0 represents the postion of the head and x represents what is on the tape. qa means accept qr means reject. 
+Hence our first String will be {#,q0w1..wn#}  
+Now if we see the following rules we do:
+$$
+\delta(q,a) = (r,b,R) = S = \{qa,br\} \iff r \neq q_r\\
+\delta(q,a) = (r,b,L) = S = \{cqa,rcb\} \forall c \in \Gamma \land \{a,a\}, \\
+\forall a \in \Gamma \land \{\#,\#\} \land \{\#,\_ \#\} 
+$$
+Here we keep trying to match but by matching we create the next state of the turing machine which we know have no choice for us to know it it halts.
+
+## Conversion from the modified to regular version
+How do I ensure if I have a lot of dominos that I indeed start with {t1,b1}. Use an extra symbol * which does not appear in any String.
+$$ \vec u = u_1u_2...u_n\\
+*\vec u = *u_1*u_2...*u_n\\
+\vec u* = u_1*u_2*...u_n*\\
+*\vec u* = *u_1*u_2...*u_n*
+$$
+So now we have a modified PCP and we must start with {w1,x2} to get to the regular PCP.  
+In this case we modify {\*w1,\*x2\*} then all the other dominos {\*w_3,x_4\*} then we of course have to have a finishing symbl with {*^,^} where the cap is an unused symbol, hence this PCP is equivalent to the modified PCP. 
+
+Atm ≤m PCP so undecidable
+
+PCP ≤ AMBIG, where we have a grammar and we want to know if the grammar is ambiguous. 
+
+All problems can be solved if we can solve Atm so Atm is CE complete. (Post's question)
+
+---
+# 19-11-2018
+# Validity of Formulas First-Order logic is undecidable
+## Syntax of a first-order logic
+We have a countable set of constants such as letters.  
+Then we have a countable set of variables.  
+Then we have a set of function symbols.  
+A set of predicate symobls.  
+Function and predicates come with arities. 
+
+TERMS: defined by induction
+1. any constant is a term
+2. any variable is a term
+3. If f is a function symbol of **arity** n and t1,...,tn are terms then f(t1,...,tn) is a 
+4. If P is a predicate of arity n and t1,...,tn are terms then P(t1,...tn) is a formula.  
+5. If phi1 and ph2 are formulas
+$$
+\varphi_1 \land \varphi_2\\
+\varphi_1 \lor \varphi_2\\
+\neg \varphi_1\\
+\varphi_1 \implies \varphi_2\\
+\exists x \in Var \varphi\\
+\forall x \in Var \varphi
+$$
+These are all formulas do not interprete them as we have not defined what the symbols mean yet
+
+## Interpretation Semanics (meaning)
+$$
+D \rightarrow \text{ domain of interpretation }\\
+$$
+All constant symboles are interpreted as elements of D. 
+
+
+### Example: Arithmetic/number theory
+Constants: 0,1,2,3...  
+Variables: x,y,z,...  
+Functions: + (ar 2),* (ar 2),succ (ar 1)  
+Predicate: =, ≤
+
+#### Interpretation
+SUCC x -> x+1  
+PLUS is interpreted as +  
+TIMES is interpreted as *
+
+All functions symbols of arity n are interpreted as functions D^n -> D.  
+All predicate symbols of arity n are interpreted as subset of D^n
+$$ \leq = \{(0,0), (0,1), (0,2), (1,1), (1,2)...\}$$
+
++(3,0)*(+(3,0),x), succ(7) (these are terms)
+
++(0,3) ≤ 2 (this is a formula)
+
+## Understanding Important concepts
+- True
+    - constants can be interpreted in truth statment
+    - variables require extra information, the environment: is a map from variables to D (programming this is called a set of bindings). 
+    - Here we will use roh as the environment so we write the variable followed by roh to have the environment
+    - The same thing applies for functions or we can put roh in front of the functions variables terms.
+    - What about formulas: we have I, roh bar equal, phi -> this formula phi is true when we use itnerpretation I and environment rho
+    - A formula that is true in an interpretation is called **satisifiable**
+    - A formula that is true in every interpretation is called **valid**.
+    - A formula is **invalid** if there is at least one interpretation in which it is not true.
+    - A formula is **unsatisfiable** if there is no interpretation in which it is true.
+- Provable
+    - We can define axioms and rules of inference and proofs. A formula which can be proved is called a theorem.
+    - Different proof systems have different powers, if we have a proof system such that every valid formula is a theorem then the system is called **complete**.
+    - FOL -> COMPLETE
+    - ARITHMETIC -> has no complete proof systems
+    - A proof is a finite object (even inductions)
+    - A proof can be checked by a terminating algorithm.
+- Theorem
+    - Soundness: any theorem is valid.
+    - Theorems must be proven.
+- Validity
+    - A formula is valid if it is true is all interpretations no matter the rho.
+- Complete
+
+Truth:
+$$
+I, \rho \models \varphi\\
+I, \rho \models t_1=t_2 \ if \ [t_1]\rho = [t_2]\rho\\
+I, \rho \models P(t_1,t_2,..,t_n) \ if \ [t_1]\rho,[t_2]\rho,..,[t_n]\rho) \in [P]\\
+I, \rho \models \varphi_1 \land \varphi_2 \ if I, \rho \models \varphi_1 \land I, \rho \models \varphi_2\\
+...
+$$
+
+Validity:  
+$$\exits n \forall m n \leq m \rightarrow T,D=\mathbb{N}\\
+\rightarrow F D = \mathbb{Z}$$
+
+---
+# 21-11-2018
+Validity is undecidable but it is computably enumerable because we have a complete proof system for FOL. 
+PCP ≤m VALIDITY
+
+Predicate = p  
+Constant = a  
+Fonction = f0,f1
+Formula:
+$$\{\rho(1..N,f_{\alpha_i}(a),f_{\beta_i}(a)) \land \forall x,y [ \rho (x,u) \implies 1...N [ \rho f_{\alpha_i}(x),f_{\beta_i}(y))]\\
+\implies \exists z \rho (z,z\}\\
+\alpha_i, \beta_i \in \{0,1\}^*\\
+f_1(f_0(f_1(a))) \equiv f_{101}(a)
+$$

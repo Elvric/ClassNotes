@@ -2151,3 +2151,86 @@ We have one node per thread statically assigned good for server architecture so 
 When a node has its counter set to 0 then it decrements its parent counter by 1 then start spining on the global flag.
 
 If a node has no parent that means that it is the root of the tree thus when the counter of that node reaches 0, the thread flips the flag instead freeing all the threads. This can cause a lot of bus trafic for all thread spinning to retrieve a new value. The good thing though is that these threads did not have to go up and down the tree to figure out what node the are at and what node they should go to.
+
+---
+# 27-11-2018
+# Concurrent Hashing and natural parallelism
+We can use the lock free list we implemented in chapter 9.
+```java
+public hashSet(int capicity) {
+    table = newLockFreeList[capacity]();
+    for (int i = 0; i<capcity; i++) {
+        table.add(new LockFreeList());
+    }
+
+    public boolean add(Object key) {
+        int hash = key.hashCode() % capcity;
+        table[hash].add(key);
+    }
+}
+```
+The issue arises when the length of inside list grows and we want to resize the list. Usually we resize a hash table when the a global threshold such as 1/4 of buckets exceed value x. Another one could be when any bucket has size x.
+
+We can use coarsed grain or fine grain locking to be able to resize.
+
+## Fine grain locking
+To resize a thread ascquires the locks in ascending order. But first we ensure that the root pointer points to the original array before acquiering the first lock, create a new array and place all the entrie inside it then just make the root pointer point to the new array. But in this case we will be missing half the locks!
+
+### Striped Locks
+A solution would be to map each lock to 2 cells rather than 1. So now a lock, locks two cells entry rather than one. 
+
+So now we can use regular lists.
+
+## Read Write lock use
+### Lock the table in read, shared mode
+add(), remove(), contains()
+
+### Resize
+Here we have to get the lock in write mode. This may be hard to achieve if we have a writer thread that gets starved by a constant stream of readers. Hence we need to include a fairness property from the lock.
+
+In this case each bucket will be of type lock free list as the read lock can be acquired by as many thread as wanted
+
+## Concurent resize
+When moving entries arround to the new table we may run into issues if a thread tries to look up an entry in the table.
+
+### Do not move the items
+Instead of moving the items when resizing we will just move the pointers to the entries.
+
+### Recursive split ordering
+Make sure that all the values after a pointer have the same key than the starting node. This is the missing thing. First when we split our array in 2 we look at the first least significan bit, then for the second time we look at the 2 list significant bit and so on. If we have a table size 2^i then we just look at the i significant bits. 
+
+### The bit magic
+We just have to revers the bits to know where to put what on the list.
+
+### Removing a node
+The issue now is what happens if we remove a node that is pointed to by the bucket array. Thus we can use sentinels node in order to achieve that, these nodes will never be removed.
+
+### Bucket split in lock free maner
+Here we have to insert a sentinels thus we have to use to CAS calls, one to add the sentinel to the list and the second to put a pointer from the bucket to the sentinel.
+
+If we want to add a node whose hash bucket has not been initialize then first we add the sentinel then we add the node. 
+
+Things can get more complex if parent of a hash function have not been initialized as well then we have to go all the way to the main parent initialize it and do it again and so on.
+
+## Open address hashing
+We keep all items in an array instead of a link list, we have one item per bucket and if we have a collision we map it to an empty bucket in the array.
+
+### Linear probing 
+When we hash a value to a bucket and we reach a value in the bucket that is not x, then we look at an extra feature of the bucket that tells us what is the furthest value that a hashed value reaching that index can be at from that index. This value can be updated as we have more and more collisions. 
+
+This works well when the number of items is less than the size of the array. But if M aproaches N then the performance can go bad very fast. 
+$$ \frac{1}{2}(1+\frac{1}{(1-\frac{M}{N})^2})$$
+
+## Cuckoo Hashing
+Use 2 hash functions on 2 different arrays. First we hash with one hash function and its full then we hash it with the next hash function independently, if both are full then you go back and hash the value on the first location with the second location and if it is empty you put it there otherwise repeat.
+
+One issue here is when we run into circles. But when it is used properly then you are only 2 search away from an input.
+
+Disadvantages: as the ratio to of entries to array size increases we run into cicle (half full in this case). This structure is a bit outdated
+
+## Hopscotch Hashing
+Use a single array with a single hashfunction. 
+
+When we hash something we have a bit map associated with each bucket telling us if there is something after it if there is a 1 telling us that there is something or not for it that could be the value searched.
+
+For adding we look for the closest open slot then swap them with other entries to make it closer and closer to the original hash value updating the bit map of hte neighbour hood we are affecting until we are close enough to the hash cell.

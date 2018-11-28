@@ -1621,3 +1621,153 @@ Tree struct
 - Each test case begins at the root and ends at the leaf node, each path produces one test case.
 - The oracle is the sequence of state + their ouput with their corresponding actions assuming all of them can be observed
 - When running the test we set the object to the initial state then check all the states, all transition and final state.
+
+---
+# 21-11-2018
+# Formal verification
+Prove or disprove the correctness of asystem with respect to a formal specification relying on sound mathematics.
+
+**Sneak pathes are not in the final**
+# Model checking 
+Exhaustively enumerat all the possible states and transitions of the sysrem and check if it meets the requierment. 
+
+For formal and model checking we need a formal language to capture the system model.
+
+## Formal state based modeling languages
+### kripe structure
+Contains states, initial state transitions and labelling. 
+
+#### Labelling
+Assigns to each state a set of atomic propositions (some predicates that must hold at that state, like a light that must be turner ON or OFF depending on the sate).
+
+#### From state machine to kripke
+The state must be flattened then then we encode the data variables into the system but this can result in an exponential number of states.
+
+### State machine composition
+We build state charts independently before but we have to compose them together, so we instentiate them and connect them between each other with synchronous reactive or asynchronous reactive.
+
+### Textual property specification
+May be ambigous such as the light intensity should be high (what does high really means?).
+
+### Temporal logics
+- Express behavioral requirements
+- Order and occurrence of states
+- Logical time
+
+Can be done in a linear or branching tree diagram. Representing a sequence of states starting somehwere and finishing somewhere.
+
+### Linear temporal logic
+We have a cyclic execution so infinit execution, in our case we interpreted over infite paths a linear path since the number of pathes is still finite.
+
+### Formulas for temporal logic
+- We use the proposition for the states
+- boolean connectivity
+- temporal connective
+    - X p: p holds in the next state
+    - F p: p holds somewhere on the subsequent path or now
+    - G p: p holds on all states
+    - p U q: q holds somewhere in the future and until then p holds
+
+We can combine them such as GF p (p can be reachd again at any stage) and so on, p can be a boolean or a regula atomic predicate.
+
+### Computation tree logic CTL
+Here we no longer interpret such things over a path but over a tree.
+Here we add the following logic:
+- E p: there exists at least one path where p holds
+- A p (for All): for all paths property p holds
+
+## Model checking
+Take the real system and then covert it to a formal model (state machine, formulas, state macines) as well with formalized properties (temporal logic, reference automata).
+Then we use a model checking algorithm to ensure that the formal model meets the property it outputs either true or a counter example.
+
+### Model checking algorithm
+#### Explicit CTL model checking
+Assume that all states are initially labeled by atomic propositions. We then label the complex formulas until no more changes are seen by the system. Look at a state and its atomic predicates then label the other states backwards based on what is seen. We are going backwards.
+
+---
+# 23-11-2018
+# Git repo with testing
+Using repository mining to search in history where defects are likely to appear, 
+
+## Identify risky changes
+Traditional defect prediction are trying to guess where the bugs of the future will be. This is important for the QA team as they need to find the defects.
+
+Usually we look at the release with pre and post release bug then we can label the modules of the software as either bug potentilal or if the module seems safe. Then we pass them to an algorithm with the updated system for release 2, then the model compares the second release with the first and gives an insite of where the bugs will be.
+
+These models have some draw backs
+- modules are not always well distributed (some modules are bigger than others)
+- Defects are difficult to locate even when we know what module might be the most affected.
+- Knowing what a dev coded for a long time period may be hard to recover
+
+
+## Identifying futur bugs
+Use the commit links that fixes bugs to the issue tracker, when the bug is fixed we can use the history to see what commits fixed the bug. Then we can also go further back and see who introduced the bug as well. 
+
+This is the just in time model, we retreive all these data and thesse comits and then we give it to our algorithm. Then when new patches are arround we pass the patches to the alg and based on the data the alg it will tell us which patch is most likely to cause bugs. This approach can also be done live as now when a commit is pushed we can scan it instently. This information can also be passed to code reviewers. 
+
+## Exprertise identification
+Different people can code different modules so the code for a module may overlap for different teams. We can assume that the team that coded the most code is the main contributor. Some studies have shown that minor contributors cause the most bugs. If we have a module with weak owner ship (lot of small contributions0 it is very likely that it contains a lot of bugs. But in today's world the only way to know a module is to push to it but we must not forget the reviewing process that alos matters as someone that pushed everything to a module may actually be reviewed by a minor contributor thus making that contributor a major expert in that module. A technique could be to create a grid where we place a Dev based on a module on the quantity of commits to it and reviewing. Then we can create a graph that traces the number of minor reviewer and authors per module. We would then expect the that graph would be going more upwards for the ones with a lot of bugs compare to the one with less bugs. Then we can see if there is a significant difference between the 2.
+
+After all these stats the theory has been confirmed therefor now when we modify some lines of code we can use this data to find the person that knows the most about the module to review the code. The issue though is that if there is only one expert per module if that person were to leave then we would loose a lot of expertise on that module.
+
+## Preempting legal issues
+Reusable components are released under different license terms which plays a big rule on how to release a software.
+
+So first we need to know which areas of the source code are actually being used in the final product. Then we see if they are static or dynamically linked to the software 
+
+**static**: the librairy is in the product.  
+**dynamic**: the user must get a shared file with the librairy to use the product.
+
+Processing such files is a big problem. We use the trace log for that we can see what area of the code are using what in the executable. Ending up producing a graph. Then we run another tool in all of the source file and then we can see what part of the source file need what licence. Then we can see if different modules have conflicting and different licence.
+
+---
+# 28-11-2018
+## Model checking LTL
+First build the system automaton, then move the holding values to the edgs, build the expected automaton from the requierements take its negation. Then we fuste the two automatons together
+
+## Abstraction
+Model checking must be abstracted as building one could be exponential. We need algorithm to abstract them, this can however caused false alarm counter example so we have to go through abstraction requierments. So we need to have abstraction requierments.
+
+Take the model, then abstract it generate the counter examples so then go back to the original state and see whether that counter example holds, if it does not then redifine the abstract state in order for the counter example to no longer holds.
+
+# more for our interestest than for the final
+# Model transoformation 
+This is the regular V model
+
+- Critical systems design
+    - certification process (safety standards)
+    - Must develop justified evidence that the system fills in the requierments
+- Software tool qualification
+    - certification creadit for a software tool used in critical system design.
+
+## New idea
+Create a virtual prototype of the system/product and test it virtually.  
+
+### Used for model based system engeneering
+Early validation of systems model, automatic source code generation. We can check the design guidelines as we build and then we can have a counter part for validation connect the 2 together for testing.
+
+This allows tracability as well as the code is generated to meet a specific aspect of the requierments we can recover it?
+
+The issue may lie in the fact the that tools used to generate code or test to be eronous then we could imagine that the original model was fine but the code generating no longer is.
+
+## Verification and validation challenges
+What validates the validator?
+
+Dev tools are the ones that generate and introduce issus in the system. Veification tools may fail to detect issues.
+
+One method is to do a tool qualify product that ensures that the tools above but it is very expensive as it requieres a lot of work to verify that the tools used are themselves valid and fill in the requierments.
+
+# Exam preparation
+36% of the grade 
+10 conceptual question 30%, 7 practical exercises 70%
+
+## Conceptual
+Compar A to B, define a concept and give example, concept covered in tutorial (i.e parametrized test), no technology oriented question, no multiple choice question. 
+
+## practical question
+- quality assurance and testing basics
+    - no practical exercises
+- static analysis
+    - code review
+    - Detecting anti patterns by graph pattern 
+    - Abstract interpretation
