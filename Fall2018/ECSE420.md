@@ -2234,3 +2234,14 @@ Use a single array with a single hashfunction.
 When we hash something we have a bit map associated with each bucket telling us if there is something after it if there is a 1 telling us that there is something or not for it that could be the value searched.
 
 For adding we look for the closest open slot then swap them with other entries to make it closer and closer to the original hash value updating the bit map of hte neighbour hood we are affecting until we are close enough to the hash cell.
+
+---
+# 29-11-2018
+When working with a set 90% of the time just contains, 9% add and 1% remove.
+
+# Skip list
+A node has a height associated with it giving it a number of pointers pointing to other nodes. When a node is created we randomely assign heights to the node. 
+
+Each higher level is a sublist of the lowest level. The lowest level contains the entire list but the higher we got the less node we get.
+
+The idea is that each pointer at a level jumps over 2^i nodes.
