@@ -155,3 +155,56 @@ Equipement:
 Adding a header at a specific layer from the PDU above it. Putting all objects in the same box and adding a name to the box to be able to distingish it for example.
 
 Dencapsulatio is the process of removing a header done at destination or intermediate nodes.
+
+# 14/01/19
+## Delays
+### Nodal processing delay
+dproc, referest to the time taken to examin the packet header, determine where to dirct teh packet, check for bit level errors usally last a few milli seconds
+
+### Queuing delay (could even be a phd)
+dqueue, waiting time in queue before transimission which depends on the number of previous packets in the queue, works as a function of intensity and nature of packets arriving to the queue. The order goes from micro to milli seconds.
+
+### Transmission delay
+ptrans = L/R the time to put the packet out onto the link/wire. L is the lenght of packet in bits and R is the transimission rate of link in bits. Goes from milli to micro seconds.
+
+### Propagation delay
+dprop = d/s the time it takes for a bit to travel the wire which depends on the type of media used (fiber, copper). s is a little less than the speed of light, sd is the distance between the nodes s ranges between 2\*10^8 to 3\*10^8 m/s.
+
+## Packet loss
+Rooters have a finite capacity so sometimes the queue can overflow in this case the rooters does not have enough space to store the packets so it just looses it (packet loss). Regions like that are called bottle necks of the network, the previous rooter sends packet faster than the rate at which the next rooter can transmit them so packets pile up there until overflow where the packets sent are just being lost.
+
+### Trancert Command
+It returns the name/ip address of routers along the way between the source and destination host as well as the round-trip delay and if any packet is lost it gets reported marked as *.
+
+## Throughput
+rate at which bits are transmited from the source to the destination.
+- Instentaneous: rate at a given point in time
+- Average: rate over longer period of time.
+
+# Rooter modes
+### User mode 
+``` 
+Router >
+```
+Allows to configure some basic of the rooters (small simple request) to see what configuration the rooter is in. From that mode we can reach the priviledge mode using the command:
+
+### User priviledge mode
+```
+Router > enable
+Router #
+```
+You can still not change the configuration but you can see more information about the configuration. In order to do that you must go to the general configuration mode
+
+### General configuration mode
+```
+ Router # configure terminal
+ Router(config)#
+```
+We can know change the configuration of the rooter
+
+### Interface configuraton mode
+```
+Router(config)# interface g%
+Router(config-if) #
+```
+Allows here to assign new IP addresses

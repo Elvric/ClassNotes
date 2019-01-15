@@ -95,3 +95,67 @@ Depth first search but stop if the goal is reached or if the max depth allowed i
 
 ### Iterative deepening search
 Do the depth limited search and increasing the depth. It is complete.
+
+# 14/01/19
+# Informed search algorithm
+Uninformed search looks at the depth or cost that is spent from the start node called **d**. But informes search looks at the distance to the goal node. Regarding the 8 tile games it would be how many tiles are misplaced for example.
+
+## Heuristics
+Set a rough estimate of the distance from the goal node in the case of travel we could draw a line from the current node to the goal node and calculate the length.
+
+For the 8 puzzle problem a good heursitic could be the number of moves required to place a tile from its current position to its correct location. (Manhatan distance). **h2**
+
+Another one would be the number of missplaced tile **h1**
+
+### Relaxed version of the problem
+h1 in this case assume that you can move a tile from its position to a new one in one move.
+
+h2 assumes that there is no need for a blank square to be available for the tiles to move
+
+## Best First search
+Expend to the mose promising node according to the heuristic this disregards the cost of the move though so that algorithm is not perfect cost wise.
+
+If the heuristic is always 0 then it acts as BFS. Uniform cost search considers the cost so far compare to best first search that tries to minimize the cose to go.
+
+Best first search in worst case is O(b^s) branchigng factor, d= solution depth (same as BFS). But with a good heuristic we can do O(bd).
+
+## heuristic search
+f = h + g  
+where h is the heuristic algorithm and g is the cost of the path so far.  
+We use a priority queue and only end when the goal state is poped from the queue to have the optimal solution according to both value is found.
+
+**heuristics like that tend to be too gready what matters is to have a heuristics that is always less or equal to the actual cost to achieve the goal**
+
+## A * search
+Applying the heuristic algorithm with an f functiont that respeects the admissible heuristic rule.
+
+### Proof of optimality
+Assume that we have a sub optimal goal G2 in the priority Q and let n be an unexpended node on a shortest path to optimal node G1.
+
+We have f(G2) = G(2) + 0 > f(G1) ≥ f(n)
+
+So A* will select n for expension before G2 this applies to every node on the path to G1 thus G1 will be reached before G2.
+
+
+
+### Consistency/monotone of heuristic functions
+h(s) ≤ c(s,s') = h(s') where for every state s and a successor s' that equation is respected this is slightly stronger property than admissibility.
+
+If this is not resepcted we can fix it by taking the max between g(s') + h(s'), f(s).
+
+### Dominance 
+If h2(n) ≥ h1(n) for all n then h2 dominates h1 (meaning thatn h2 is more informative than h1).
+
+### Iterative deepening A* (IDA*)
+Same as A * search but f value to decide in which order to consider the descendents of a node. It keeps the same properties as A* but uses less memory.
+
+**SMA** is the version where you keep old nodes when rexpending.
+
+### Learning heuristics functions
+Intution is good but it is still limited and up to the individual.
+
+The idea is that rather than writting it down we will write a general idea of the heuristic functions and run the game on multiple samples and by solving each of them we may then get an insight to a better heuristic function.
+
+1. Genreate features that describe a particular state of the game x1(n),x2(n) and so on
+2. Form the heuristic function h(n) = c1x1(n) + c2x2(n)
+3. Set a particular target for the heuristic function and then use maching learning to find better c1 and c2 to match this target.
