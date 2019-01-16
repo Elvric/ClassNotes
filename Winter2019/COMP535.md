@@ -208,3 +208,59 @@ Router(config)# interface g%
 Router(config-if) #
 ```
 Allows here to assign new IP addresses
+
+# 16/01/19
+## PAN (personnal area network)
+Range of 1 m done through bluetooth or BAN (Body area network) used in the medical field for monitering passients through signaling probs on the network.
+
+## Local area network (LAN)
+range from 10 to 1000 m accessible through wifi, ethernet cable. It is the technology used at home/office/factory.
+
+## Metropolitan area network (MAN)
+Range of 10 km covers a city through the TV cable networks.
+
+## Wide area network (WAN)
+100 km to 1000 km, company with multiple branches, transissions lines are usually provided by the ISP infra structures.
+
+## World
+connected through a cluster of WAN and LAN.
+
+# Physical layer deeper view
+Moves individual bits from one node to the next it defines the relationship between the device and the transmission protocol such as frequency.
+
+## Transmission media
+### Twisted pairs
+Info is transmitted by varying voltage or current, it is the most commun transmission media made of 2 insulated cupper wire twisted so that the waves of different wires cancel out usually 8 per cable (8 wire). This system can work over several K withouth being amplified. 
+
+**Wiring standards** differs in the way each cables are pluged in to physical devices:
+- T568A 
+- T568B with RJ45 (most commun)
+
+To connect 2 divices that are the same type switch to switch, router to router then we would use the cross over cable cable source location on the box is different from its destination arrival location on the box. If the divices are not the same swith to router, router to PC and so on then we use straight through cable, **exception comes when connecting a PC to a router this is cross over**
+
+### Coaxial cable
+Info transmited through voltage, in this case we have multiple layer covering the wire giving a high band width with low noise, used in the passed for long telephone lines
+
+### Fiber cable
+Hire bandwidth again usuing transmission with light, used for long-haul transimission in netwok backbones but are more and more used locally now
+
+### Radio waves
+Can travel for long distances but subject to interference. Properties depend highly on the frequency long waves fall sharply and short waves travel in strainglines.
+
+### Micro waves
+Travel in straight lines since they have a higher frequency, used for long distance communication but cannot penetrate buildings.
+
+## Router consol
+```
+running configuration: config that the rooter is running on but if we restart the rooter
+then only the start up configuration will work on the rooter
+
+hostname blabal sets the name of the rooter .
+
+? used to get info on possible values.
+
+enable password blabla sets a password but allow other people to see it.
+```
+
+
+# Data link layer

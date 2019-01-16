@@ -159,3 +159,118 @@ The idea is that rather than writting it down we will write a general idea of th
 1. Genreate features that describe a particular state of the game x1(n),x2(n) and so on
 2. Form the heuristic function h(n) = c1x1(n) + c2x2(n)
 3. Set a particular target for the heuristic function and then use maching learning to find better c1 and c2 to match this target.
+
+# 16/01/19
+We are going to look at a model where the cost is some function Eval(X) and we want to find the best solution X*. 
+
+Given a set of task to be completed figure out the best schedule for these tasks.
+
+Given a board made of components and connections place the componentes to maximize energy efficiency and minimize production cost.
+
+custumer described by (age, gender, location) and prev purchase
+Find the product that the custumer will most probably buy which gives maximum revenue.
+
+## Type of search so far
+- Constructiv method seen so far
+  - Start from scratch and gradually build up a solution.
+- Iterative improv/repair method
+  - start with a soltion and improve it which is what we will see today.
+
+## Iterative
+Start with a set of states/configurations and and evaluation function. In this case a state is a candidate solution not a description of the world. This is used when the state space is too big to be generated and the computation is too expensive to be done.
+
+
+### Generic local search alg
+Start of an initial configuration and walk down the gradient by selecting neighbouts of the initial config evaluate each of them and select the lowest one keep doing that until no neighbours are better.
+
+Defining set of neighbours is a design choice and has a crucial inpact on performance. We call that a neighbourhood function.
+
+#### What move to consider?
+- Search for high ground
+  - Start at initial state
+  - Move to adjacent postion
+  - Terminate when goal is reached
+- SalesMan
+  - Start intial state
+  - Swap cities 
+  - Stop when the goal is met.
+
+## Hill Climbing
+Gradient ascent start form X0 with value E(X0), generate the neighbour set with their values and compare that to our current solution, if the best neighbour is worse that means that we are at an optimal point and we terminate the algorithm.
+
+Else we set our new location to the best neighbour.
+
+This is popular as it requires no memory (no backtrack) trivial to implement (just eval neighbours) and it can handle very large problems.
+
+The neibourhood function is important: large neigh more computation but maybe fewer local optima so better result. Fewer neigh less calc but possibly worse solution.
+
+## Travelling Salesman Problem
+Given a set of vertices and a distance between each, find the shortest path that vistis every vertex exactly once given a start city.
+
+Here one state is a proposed tour that we a gradually going to improve to find tours with gradually shortest length (the best solution is NP complete).
+
+### Neighbourhoud func
+**Swap 2 edges**: takes (n 2) combinations since we have n edges in a tour and swap two of them
+
+**swap 3 edges**: so (n 3) combinations
+
+## Improv hill climbing
+### Quick fix
+When reaching a plateau or local maximum use random restart. But this is expensive as we have to run the procedure mutliple times
+
+### Better fix
+Instead of picking the next best move that gives an improvement.
+
+### Simulated annealing
+Takes some bad moces to try to escape local maxima and decrease the frequency of these bad moves over time.
+
+The only change is that we store the max seen so far, then we move to the max seen as neigh or we accept worse solutions with prob p.
+
+#### what about P
+- fixed p
+- Value decay to 0 overtime
+- decay's to 0 and give similar chance to similar bad moves
+- A value that depends on how much worse the value is.
+
+Boltzmann distrivution
+$$ p = e^{\frac{-(E-E_i)}{T}}$$
+T>0 as a param called temperture (start with high temp and go down slowly).  
+We decrease T by mutliplying it by a constant alpha that is between 0 and 1.
+
+If T decreases slowly enough then the algorithm is garenteed to reach the optimal solution. *slowly enough* however could be extremely slow.
+
+This makes sense as first we improve until we reach a local optimal then since we stay there for a longer amount of time thatn we have more chances of going down hill again to reach another maximum.
+
+### Monte-Carlo Search
+Looking arround the environment and explore it instead of trying to always improve.
+
+## Parallel search
+Run many parallel search on different cores and keep the best solution found so far in memory. Useful when actions have non-determanistic outcome (not sure of how good the next solution is)
+
+## Local beam search
+Run many instances of local search at the same time but in this case make them share info between each other.
+
+- Start k searches in parallel
+- At each step keep the top k solutions in the sets of neighbouthoods discard the remaining 
+- k is called **beam width**.
+
+## Evalutionary computing
+Nature usually makes the most adapted individual to survive and reproduce. Evolutionary search procedure are also parallel.
+
+## Genetic algorithm
+A candidate soltion is called an individual which has a fitness (value that tells how good that individual is).
+
+A set of individual is called a population. Population change ocer generation by applying operations to individuals. Individuals with higher fitness are more likely to survive and reproduce. They are usually represented by a binary string
+
+Good because they are intuitive, and can be affective if tuned right
+
+
+
+### Mutation
+Select a random entry and change its value
+
+### Cross over
+Cross over bits between individuals (slingle, two point, unifor, point mutation)
+
+### Elitism
+The best solution dies during evolution to prevent that we always preserve the best solution. 
