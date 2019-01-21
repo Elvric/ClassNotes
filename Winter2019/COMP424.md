@@ -1,4 +1,3 @@
-# COMP424
 # Lecture 1
 __Def__: developping models and algorithms that can produce rational behaviors in response to incming stimulus and information.
 
@@ -274,3 +273,92 @@ Cross over bits between individuals (slingle, two point, unifor, point mutation)
 
 ### Elitism
 The best solution dies during evolution to prevent that we always preserve the best solution. 
+
+# 21/01/19
+# Constrain satisfaction problem
+We want to find some solution or no solution that satisfies all the constraines for every variable.
+
+There complexity ranges from P to NP-complete problems to NP-Hard.
+
+#### Australia coloring example
+- Variables: WA, NT, Q, NSW, V, SA, T
+- Domains: Di = {red, green, blue}
+- Constrains: adjacent regions must have different colors
+
+We then look for completness (the goal is achieved) and complete the constrains are respected.
+
+### Variaties of constraints
+- Unary: one variable and one constraint
+- Binary: 2 variables
+- Higher-order: involve 3 or more variables
+- Relations:
+  - T1 + d1 ≤ T2
+  - Alldiff(v in row), Alldiff(v in col), allDiff(3x3 square) SUDOKU
+- Preferences (soft constrains): can be represented by a costs and lead to constrained optimization problems.
+
+### Real-Wolrd CSP
+- TimeTable prob (which class is offered when, where)
+- Hardware Configuration
+- Floor spanning, transportation
+- Puzzle solving
+
+## Solving CSP
+### Constructive
+- State: defined the variables assigned so far
+- Initial state: no variable is currently assigned
+- Operators: assing value to unassigned variables
+- Goal test: all variables assigned, all constrains satisfies
+
+Depth is limited to the number of variables, n. So we can apply DFS or depth limited search
+
+This is a complete and optimal approach regarding the constrains
+
+The complexity is n\*d + n-1\*d + ... = n!*d^n.
+
+### Constrain graph
+- Nodes are variables
+- Arc/edges show constrains
+- Graph structure can be exploited to accelerate solution search
+
+Try to avoid CLICS as if you get them it is hard to optimize.
+
+#### Perfrom inference
+Pre process the graph  to remove obvious consistencies.
+- Varaible is arc consistent if: potential values that its domain can take are consistent with its binary constrains (verify that variable associated with other variables respects the constrain)
+- Generalized arc consistent: every value in the domain for each variable are simultaneously arc consistent
+
+### BackTracking search
+- Select variable X
+- for each value in the domain if it satisifies exit the loop and go to the next
+- else if no assignment was found go to the previous var
+
+Works for n=25
+
+### Forward Search
+- When assigning value to X
+- Look at all values each Y connected to X can take
+- Delete the ones that do not respect the constrains with X
+
+n=30 
+
+### Commun Heuristics
+- Minimum-remaining values Choose the variable that has the most constrained (fewest legal values)
+- Degree heuristic: choose the variable that causes the most constrains on the remaining variables (can be used to break ties.)
+- Least-constrain value: Assign value that rules out fewest values for other vars
+
+Tree structure constraint graph: complexity is O(nd^2)
+
+No need to know the cut set conditioning but here to show that there are ways to change a graph to a tree each
+
+## Local Search for CSP
+1. Start with broken but complete assignments of variables
+2. Randomely selec any conflicted variables
+3. Reassigned values using min conflict: choose value that violates the fewest number of constrains
+
+aka Hill climbing opt
+
+### Performance of min-conflict
+Given random inital state cans love n-queens in almost constant time for n queens with high prob with n=10^7.
+
+Many solution mixed with random initilaize (what are the chances that we get high constrains?) making that runtime slower.
+R = num const / num var that ration shows that most of the time random assingment of CSP will work well except for a specific ratio.

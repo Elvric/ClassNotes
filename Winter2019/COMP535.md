@@ -262,5 +262,74 @@ hostname blabal sets the name of the rooter .
 enable password blabla sets a password but allow other people to see it.
 ```
 
+# 21/01/19
+# Data Link Layer
+Responsible for moving data from ne node to the next node through services:
 
-# Data link layer
+## Framing service
+Transmission between two end devices implies encapsulation and decapsulation procedures.  
+Framing refers to the perocess of forming data link frames out of network layer packet. We generally add a header and a trailer at this stage to the packet
+
+### Defining the packet data
+If we have a packet of 2000 bytes but the frame can only take 1500 byte of data then we will have to split the packet in two and then end device will be responsible for unifying the packets.  
+Another method is to have a flag the delimits where the limit of the packet in the frame is.
+
+## Error detection and connection
+These could happen because of noise or signal attenuation.
+
+If we have an even number of 1 we set a parity check bit to 1 else to 0 so when we recieve the data we can check wether that data is correct according to the parity check bit. Better way would be to devide the data into matrices. The objective is just to show how errors can be detected.
+
+## Flow Control
+Ensure that the pace between two communicating nodes are similar to prevent a slow receiving node to be overwhelmed by a fast sending node.
+
+## Multiple access protocol
+### Types of data link channels
+**Point-to-point channels**: Single sender at the end of the channel and only one receiver. Two routers connected by a long distance link, computer and Ethernet swithc
+
+**Broadcast channel**: Multiple sending and receiveing nodes connected to the same shared broadcast channel. Hybrid fiber coaxial cable (HFC), multiple host in wireless LAN, satellite networks. The issue arises when we have to coordinate multiple access.
+
+### Partition MAC Protocols TDMA (Time division multiple access)
+- Time is divided into time slots
+- Each slot is assigned to one node
+- For channel with transmission rate of R bps each node gets R/N bps where N is the number of divices comunicating with it.
+  
+This protocol eliminates collisions and is perfectly fair but a node is limited to a fix rate even if it is the only node transmiting at a given point this is what is used in a 2G cellular network (voice communication) 3G (add a internet/data layer).
+
+### Partition MAC Protocols FDMA (Frequency division multiple access)
+- Frequency band is divided into slots with rate of R/N each
+  - Apparently this is due to the fact that each sub frequency in our range carries some set of information so when we split it in parts we loose some information (transmission speed).
+- Each frequency is assigned to one node.
+
+Also used in 2G networks.
+
+### Partition MAC Protocols CDMA (Code division multiple access)
+- Each node is assigned a code to send data (like a flag)
+- Different node can transmit simultaneously
+
+Used in 3G network.
+
+### Random access protocol PureALOHA
+Node transmit at full channel data R. When collision occurs each node repeatedly retransmits its frame with a probability of p else the node waits before resending the frame, until its frame is sent without collision.
+
+### Carrier Sence Multiple Access (CSMA)
+- Listen before transmiting
+- Channel sensed idl transmit
+- Channel sensed busy the frame is sent later
+
+#### Collision detection/CD used in ethernet
+- Carrier Sense: channel sensing to detect transimisions
+- Collision detection: Detect collision and enter a back-up mode
+  - Compare transmiting and receiving signall
+
+**Binary back off mechanism**: at the m^th (m is calculated from the perspective of the frame) collision the node choose a waiting time from {0,..,2^m-1}=k then k*512 bit times
+
+512 bit times is related to early ethernet network where there was one wire and all node linked to that same cable and the max time to detect collision between the node furthest to transmiting node was 512.
+
+#### Collision avoidance/CA used in wifi 
+
+### Taking-Turns protocols - Polling
+One master node control transimission node can transmit in a Round-Robin fashion
+
+### Taking-Turns protocols-Token passing
+A token is passed between nodes.
+
