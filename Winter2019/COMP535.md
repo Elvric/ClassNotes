@@ -316,12 +316,12 @@ Node transmit at full channel data R. When collision occurs each node repeatedly
 - Channel sensed idl transmit
 - Channel sensed busy the frame is sent later
 
-#### Collision detection/CD used in ethernet
+#### Collision detection/CD used in ethernet (not used anymore)
 - Carrier Sense: channel sensing to detect transimisions
 - Collision detection: Detect collision and enter a back-up mode
   - Compare transmiting and receiving signall
 
-**Binary back off mechanism**: at the m^th (m is calculated from the perspective of the frame) collision the node choose a waiting time from {0,..,2^m-1}=k then k*512 bit times
+**Binary back off mechanism**: at the m^th (m is calculated from the perspective of the frame) collision the node choose a waiting time from {0,..,2^m-1}=k then k*512 bit times, then start sending again without listening again.
 
 512 bit times is related to early ethernet network where there was one wire and all node linked to that same cable and the max time to detect collision between the node furthest to transmiting node was 512.
 
@@ -333,3 +333,61 @@ One master node control transimission node can transmit in a Round-Robin fashion
 ### Taking-Turns protocols-Token passing
 A token is passed between nodes.
 
+# 23/01/19
+## Ethernet
+Mostly used in LAN operating on data link and physical layer suporting a band with of 10 mbps to 100 Gbps requires switch for multiple access since 2000 (no more MAC protocol in Ethernet). Most computer include an Ehternet card.
+
+The switch recieves all the information from all the selected divices and knows exactly from which port it should send/output the frame it recieved.
+
+### Organization of the frame in ethernet
+- Ethertype
+- Data
+- SRC (address)
+- Preamble
+- FCS (Frame check sequence)
+- DST (address)
+
+Frame: | header | payload/data | tailer |
+
+| | preamble | destination Address | Source Address | EtherType | Data | FCS|
+|--|--|--|--|--|--|--|
+|Byte| 8 | 6 | 6 | 2 | 0-1500 | 4 |
+Header: preamble, dest address, sources address, ethertype
+
+#### Physical/MAC address break down
+XX:XX:XX OUI/manufacturer info then Serial # XX:XX:XX
+
+Such MAC: FF:FF:FF:FF:FF:FF means send the message to everyone in the LAN.
+
+#### EtherType
+Values equal or bellow 1500 indicate the size of payload in octet. Valuse greater or equal to 1536 indicates it is used as a type telling the reciever which running network-layer protocol to hand the frame to.
+
+#### FCS
+Error detection code
+
+### LAN switch 
+Only examine link-layer headers, a switch operation are transparent to end devices and routers. 
+
+A switch contain a MAC address table to map MAC address to ports.
+
+MAC address is in the table, switch forwards frame out of that interface.
+
+MAC address not int the datable switch broadcasts the frame out of all interfaces and then learns from the response the mapping of address/interface
+| MAC address | interface/port | Time |
+|---|---|---|
+
+## ARP address resolution protocol
+Translate between IP address from Network Layer and link-layer address MAC on teh same LAN. On each host and router there is an ARP module that takes an IP address on the same LAN as inout and return its MAC address. 
+
+If we have no entry in the ARP table, we broadcast and ARP message saying that it is looking for the MAC address of the device with IP address ..., the device that has this IP will then send back its MAC address.
+
+**Host means end divices** and **Intermedary device means routers and switches**.
+
+
+
+## Difference between MAC and IP address
+LAN uses the MAC address of the device to know how to reach it. IP addresses are needed when we move outside of our LAN.
+
+
+
+IP is used as a home address (can change overtime) and the MAC is more like the social insurance number (does not change).
