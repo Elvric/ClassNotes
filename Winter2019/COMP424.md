@@ -399,3 +399,74 @@ The solution is no longer a path but a subtree that tells you what actions to pe
 2. Number of state in each belief can be large
 
 Use sampling or puring to reduce the number of reachable state. Try to compact the state as much as possible, search for a separate state in the belief to see if the set of state can lead to a solvable solution.
+
+# 28/01/19
+# Adverserial search
+Games with 2 players where we compete with another player. 
+This is useful since games represent a good stimulation of multiple agent systems, it is a good training example for AI makers since the rules of a games are usually wellknown the goal is easy to reach "Winning". Some games are hard to solve too so it can be usefull to have an agent that can solve it. 
+
+### Types of games
+- perfect information
+  - Can see the entire state of the game
+- imperfect info
+- Determanistic
+  - change in state is determined by player's move
+- Stochastic
+  - Chane in state is partially determined by change.
+
+## Game playing as search
+- State: state of the board, player turn
+- Operators: legal move
+- Goal: state where the game is lost, won, draw
+- Cost: +1 ofr winnint, -1 for loosing, 0 for draw.
+
+The strategy involve picking up moves that maximize utility of win or min cost.
+
+The key idea is to have two player, on our side we want to maximize our utility function but the other player wants to minimize our utility function.
+
+At each max node we look at the max value we can get and for the min node we do the opposit.
+
+### Assumptions
+- Both player are playing on the same utility function
+- We think that the min player is following the same strategie than us.
+
+### Properties of MIN MAX search
+- complete: if the tree is finite
+- Optimal: if the oponant plays optimally
+- Complexity: O(b^m)
+- Space complexity: O(bm) for BFS
+
+
+## Evaluation function
+v(s) represents the goodness of a board state (chance of winning for that state). It can be given or learned from experience. We can use multiple functions like this.
+
+#### Chess example
+f1(s) = # white quess - # black queens    
+f2(s) = # number of white pawns - # number of black pawns  
+w1 = 9    
+w2 = 3  
+v(s) = w1f1(s) + w2f2(s)
+
+These functions represent heuristic, it is easier to design these functions towards the end of the game. We apply the same idea of MIN MAX. (read the slide could help)
+
+We use these evaluation functions to evaluate non-terminal nodes. 
+
+** Minmax cutoff algorithm, appplay the eval function at each of the leaf node after going down a depth of m.
+
+## Alpha beta pruning (better min max)
+If a path looks worse than what we already know about then we should discard it.
+
+The algorithm keeps track of best leaf for us and worse leaf for opponent. At max node only update alpha, at min node only update beta.
+
+This algorithm a demonstration of reasoning about which computation are important. In this case the order matters for the efficiency. An option is to add a heuristic that can help us improve the order or that efficiency.
+
+On average O(b^{3m/4}) to find it after b/2 expensions.  
+With perfect ordering we can get O(b^m/2) but the worse remains O(b^m).
+
+In practice if the branching factor is bing the search depth is still too limited. If the oponent does not play accroding to the same heuristic function as the player which is a big **assumption**.
+
+### Forward pruning
+Only explore n best moves for current state according to the evaluation functions. This can lead to sub optimal solution. can be efficient with good evalution functions.
+
+## Chinook system
+The best checker player, perform alpha beta pruning on an evaluation function created by the best checker player. They have an opening and huge end game database. It has perfect play for 8 or fewers pieces on the board. Only middle move of the game are are actually search.

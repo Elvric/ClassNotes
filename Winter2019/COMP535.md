@@ -391,3 +391,62 @@ LAN uses the MAC address of the device to know how to reach it. IP addresses are
 
 
 IP is used as a home address (can change overtime) and the MAC is more like the social insurance number (does not change).
+
+# 28/01/19
+All operations in LAN are transparent to switches. The MAC and IP address of the switch are not included in the ARP tables.
+
+## Why MAC and IP address
+- MAC (physical address) comes from the company that makes the product, used to move frames in local network.
+- IP (logicaal address) is used to move packets accross remote networks.
+
+LAN as a reminder is as I understood so far the set of devices that can be access directly from the rooter. A broad cast message never cross the boundary of a router (broad cast message means the mac address FF:FF:FF:FF:FF:FF is used to send it to everybody).
+
+## Sending message accross a router
+```
+PC0 sends a message to PC1 that is in another lan.  
+At LAN0:  
+    SRC IP : PC0 IP  
+    SRC MAC: PC0 MAC  
+    DST IP: PC1 IP
+    DST MAC: R0 MAC0
+
+At LAN1:
+    SRC IP : PC0 IP  
+    SRC MAC: R0 MAC1  
+    DST IP: PC1 IP
+    DST MAC: PC1 MAC
+```
+
+As we can see the MAC addresses changed according to the LAN they are in (The router for example has different MAC addresses depending on the LAN that is actually the MAC address related to one of its ports or interface)
+
+# Network Layer
+Router can understand that layer (layer 3). Segments are encapsulated into packets and the reverse when receiving the packets.
+
+It is the job of the network layer to genrate the path that needs to be taken to send the packet.
+
+## IP protocol IPv4
+Take the segment and add a header to it.
+IPV4 is in 32 bits  
+- version 4 bits 0100 for v4
+- headerLength 4 bits
+- Type of service 8 bits
+  - The priority of the packets
+- Datagram length 16 bits
+  - Can be 65535 bytes of data
+- 16 bit identifier
+- flags 3 bits
+- 13 bit fragmentation offset
+ - time to live (TLL) 8 bits
+   - Decrement by 1 each time it passes a router when at 0 the packet drops
+ - Uperlayer protocol 8 bits
+   - such as TCP
+ - Header Checksum 16 bits
+   - Detecting bits error in headers
+ - SRC address 32 bits
+ - DST address 32 bits
+ - Options (if any)
+ - Data
+
+## IP v4 address
+32 bits long with:
+A network portion of 24 bits and a Host postion of 8 bits
