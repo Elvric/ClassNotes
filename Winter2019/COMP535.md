@@ -436,7 +436,7 @@ IPV4 is in 32 bits
 - 16 bit identifier
 - flags 3 bits
 - 13 bit fragmentation offset
- - time to live (TLL) 8 bits
+ - time to live (TLL) 8 bits (default 64 usually)
    - Decrement by 1 each time it passes a router when at 0 the packet drops
  - Uperlayer protocol 8 bits
    - such as TCP
@@ -448,5 +448,78 @@ IPV4 is in 32 bits
  - Data
 
 ## IP v4 address
-32 bits long with:
+32 bits/4 bytes long with:
 A network portion of 24 bits and a Host postion of 8 bits
+
+### Subnet mask SM
+There is also a subnet mask, its goal is to distingish the network portion from the host portion. **The shorter version of the subnet mask is /24 where 24 represents the number of ones.**
+
+So the IP address is 192.168.18.57/24 the subnet mask is used in this case to know which area of the IP represents the Network.
+
+# 30/01/19
+
+## IP v4 address classes
+|Class | Range | start with| Network and host part| default subnet mask|Num net|num host|
+|--|--|--|--|--|--|--|
+|A|1-127**|0|N.H.H.H|255.0.0.0 \8|2^7|2^24-2|
+|B|128-191| 10|N.N.H.H|255.255.0.0 \16|2^14|2^16-2|
+|C|192-223| 110 | N.N.N.H | 255.255.255.0 \24|2^21|2^8-2|
+|D|224-239| 1110| NA | NA|
+|E|240-255| 1111 |NA | NA|
+
+Class D is used for one node to send a message to mutliple node in a network (mutli cast) but this is not used that much today.
+
+Class E were reserved to do experimentation so we do not find them in typical networks.
+
+### Network address and boradcast address
+class A adress 5.0.0.0/8  
+netowork address all 0 in host + network portion 5.0.0.0  
+Broadcast address network portion + all 1 in host 5.255.255.255.
+
+### Subnetworks system
+100.4.5.1/8 In this case then we cannot have
+100.0.0.0 or 100.255.255.255 as host these are reserved
+
+100.255.255.255 is the broadcast address used to say that you want to send the frame to all host in the system, broadcast never cross the boundary of a router.
+
+100.0.0.0 used to identify the network itself, if I want to know if a specific address is in the network itself (network IP address).
+
+### Private vs public IP address
+public: IP addresses where information can be routed accross the internet to allow other host to reach it accross the internet.
+
+|Class|private format|
+|----|---|
+|A|10|
+|B|172.16.0.0/16 to 172.31.0.0/16 and 172.16.0.0/12|
+|C|192.168.0.0/24 to 192.168.255.0/24 and 192.168.0.0/16|
+
+### Other IP addresses
+- Loop back address 127.0.0.0/8 test that the IP stack on the computer is working verify that the machine we are in is operational.
+- Link-local address ot automatic private IP addressing APIPA. DHCP.
+  - 169.254.0.0/16 to 169.254.255.254
+
+## Subnetting
+Forming smaller subnets that fit into the need of the network.  
+Large broadcast domains slow network and devices operations due to broadcast traffic.
+
+So the solution is to divide the network address into multiple sub networks it uses a subnet mask to identify how many bits are reserved for the subnetwork.
+
+Consider class C IP address 192.168.5.0/24 with only 10 users in the network we must go to a power above 2^4 so 16-2 = 14 so 4 bits is good.  
+So we divide the host portion in two different parts x,y x bits on the left are the ones that identify the subnet and y that I am using to identify the hosts. So we can then have the 192.168.5.zzzz.zzzz So we are going to be able to form 16 different subnets from that specific IP address.  
+Here are the possible subnets address:  
+192.168.5.0 with a host range of 192.168.5.1-192.168.5.14  
+192.168.5.0001.000
+192.168.5.0001.000
+
+In this case the subnet mask with be 255.255.255.240  
+The broadcast address would be 192.168.5.15.
+
+So the subnet mask can be identified as /28
+
+
+
+
+
+
+
+Link-local what is it exactly

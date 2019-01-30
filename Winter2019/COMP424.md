@@ -470,3 +470,43 @@ Only explore n best moves for current state according to the evaluation function
 
 ## Chinook system
 The best checker player, perform alpha beta pruning on an evaluation function created by the best checker player. They have an opening and huge end game database. It has perfect play for 8 or fewers pieces on the board. Only middle move of the game are are actually search.
+
+# 30/01/19
+## Random stimulations
+1. Simlate games by randomly selecitng moves for both player
+2. At the end of each see if we won, lost, draw. Keep track of the initial move that lead to that result
+3. After the stimulation pick the move that led to the highest win rate
+
+This is called the Monte Carlo Method
+
+### Where to spend the effort
+Allocate more runs to more promessing moves. Min max could still be done near the top and then divide that search according to that example.
+
+Base on the win rate of the stimulation we can redistribute our left trials.
+
+## Monte Carlo tree search (MCTS)
+1. Select promessing node in the search tree using a tree policy. Mapping State to an Action for all states
+2. Sample possible continuations from leaf nodes using a randomized default policy
+3. Value of a move is the average of the evaluations from its smpled lines
+4. Pick the move with the best average.
+
+### Tree Policy
+We need to balance:  
+Exploitation: a promessing node is explored more  
+Explortation: a node that has not received many simulation yet, so we would like more info  
+
+Define the following:
+- Q(s,a) value of taking an action from state s
+- n(s,a) number of time action a was taken from state s
+- n(s) number of time s was visited in stimulation
+- c Scaling constant
+
+$$ \hat{Q}(s,a) = Q(s,a) + c \sqrt{\frac{\log(n(s))}{n(s,a)}}$$
+
+Q(a,s) is the exploitation the rest is the exploration
+
+The parrent node has always 1 extra default play through what it was genrated but not its children. 
+
+### Rapid Action value estimate (RAVE)
+Assume the value of a move is the same no matter when the move is played.  
+This reduces the space but allows same moves to be calculated faster. I personnaly wonder how accurate that it because the state of the board matters a lot I guess putting a knight on a specific place if there is a queen for example is way better than putting the knight there where there is no queen, I assume that can be tweeked I guess my perspective remains still a bit broads.
