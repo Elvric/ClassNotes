@@ -508,18 +508,74 @@ Consider class C IP address 192.168.5.0/24 with only 10 users in the network we 
 So we divide the host portion in two different parts x,y x bits on the left are the ones that identify the subnet and y that I am using to identify the hosts. So we can then have the 192.168.5.zzzz.zzzz So we are going to be able to form 16 different subnets from that specific IP address.  
 Here are the possible subnets address:  
 192.168.5.0 with a host range of 192.168.5.1-192.168.5.14  
-192.168.5.0001.000
-192.168.5.0001.000
+192.168.5.1.0
+192.168.5.1.0
 
 In this case the subnet mask with be 255.255.255.240  
 The broadcast address would be 192.168.5.15.
 
 So the subnet mask can be identified as /28
 
+# 04/02/19
+## Exercise
+We have a subnet of size 2 with IP: 172.17.0.0
+We have other subnets of size 512 with IP 172.16.0.0
+
+Notice first that this is a type B private IP address so the 172.16 is the network, now we have the possibility to divide the host portion into bits for the subnets and the host left.
+
+#### FOR 512
+So for 512 we will have to use 10 bits for the host since we must account for the network and broadcast address
+172.16.xxxxxxhh.hhhhhhhh  
+**1st subnet:**  
+subnetIP@ = 172.16.0.0  
+subnetMask: 255.255.252.0  or /22  
+broadcastIP@: 172.16.3.255
+
+**2nd subnet:**  
+subnetIP@ = 172.16.4.0  
+subnetMask: 255.255.252.0  or /22  
+broadcastIP@: 172.16.7.255
+
+**3rd subntet:**  
+subnetIP@ = 172.16.8.0  
+subnetMask: 255.255.252.0 /22  
+broadcastIP@: 172.16.11.255
 
 
+#### Now looking at 172.17.0.0 we need 3 bits   
+**1st subnet**  
+subnetIP@ = 172.17.0.0  
+subnetMask = 255.255.255.252  /30  
+broadcastIP@ = 172.17.0.3  
+
+**2nd subnet**  
+subnetIP@ = 172.17.0.4  
+subnetMask = 255.255.255.252 /30  
+broadcastIP@ = 172.17.0.7 
+
+**Reserve the fist IP address avail for the rooter**
+
+## Important each interface has its own IP address on routers for sure not sure about the rest
 
 
+## Dynamic host Configuration protocol DHCP (Operates at the application layer)
+Allows to dynamicaly assign or lease IPv4 addressfrom a pool of addresses (instead of manually going through every user). The level is normal as it has to comunicate with your devices terminal.
 
+The way we can do that is too add a DHCP server in each one of the subnet which may be a lot if we have a lot of subnet and expensive as we are paying for 3 different servers. Today we can include just one server in the network.  Last possibility is to not even use a server and let the routers do it for us.
 
-Link-local what is it exactly
+### One server for the entire network
+DHCP server recieves a request to get an IP address and replies back the IP address required.
+
+The server has a pool of IP addresses that the server can provide to subnets. 
+
+The default get way is the port that connects the router to the subnet.
+
+1. Device sends a broadcast message through the linked layer
+2. Recieve an answer from the server
+
+#### When the subnet is not directly connected to the server
+1. a relay will redirect the broadcast
+2. A relay is configured on local routers interface and points to the server
+
+Serial link different IP?
+How do we know that the request came from another subnet (special protocol I am assuming)

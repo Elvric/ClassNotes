@@ -510,3 +510,79 @@ The parrent node has always 1 extra default play through what it was genrated bu
 ### Rapid Action value estimate (RAVE)
 Assume the value of a move is the same no matter when the move is played.  
 This reduces the space but allows same moves to be calculated faster. I personnaly wonder how accurate that it because the state of the board matters a lot I guess putting a knight on a specific place if there is a queen for example is way better than putting the knight there where there is no queen, I assume that can be tweeked I guess my perspective remains still a bit broads.
+
+# 04/02/19
+# Complex game problems
+Game such as Civilization are harder to model we need to represent their states and reason about them.
+
+## Knowledge representation
+An agent must be able to perfmor many tasks in relation to the **perception** of the state it is is and the **cognition** what actions to take. 
+
+Recognition implies some form of representation (how knowledge is represented)
+
+Inference is required when the agent makes a decision on the right action based on what it knows and what it can figure out (implicitly known)
+
+## Declarative problem solving
+The long term dream of AI. A declarative agent to building agents, divided into parts
+1. Knowledge based (domain specific contant): contain the set of facts in some formal standard language (rules of the game for example)
+2. The inference engine (domain independent algorithms): with general rules for deducing new facts and drawing conclusions. (algorithm that figures out what must be done)
+
+This is the long term AI goal as we can just change the knowledge base and let the AI figure out the rest based on its domain independent algorithm.
+
+### Example with the Wumpus world
+A board game 4x4 and we want to retrieve the gold without getting cought by the monster the "Wumpus" the world is static thing but you do not move.
+
+# Logic
+Formal languages for representing information such that conclusions can be drawn.
+- Syntax defines which sentences are allowed in the language
+- Semantics define the meaning of sentences
+
+## Type of logic
+|Language | Commitment | Comm |
+|--|--|--|
+|Propositional logic|facts|true/false/unknwon|
+|First order logic| facts, object, orientation | true/false/unknwon|
+|Tempral logic|
+|Probability theory|
+|Fuzzy logic|
+
+### Propositional logic
+Assertion about the state of the world/game/problem can be true or false.
+
+Syntax include assuming x and y are sentences:  
+neg, and, or, implies, if and only if
+
+The interpretation sepcifies true/false value for each propositonal symbol.
+
+Terminology of a setence:
+- valid: true in all interpretation
+- satisfiable: true in at least one iterpretation
+- unsatisfiable: false in all interpretation
+
+## Entailment
+A rule for generating new sentences that are always true.
+
+Knowledge base KB entails setnence alpha fi and olny if alpha is truee in all worlds where KB is truee.
+
+$$ KB \models \alpha \iff KB \implies \alpha$$
+
+
+## Inference
+To check for such alpha when moving in the Wompus world for example we can use a truth table and check the possiblilities but the time and state space is a bit too large
+
+### Two kinds of inference methods
+1. Model checkong (bad one with the table)
+2. Application of inference rules
+   - Generate new sentences from old 
+
+### Normal Form
+- CNF have the or inside with and
+- DNF the exact opposite and in or out
+- Horn Form less than 2 positive literal per sentences if or and and.
+
+## Forware chaining
+WHan a new sentence p is added to the KB look at all sentences that share a literal with p, perform the resolution and add that to the knowledge base (look at what can be deduced).
+
+## Backward chainging 
+
+SEE THE RECORDING I AM TOO TIRED RIGHT NOW TO LISTEN
