@@ -577,5 +577,97 @@ The default get way is the port that connects the router to the subnet.
 1. a relay will redirect the broadcast
 2. A relay is configured on local routers interface and points to the server
 
-Serial link different IP?
-How do we know that the request came from another subnet (special protocol I am assuming)
+# 06/02/19
+
+# Routing
+Routing protocols are the protocols used when it comes to decide for the root that a given packet may trace.
+
+It can be done as **static** routing where each router is thought manually to go through a specific path when sending a packet to the network part x. 
+
+It can be done as **dynamic** routing that adapts to the changes that can occur in the network.
+
+## Dynamic routing
+Devided into 2 categories:
+1. Interior Gate Way Protocols (IGP)
+   - Used inside a autonomous system (university Network) to handle connectivity inside the network.   
+2. Exterior Gate Way Protocols (BGP)
+   -  Used to communicate between autonomous systems. 
+
+## Static routing
+Two kinds of routes:
+1. Default Route: taken when all else fails used to reach the 
+internet from a network
+2. Used when summarized route to the network is known.
+
+Static routes are used because:
+- Stub network
+  - If we are in a company network that connects to the ISP netowork through only one port then we can just route every outside packet through the default port.
+  - The same thing apply if a network can only be reached through one router then we can also attach static route
+- Lower overhead than dynamic routing (no need to extend messages between router to make decision) every thing is pre configured
+- Design requierement: easier to design the network system
+- Security requierments: no routes outside of the interior routes of the network can be taken.
+- Useful when the network is made of only a few routers.
+
+
+### Routing table
+In order to know where packets must be pushed when it comes to reaching specific destination, each router holds a routing table to determine where pac\kets will be directed.
+
+|network IP | Hops | Next-Hop IP | exit interface (of the current rounter)
+
+Every device must have a default gate way IP set to it so it knows its router DHCP protocol assigns that automatically if used to initialize the device.
+
+### How to configure it:
+```
+Router(config) # ip route de network address subnet-mask
+ip add of the next hope | or MAC or exit interface
+
+use all 0.0.0.0.0.0.0.0 for default gate way.
+
+Router(config) # show ip route S (for static)
+Router(config) # ping IP
+Router(config) # show running-config
+```
+The port of exit only work from port to port direct connections.
+Direct connection of ports are directly including into the routing table.
+
+# 11/02/19
+# Dynamic routing
+Autonomous systems is a group of routers under the control of one authroity. IGP protocol is for the interior of these autonomous systems compare to BGP that is the protocol used for the outside.  
+These protocoles dnyamically share info between routers and automatically update the routing table when the network structure changes, it also determines the best path to destination.
+
+**Administrative distance**: if multiple paths to a destination are configures on a router, the path in the routing table is the one with the lowest admistrative distance (AD) (look at the table that tells us all about this distance)
+
+**Metric**: a value used by a routing protocol to detrermine which routes are better than others can include one or more of these parameters:
+- Hop count
+- Bandwidth
+- Delay
+- Load
+- Reliability
+- Cost
+
+## IGP
+
+### Distance vector protocol (RIP: routing information protocol)
+Routes are advertised as vector of distance and direction. 
+Each router keeps on sharing its complete routing table with other routers.
+
+### Link State protocol (OSPF, ISIS)
+- State of link (interfaces) are at the core of the operations.
+- Routers see the entire network structure.
+- Updates are triggered by events.
+
+Protocol:
+1. Each router sends and LSP packet or (link state packet) containing the state of each directly connected link (interface) + discovered neigh: ID, Link type, bandwidth
+2. LSP flood the area to all neigh routers
+3. Router stores all information received and when convergeance occur no more traffic.
+
+LSP are sent when intial router starts up, or when there is a change in topology.
+
+#### Open Shortest Path First (OSPF)
+$$metric = \frac{10^8}{Bandwidth}$$
+
+### EIGRP is a hybrid between the two protocols
+
+
+## EGP
+### BGP protocol

@@ -542,9 +542,9 @@ Formal languages for representing information such that conclusions can be drawn
 |--|--|--|
 |Propositional logic|facts|true/false/unknwon|
 |First order logic| facts, object, orientation | true/false/unknwon|
-|Tempral logic|
-|Probability theory|
-|Fuzzy logic|
+|Temporal logic| facts, objects, relations, times | true/false/unknown
+|Probability theory| facts | degree of belief [0,1]
+|Fuzzy logic| degree of truth | degee of belief [0,1]
 
 ### Propositional logic
 Assertion about the state of the world/game/problem can be true or false.
@@ -568,10 +568,19 @@ $$ KB \models \alpha \iff KB \implies \alpha$$
 
 
 ## Inference
+$$ KB \vdash_i \alpha$$
+Means that the sentence alpha can be derived from KB by inferencey procedure i.
+
+Procedure i must be:  
+sound: 
+$$ KB \vdash_i \alpha \implies KB \models \alpha$$
+complete:  
+$$ KB \models \alpha \implies KB \vdash_i \alpha$$
+
 To check for such alpha when moving in the Wompus world for example we can use a truth table and check the possiblilities but the time and state space is a bit too large
 
 ### Two kinds of inference methods
-1. Model checkong (bad one with the table)
+1. Model checking (bad one with the table)
 2. Application of inference rules
    - Generate new sentences from old 
 
@@ -580,9 +589,89 @@ To check for such alpha when moving in the Wompus world for example we can use a
 - DNF the exact opposite and in or out
 - Horn Form less than 2 positive literal per sentences if or and and.
 
-## Forware chaining
-WHan a new sentence p is added to the KB look at all sentences that share a literal with p, perform the resolution and add that to the knowledge base (look at what can be deduced).
+### Inference rules for propostional logic
+Resolution:
+$$ \frac{(\alpha \lor \beta), (\neg \beta \lor \gamma)}{(\alpha \lor \gamma)}$$
+
+Modus ponenes (horn):
+$$ \alpha_1, \alpha_2 ... \alpha_n, \frac{(\alpha_1 \land \alpha_2 \land ... \alpha_n \implies \beta)}{\beta}$$
+
+## Forward chaining
+When a new sentence p is added to the KB look at all sentences that share a literal with p, perform the resolution and add the new sentences to the KB (ook at what can be deduced).
+
+It is data driven (we keep adding things to the KB): we already have knowledge and we add new knowledge to our data by cross comparing it with what we already have. It is eager as new facts are inferred we figure something out and we add it to the knowledge based
+
+Mostly used when the focus is to find a model of the world by extending the KB and improving our understanding of the world.
 
 ## Backward chainging 
+when q is asked of the KB we do the following:
+1. If q is in the KB already, return true
+2. Else use the resolution for q with other sentences in the KB and continue from the result.
 
-SEE THE RECORDING I AM TOO TIRED RIGHT NOW TO LISTEN
+Goal driven as reasoning is centered arround the query being asked. It is lazy since new facts are inferred as needed.
+
+Used when we only want to perform targeted calculations so more efficient, used in proofs by contradictions.
+
+# 06/02/19
+### Complexity of inference
+The time complexity of verifying the validity of a sentence of n literals is 2^n.
+
+Horn closes however can be done in exactly one fact. We can state all new facts implied by the KB in n passes. Thus experts systems usually uses horn closes.
+
+# First order logic
+Includes the exists and for all. Predicates are used to describe objects, properties, relationships. The quantifiers are the forall and exists 
+
+Functions are used to give you an object related to other object and they can be related such as cell A is to the right of cell B
+
+$$ \forall x On(x,Table) \implies Fruit(x)$$  
+This measn that any thing that is one the table must be a fruit.
+this is a functions
+
+Predicates: truth value at the end IsPit(x,y)  
+Functions: SonOf(x), PlusOne(x) map domain element to domain elements. these returns other elements.
+
+A term can be a constant, variable or function  
+Atomic santence: take terms and join them together with a predicate.  
+Complex sentences: combine atomic sentences with connectives.
+
+# 11/02/19
+## Unification
+$$ p\sigma = q\sigma$$
+Where sigma unifies both side p = x + 2 and q = 2 + 3 then sigma is x / 3 when x is replaced by 3.
+
+### GMP generalized modus ponens 
+use the special imply form of horn. 
+
+## Completness of FOL
+GMP is complete for KB of universally quanfitify hordn
+
+FOL is only semi decidable can foind a proof when KB entails alpha but not always when KB does not entail alpha.
+
+## Resolution
+Two clauses can be resolved if they contain complementary literals.
+
+This is a sound and complete method
+
+## Skolemization (eliminate existential quantifier)
+$$ \exists x Rich(x) \rightarrow Rich(G1)$$
+Where G1 is the skolem constant for \forall we use skolem functions such as G(x).
+
+# Planning
+A collection of actions for performing some tasks.
+
+The most commun thing is to use a subset of FOL to describe the problem.
+- What actions can be done?
+- When are we allowed to do these actions.
+- What is the initial state
+- What is the goal state
+
+## Search of planning
+| Search | Planning |
+| ---- | ----- |
+|States are atomic | States and goal are logical sentence |
+| Acations are atomic | Actions are described in logic by precondition and outcomes|
+
+### STRIP planning language
+Everything not stated is false, only objects in the world are the ones defined.
+
+Precondtions are positive litterals and post condtion represented as add and delete least of.
