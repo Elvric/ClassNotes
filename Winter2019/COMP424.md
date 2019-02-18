@@ -566,8 +566,8 @@ Knowledge base KB entails setnence alpha fi and olny if alpha is truee in all wo
 
 $$ KB \models \alpha \iff KB \implies \alpha$$
 
-
 ## Inference
+Lets call that inference procedure i.  
 $$ KB \vdash_i \alpha$$
 Means that the sentence alpha can be derived from KB by inferencey procedure i.
 
@@ -675,3 +675,84 @@ The most commun thing is to use a subset of FOL to describe the problem.
 Everything not stated is false, only objects in the world are the ones defined.
 
 Precondtions are positive litterals and post condtion represented as add and delete least of.
+
+#### Pro
+Inference can be done efficiently, all operators can be viewed as simple delitions and additions of propositions to the knowledge base.
+
+#### Cons
+Assumes that a small number of proposition will change for each action
+
+Limited language
+
+# 18/02/19
+
+# Planning approaches
+
+## State space planning
+
+### Progressing planning
+1. Determine all operators avail from the start state by examining preconditions
+2. Ground the operators by replacing any var with constants
+3. Choose an operto apply
+4. Determine the knew knowledge base
+
+### Regression planning
+1. Start form the goal state
+2. Pick action that satisfy some part of the goal state
+3. Make a new goal containing the precondtion of thes actions as well as any unsolved goal proposition
+4. Repeat until goal state is satisfied by the start state.
+
+For both regression and progression matters, also in both states the planner work with a set of states instead of using individual state.
+
+### STRIPS planning
+It is sound since only legal plans are found. It is not complete since we cannot go backwards so not optimal either and expensive then.
+
+## SatPlan
+- Take a description of a planning problem and generate all literals at a time slice.
+- Use SAT solver to get a plan random or advance SAT solver.
+
+is NP-Hard + PSPACE.
+
+### Heuristic search planning
+Define heuristics based on the palanning problem itself to relax the problem.
+
+#### Some heuristics
+Ignore preconditions, assume an operator can always be applied
+
+Ignore delete lists assume that when something is achieved it stays achieved.
+
+## Real world application
+The issue is that in the real world we have incomplete information or incorect information (something might be true but false to us or has a certain probability of being flase). There will also be some qualification problems, we can never list all preconditin and possible conditional outcomes of an actions.
+
+### Solutions
+#### Conditional planning
+plan include observation actions and contingency plan (if this then that else this). It is expensive because it plans for unlikely cases
+
+#### Monitoring/Replanning
+Assume normal states outcomes, check progress during exection and replace if necessary.
+
+# Uncertainty
+We can either:
+- ignore uncertainty as much as possible
+- Build procedure that cannot have uncertainty
+- Build a model that describe these uncertainties
+
+Logical approach is not good sincd sensors of that world may not work or conclusions can be flawed. 
+
+## Bayesian probability
+Prior belief is the belief we had up to the arrival of knew evidence.
+
+$$P(A | B) = \frac{P(A)*P(B | A)}{P(B)}$$
+
+### Conditional indepent
+P(x | y,z) = P(x | z) knowing y does not change the probability of x knowing z.
+
+### Naiv Bayesian
+If we assume thay symptoms are independent for example:  
+P(D, s1, s2, ...) = P(D) * P(D | s1) * P(D | s2)  
+And so on.
+
+Exercise:
+2^{D + n} - 1  
+1 + 2*n  
+
