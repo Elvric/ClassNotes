@@ -649,7 +649,7 @@ These protocoles dnyamically share info between routers and automatically update
 
 ### Distance vector protocol (RIP: routing information protocol)
 Routes are advertised as vector of distance and direction. 
-Each router keeps on sharing its complete routing table with other routers.
+Each router keeps on sharing its complete routing table with other routers. It cannot handle subnets.
 
 ### Link State protocol (OSPF, ISIS)
 - State of link (interfaces) are at the core of the operations.
@@ -666,8 +666,61 @@ LSP are sent when intial router starts up, or when there is a change in topology
 #### Open Shortest Path First (OSPF)
 $$metric = \frac{10^8}{Bandwidth}$$
 
-### EIGRP is a hybrid between the two protocols
+# 20/02/19
+## EIGRP (Enhance interior gate way protocol) is a hybrid between the two protocols
+It has an administrative distance of 90. It only change partial updates between routers when there is a topology change unlike RIP that sends the entire routing table. Here we are going to use bandwidth and delay for metric calculation. Fast convergence as well.
 
+### EIGRP hello packets
+used to learn about the neighbours, hello packets are sent periodically (every 5 seconds). If we do not receive back hello packets from a router we can consider it down (default is 3 time the hello interval). A neighbour is identified as such if the autonomous system number and password in hello packets. 
 
-## EGP
-### BGP protocol
+Yes since we want to avoid security flaws thus when a neighbour sends hello packets we want to make sure that such packet indeed comes from a valid router in our autonomous system (group of routers under the control of one entity).
+
+### EIGRP updated packets
+Used to propagate routing information and only sends what changed in the topology.
+
+- Query packet used for search networks
+- Reply pacekt in response to query packet
+- Acknowledgment used to acknowledge the receipt of update, querty & reply packet.
+
+### EIGRP tables
+#### Neighbor table
+Contains a list of all EIGRP neighbours directly connected to it
+
+#### Topology table
+Contain all possible path to reach one specific network. 
+FD is the feasible distance (cost that the router will pay to send the message). AD cost that the neighbour router will pay to reach the distination.
+|Network|FD|AD|
+
+#### Routing table
+Include the best path to all possible destination
+
+### Metric
+$$ metric = (\frac{10^7}{lowestBand} + \frac{\sum delay}{10})*256$$
+
+Every network type has its delays: serial 20.000, fast thernet 100, gigabit ethernet 10. So every router/link on the path we sum that up.
+
+### EIGRP commands
+```
+router (congig) # no-eigrp 1
+router (config) # router eigrp aut-sys i.e 1
+router (config-router) # 
+```
+Then we can tell the router which network it will share information with.
+```
+R1 (config-router) # network 172.16.0.0 
+```
+Some network might as for a wild card mask afer the IP address 
+/24 = 255.255.255.0 then minus that with all 255 so we get 0.0.0.255
+
+To prevent the protocol to run on class full subnet you must run
+```
+no-auto summary
+```
+
+If we have a default rout configured in a router, to redistribute static command 
+```
+R2(config)# redistribute satic
+```
+**If a router has access to another autonomous system statically we can share that information with other routers in the system with the command above.**
+
+The router identifier is the smallest IP address that the router has based on all its assigned interface.
