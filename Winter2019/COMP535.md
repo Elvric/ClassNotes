@@ -724,3 +724,62 @@ R2(config)# redistribute satic
 **If a router has access to another autonomous system statically we can share that information with other routers in the system with the command above.**
 
 The router identifier is the smallest IP address that the router has based on all its assigned interface.
+
+# 25/02/2019
+# IPv6
+This addresses looks like a MAC address with 2^128 different possible combination looking like:  
+xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx
+
+We split it into 2 parts one is the prefix and the second part is the interface identifier.
+
+### Abrevation of IPv6
+1. Remove leading 0 for each quartlet except for 0000 then we have just 0.
+2. If we have consecutive pairs :0:0: then we can change that to :: But can only be done once in an IPv6 address. Note that :0:0:0: can also become ::
+
+## Transfer of IPv4 to IPv6 and vice versa
+Tunnelling: put the IPv6 packet inside an IPv4 packet to transfer packets accross a network that only uses IPv4.
+
+Dual Stack: Use both on the same network.
+
+Translation: Packets are converted to the different addresses.
+
+## IPv6 header
+| Version | trafic class | flow label |  
+| Paylcard | Next header | Hop limit |  
+| Source IP |  
+| Dest IP |
+- Version 4
+- Trafic class: priority 8
+- Flow label:  20
+- Payload lenthg 16
+- Next header: layer 4 protocol 8
+- Hop limit: TTL equivalent 8 
+
+## Type of IPv6 addresses
+### Unicast
+Communication between individual hosts.  
+
+#### Global unicast IPv6 addresses
+Routable over the internet.
+1. quartet: beggin with 2001::/16 or 3001::/16
+2. quartlet: 2001:0::/32  or 3001:0::/32
+3. quartlet used by ISP or 2nd tier 2011:0:0::/32  or 3001:0:0::/32
+
+#### Link local IPv6 address
+Not routable, used to communicate between devices within a subnet. (Not routable even inside the same LAN).
+Start with FE80::/10 fixed for the first 10 bits and we must have 54 bits set to 0.
+
+These addresses are usually randomely assigned by the OS but can also be configured manually.
+
+Router use such addresses to send information with each other.
+
+#### Unique local IPv6 addresses
+Equivalent of private IPv6 used to communicate between devices locally within a subnet.
+
+FD00::/8 Next 40 bits are unique sequence created by the company, Next 16 are the subnets Last 64 bits are for the interfaces ID
+
+### Multi cast
+Group of nodes that want to communicate between each other.
+
+### AnyCast
+Used in constent delivery network, for example Neflix rely on that system they could have 3 servers one in Vancouver, Torronto and Montreal but we need the content of only 1 of them this is where anycast comes in.

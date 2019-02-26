@@ -747,12 +747,23 @@ $$P(A | B) = \frac{P(A)*P(B | A)}{P(B)}$$
 ### Conditional indepent
 P(x | y,z) = P(x | z) knowing y does not change the probability of x knowing z.
 
-### Naiv Bayesian
+### Naive Bayesian
 If we assume thay symptoms are independent for example:  
 P(D, s1, s2, ...) = P(D) * P(D | s1) * P(D | s2)  
 And so on.
 
 Exercise:
-2^{D + n} - 1  
+2^{D + n} - 1 
 1 + 2*n  
 
+# 25/02/2019
+## Special Law
+Prop(Hypo | Exepects) equiv to Prob(Expect | Hypo)* P(Hypo)  
+Posterior Likelyhood prior
+
+## Baysian network
+Represents the conditional independence relationships in a systematic way using a graphical model. Nodes are random variables and endges with arrow represent the node that affect the probability of others.
+
+In this case P(A | B) works when looking at the parents of A which in this case happens to be B where B has a specific value.
+
+The graph cannot have a directed cycle.        
