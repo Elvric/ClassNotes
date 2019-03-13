@@ -813,3 +813,78 @@ The idea of having one for each combination of values is called laplace smoothin
 
 
 Review lagrange multiplier    
+
+# 13/03/2019
+## Getting Baysian value with missing data
+Values may be **latent/hidden** variables such as viewers prefer certain movies depending there level of tiredness during the day which is not measured.
+
+It is interesting to model the latent variable such as heart disease is a latent variable and smoking, exercise, diet as variables we record and estimate the latent variable.
+
+Models with latent variables register however can be more precise and cleaner than other models.
+
+### latent variable hestimation
+When removing  variable from Baysian graph this forces us to have more edges as we need to connect nodes that are affected by the latent variables with node that affect the latent vriable which with the example given in class changes the number of parameters from 78 to 708 parameters which is 10 times more.
+
+## Expectation Maximization (EM)
+The parameters we chose in the begenning must not be assigned 0 or 1. P(T) and so on.  
+1. E-Step For all the instances of missing data we will fantasize how the data should look based on the current parameter setting
+2. M-Step we then maximize parameter setting based on these statistics.
+
+There are two versions of this algorithm both have the same complexity.
+
+### Hard EM
+For each missing data point assing the value that is most likely
+
+### Soft EM
+For each missing dtat poit put a weight on each value equal to its probability and use the weights as counts. This means that we create different data set for each value which gives us
+$$ L(\Theta\mid D*) = w_0P(D_0 \mid \Theta) + w_1P(D_1 \mid \Theta)$$
+
+*I encorage looking at the slides here to make the idea clearer*
+
+### Properties
+- Guaranty to improve or stay the same at each iteration (soft version only mentioned by the prof)
+- Guaranty to conver at a local optimum (soft version only I suppose)
+
+## Harde problem
+What if a value is always missing
+
+### Ploting the data
+We can plot the data and look at any clusters that we can see we could maybe assing a cluster to a specific value regarding the missing parameter like apple varaity based on weight and color
+
+### Gaussian distribution
+Here we no longer assume discrete values as we are considering continuus data according to the prof. 
+
+Guassian is a probability function you know the one with the average at the center and the standard divation a good example is the normal distribution.
+
+In our case the closer you are to the mean the closer you are to that category.
+
+### K mean clustering
+We want to classify sample data to a category and we have K categories
+- there are 5 apple variety
+- Each variety genreates apples according to a 2-D Guaussian
+- If you know mean and variance of each class it is easy to estimate apples
+- If you know the class of each apple it is easy to estimate mean and variance.
+
+**What if we know neither?**
+1. assign random guess to mean and variance of each classes ensuring they are different.
+2. Assign a class to each apple
+
+
+Now for the K technic
+1. Guess K centers
+2. Assign each data points to the closest center
+3. Then reastimate the new center
+4. Repeat
+
+That K can also be soft by assigning a likely hood score for each data points and use it when calculating the mean and variance.
+
+Time complexity: O(nkd) wher n = # data points, k = # centers, d = dimensionality of data
+
+- Converges to local optimum
+- Can use random restart to get better optimum
+
+
+#### Choose initial center alternative
+1. place the first u1 on a random data point
+2. Place u2 on the point furtherst to u1
+3. place u3 furthest from u1 and u2.

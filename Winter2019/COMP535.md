@@ -870,17 +870,73 @@ They can use 16 bits, 1 to 1023 ports are reserved for specific application the 
 Known to be light wait compared to TCP. Does not offer much on top of the IP protocol (when sending something from the source point to the destination point there is no garentee that the packet will be delivered). Similarlly such protocol does not give us that, it does not maintain connection between each processes at  this level. There are no dependencies between UDP packets that are being send between two applications.
 
 - No reliability
-- Connectionless (no connection is maintained)
+- No end to end connection (no connection is maintained)
 - No flow control
 - No congestion control
+- Lightweight protocol
 
 Adds to the header file 16 bits for length in byte of UDP segment including header, 16 bit for checksum for error detection then followed by the application payload.
 
 Used mostly by application that want information to be sent quickly so good for video and mutlimedia, request and reply application DNS/DHCP and finally used by applicationt that handle reliability themselves SNMP, TFTP.
 
-## TCP protocol
-Include flow and congestion control:
-- 
-
 ## Quick protocol (new google protocol)
 Light wait with security advantages
+
+# 13/03/19
+## TCP protocol (Transmission control protocol)
+Include flow and congestion control:
+- Reliability: 
+- Connection oriented: relies on an end to end connection between hosts
+- Flow control: prevent a slow node from being overwhelmed
+- Congestion handles congestion in the network
+
+### TCP segments
+src port 16 bits, dest prot 16 bits  
+squence number 32 bits   
+acknowledgment number 32 bits (use to acknowledge back the segment read in some versions of TCP)  
+head Length 4, unused 6, flags 6 (tell what message is being sent), receiv window 16 (tells how many byte can the receiver receive in one shot from the sender number of seguments based not there size)   
+checksum 16, urg data pointer 16 (link to the urgent flag to refer to the urgent payload part)  
+options 0 to 32 bits  (usually holds the maximum segment size or length of the application data)
+App data
+
+Each communicating host has its max segment size.
+
+#### Flags (can have mutliple flags on the same message)
+- URG: urgent flag (not used often)
+- **ACK**: declare the use of the acknowledgment field (the receiving host must )
+- PSH: the app data should deliver asp (not used often)
+- RST: connection restart
+- **SYN**: declare the initial value of the sequence number field during the connection establishement phase
+- **FIN**: end segment connection used when closing the connection.
+
+### TCP connection establishement (3 way handshake protocol)
+1. Choose init seq num x, send TCP SYN msg
+2. Choose init seq y, send SYNACK msg, acknowledging TCP syn msg
+3. TCP SYNACK msg for x received, the serer is live ACK sent back
+4. ACK for y is recieved the client is live.
+
+### TCP connection end (conventional way)
+1. Client send FIN flag can no longer receive data
+2. Server send ACK bit 
+3. Server send FIN bit
+4. Client send ACK bit
+
+### TCP connection end
+1. Client send FIN flag can no longer receive data
+2. Server send FINACK bit 
+3. Client send ACK bit
+
+### Sequence # and acknowledgment #
+Each sequencence # unicquely identifies each segment. It is incremented when date is sent by the number of transmitted bytes in the app data. These number help keep track of segments order for reassembling and reordering them before transmitting them to te application process at teh receiver side.
+
+The sequence number and acknowledgment number allow to detect missing data segments. 
+
+The initial segment number is usually randomelly choosen.
+
+Aknowledgment number point to the sequence number that the destination point is actually expecting next.
+
+### Retransmission
+- Rely on RTT (Round trip time send from src back to src) hestimated as Timout = 2 * round trip. If timout expires before we get a response then we send again.
+- Estimated RTT = alpha * Estimatedold + (1-alpha)SampleRtt alpha recomende 0.875 
+
+The receiver nodes and source node must keep track of the last segment it last saw to remember what segment it expects next.
