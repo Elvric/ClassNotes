@@ -767,3 +767,49 @@ Represents the conditional independence relationships in a systematic way using 
 In this case P(A | B) works when looking at the parents of A which in this case happens to be B where B has a specific value.
 
 The graph cannot have a directed cycle.        
+
+# 28/02/19
+## Leveraging structure
+When a term only appears in certain P then isolates these P from the summation and change these P into a function lets call that m_s(f) in the case where the term isolated is s but depends on f. 
+
+Then we can keep repeating that for all variables we get a runing time of 2^kn instead of 2^n where k is the largest factor that we have I guess the biggest function that we have.
+
+Algo (similar to dynamic programming):
+1. Impose an ordering over the vriable with the query var last
+2. Maintian a list of factos which depend on given variables
+3. Sum over variables in the order in which they appear in the list
+4. Memorize the result of intermediate computation.
+
+### Notation
+**Evidence variables**: are viraible with observed values. 
+
+$$ \delta(x_j, x_i) = 1  \iff x_j = x_i$$
+Else it is 0.
+
+So the P of:
+$$ P(s \mid F=1) = \sum_fP(s \mid f)\delta(f,1)$$
+
+### Algo with the new notation
+1. Pick a variable odering with Y (query var) at the end
+2. Initialize the active factor list with cond prob dist (tables) in the Bayes net
+3. Add to the active factor list the ecvidence potential delta function of evidence variables %
+4. for i=1..n
+   1. Take the next var Xi form the ordering
+   2. Take tall the factos that have Xi as an arg off the active factor list multiply them then sum ovar ll values of Xi creating a new facto mxi
+   3. Put mxi on the active factor list
+
+We need to have at most O(n) to create an entry in a factor and m is the maximum number of values that a variables. Then a factor that depends on k variables will have O(m^k) entries so k could be as bad as n the ordering of variables matter.
+
+# 11/03/19
+
+## Data estimate
+Making estimates when certain data combinations are quite rare even on large sample can be hard. One thing to compensate that is pretend that you have seen every potential outcome at least once so for coin toss we assume we have seen at least 1 head and at least 1 tail. This works per combination (if you know what I mean) in the fire case one for no alarm with fire and with tempering and 1 with alarm with no fire and no tempering.
+
+## Maximum likelihood estimation
+Taking the log of a function is monotoneous which means that taking the log of a function does not change where the maximum location is on the x axis just the value on the y axis.
+
+## Laplace smoothing
+The idea of having one for each combination of values is called laplace smoothing.
+
+
+Review lagrange multiplier    
