@@ -888,3 +888,59 @@ Time complexity: O(nkd) wher n = # data points, k = # centers, d = dimensionalit
 1. place the first u1 on a random data point
 2. Place u2 on the point furtherst to u1
 3. place u3 furthest from u1 and u2.
+
+# 18/03/2019
+# Supervised learning
+## Terminology
+- Inputs are called variables, features or attributes
+- Predicitona are called ouput variables or target
+- A data set consists of training examples or instances
+
+Given a data set D = X cross Y where X is the set of all features column wise and training examples row wise and Y is the target row wise. 
+
+## Linear hypothesis
+Y is a lineaer function of x so:
+$$ f_w(x) = w_0 +w_1x_1 +w_2x_2 + ... + w_mx_m $$
+
+To select the w that minimizes the error we use the least square:
+$$ Err(W) = \sum_{i=1:n}(y_i - W^Tx_i)^2 \\
+ = (Y - XW)^T(Y-XW)
+$$
+
+# 20/03/19
+# Time and uncertainty
+Here we are going to make observable variables Xt and observable variables Et where t represents the time. We are also going to assume that the time is discrete and that we experience the same model of data no matter the time.
+
+## Transition model
+Changes in the state of variables over time are determined by that model.
+$$ P(X_t \mid X_{0:t-1})$$
+
+## Senseor model
+Same than above but with observable variables.
+$$ P(E_t \mid X_{0:t-1},E_{0:t-1} )$$
+
+## Markov process
+Markov assumption: Xt depends on a boundes subest of the previous states. Such that the probability of word w being next only depends on the previous number w-1 so only on the previous state.
+
+Sationary process assumption: transition and sensor models are fixed for all time steps. P(Xt | Xt-1) as for P(Xt+1 | Xt).
+
+These assumptions are often false in the real world but ae usefull assumptions to makes learning possible.
+
+## Dynamic baysian network
+Have a regular baysian network that we replicate over time that are connected to each other (adding links between random variables at each time steps between each baysian replicas)
+
+## Inference taks on temporal models
+1. Filtering (infer a topic probabilty after ready article)
+2. Prediction (predict the price of some value based on what has been seen so far)
+3. Smoothing (looking at the genom produce plausible sequence alighnment)
+4. Most likely explaination (infer moste likely word based on observed phonemes in speech recognition)
+
+## Simples case hidden Markov Model
+There is only one state random variables and one sensor variable per time step: simples DBN.
+
+### Compute data likelihood
+P(E | ø) = sumx(P(E,X | ø))
+
+### Forward algorithm
+We are going to use a trellis table:
+Row represents all the state of each hidden variables at time t the columns represent the probabilty of each seen variables for each t.

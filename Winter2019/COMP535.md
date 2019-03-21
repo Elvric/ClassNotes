@@ -940,3 +940,79 @@ Aknowledgment number point to the sequence number that the destination point is 
 - Estimated RTT = alpha * Estimatedold + (1-alpha)SampleRtt alpha recomende 0.875 
 
 The receiver nodes and source node must keep track of the last segment it last saw to remember what segment it expects next.
+
+# 18/03/19
+## TCP congestion control mechansim
+The TCP header has a field called the congestion window that holds the maximum number of segments that can be tranmistted by its host it is updated based on the congestion control mechanism.
+
+#### Def congestion
+State of a node that received more data than it can handle.  
+This can cause:
+- Lost packet
+- Long delays
+- transmission capacity is wasted
+- retransmission is needed
+
+### Slow start
+1. Initally the connection window cwnd = 1 MSS (maximum segment size) 
+2. Get the acknowledgment back and send 2 MSS this time 
+3. Get the acknowledgment back send 3 MSS this time but then we get the second acknolwedgment so send 1 MSS this time and set cwd to 4.
+
+As we can see the MSS increases exponentially over time after each RTT (round trip time). This carries son when ssthresh : slow start threshold is reached or a loss event is reached.
+
+After that the ssthreshold the cwnd increases linearly.
+
+ssthresh first value is arbitrary but when a lost even occurs it is set to 1/2 of cwnd.
+
+### Fast retrasmit
+If no fast retransmit is implemented a loss evey is detected by timout. 
+- cwnd is set to 1 MSS
+- ssthresh is set to 1/2 of cwnd just before lost event
+- cwnd then grows expontentially up to ssthresh then grows linearly.
+
+### Fast Recovery
+If there is a speciam implementation usually it is:
+Instead to wait for timout if we receive 4 ACKs that are the same we consider that as and indication that a segment was lost.
+This eliminates half of the TCP timouts and leads to notable increase in throughput.
+In this case then the protocol is:
+- ssthresh is to 1/2 cwnd just before loss event (where the packet missing was sent).
+- cwnd is set to ssthreash+3
+- cwnd then grows linearly
+
+## Different TCP version (just for our knowledge)
+- TCP Tahoe: Slow start, congestion avoidance, fast retransmit
+- TCP Reno: all thinga above
+
+# 20/03/19
+# Application layer protocol
+## DNS protocol
+IP addresses are not easy to remember for humans so domain names make server addresses easier to rember. But the computer still needs the IP address to reach the server. The DNS protocl allows the dynamic transaltion of a hostname to the ip address we use the port **53** to receive DNS query.
+
+The DNS relies on the **UDP** transport protocol.
+
+### DNS system
+There is a hiarchy bettween DNS servers.
+1. Root DNS servers provide IP of TLD server
+2. Top level domain or TLD server (.com,.org,.fr,.sg,.in) since these are the highest domains that we have, provide IP to reach authoritative DNS server
+3. Authoritative DNS server (xwv.ca) provide IP of a hostname
+
+#### Local DNS server
+Each ISP (residential, company, university) has one when a host in such network makes DNS query the query is set to its local DNS server as it has recent cache of name to address recently access. Note that even local host also cache the IP address of the IP of domain names.
+
+The query can be recursive following the regular hiarchy of the tree and the response back
+
+The query can be iterated where in this case the query sent to each server comes back to the local DNS server that then itself reaches the next DNS server in the tree level.
+
+### Operation of DNS
+It uses caching to increase the speed of address translation. The DNS data is stored in the database in the form of resource record RR. 
+
+RR is maked of 4 tubples:  
+domain name, time to leave field, type, value
+
+#### Type
+- A the name is a hostnamea nad value its ip address  AAAA is for Ipv6
+- NS the name is a domain name and value is the canonical name of its authoritative DNS server.
+- CNAM the name is an alias for a host and value is the cononical name of the host
+- MX the names is an alias for an email host and value is the canonical name for the email server.
+
+The TTL is used to indecate when an RR can be removed from the DNS cache
