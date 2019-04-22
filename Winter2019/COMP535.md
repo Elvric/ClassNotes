@@ -1010,9 +1010,255 @@ RR is maked of 4 tubples:
 domain name, time to leave field, type, value
 
 #### Type
-- A the name is a hostnamea nad value its ip address  AAAA is for Ipv6
+- A the name is a host name and value its ip address  AAAA is for Ipv6
 - NS the name is a domain name and value is the canonical name of its authoritative DNS server.
 - CNAM the name is an alias for a host and value is the cononical name of the host
 - MX the names is an alias for an email host and value is the canonical name for the email server.
 
 The TTL is used to indecate when an RR can be removed from the DNS cache
+
+# 25/03/19
+# WebBrowsing
+A webpage consits of a group of objests with a bast HTML-file obehst and several referenced object. Each object is addresseable by a URL.
+
+## Hypertext Transfer Protocol
+HTTP is implemented in two programs:
+- Client: browser that display the page and displays it
+- Server: server that sends the http protocol objects in response to the request.
+
+Http uses TCP:
+1. Client initiates TCP connection to server on port 80 (HTTP runs on top of TCP)
+2. Server accepts the TCP connection
+3. HTTP messages are sent between them (application layer protocol)
+4. TCP connection closes
+
+### Types of HTTP connection
+#### Non persistent connection
+1 TCP connection per object that we want.
+1. Client initate TCP connection to HTTP server
+2. Server accepts connection and notifies the client
+3. clients sends HTTP request message to server
+4. Server sends HTTP response mesage to client with requests objects
+5. HTTP server closes the TCP connection
+
+#### Persistent connection
+1 TCP connection for all objects.
+
+Server usually closes a TCP connection after it does not receive a message from a client for a certain amount of time.
+
+## HTTP request messages
+The first line is the method followed by the path we want to apply the command on or object, then we have \r \n to indicate the start of the header lines which inlude information about the browser then we have a \r \n that indicate the end of the header
+
+method | URL | http version | \r \n
+header
+|header field name | value | \r \n
+\r \n
+
+Here are the main methods for the HTTP request messages:
+1. GET (request objects from server)
+2. HEAD (same as get but here we request just the header of the response message)
+3. POST (used to send data to the server in the message)
+4. PUT (used to uplead an object to a specific path)
+5. DELETE (used to delete objects on the webserver)
+
+## HTTP response message
+status line | \r \n
+header \r \n
+\r \n
+data of requested object.
+
+### Status code
+- 200 OK
+- 301 moved permanently (object was on server but permantently move)
+- 400 bad request (message not understood)
+- 404 Not Found
+- 505 HTTP version not supported
+
+## Web caching
+Its purpose is to save certain data in proxy servers. 
+
+Clients when accessing servers may go through a proxy server before hand. If the proxy server has the content asked by the client then the proxy server sends the response directly else then we have a cache miss and the proxy server itself redirects the request to the correct server.
+
+### GET with cache
+How de we know that the cache is up to date.
+This is called a conditional get
+
+We have a conditional get so it sends a message to the server specifically to tell it that it cached the object at date x. If the object has not been modified since that date the server replies that to the proxy, else the server will reply to the proxy with the fresh copy.
+
+# 27/03/19
+# Remote access
+## Telnet
+Relies on TCP protocol using port 23. Telnet is light and easy to configure the only issue is that it does not encrypt messages between the sender and receiver. So if we send a password over the internet a person snifing the line can read the password.
+
+```
+Router(config) # enable seceet donttell
+Router(config) # enable password Cisco
+Router(config) # line vty 04
+Router(config-line) # password cisco
+Router(config-line) # login
+Router(config-line) # transport input telnet
+```
+## SSH
+Uses TCP on port 22, this is more secured than tel net but relies on more configuration.
+1. Hostname ust be changed (not default) and enable password must be configured
+2. Select version 2 of SSH
+3. Domain name must be entered
+4. Username and password must be defined
+5. Ecription configured > 768
+6. Uder vty entries:
+   1. Login must now be local
+   2. Transport is configured to ssh
+
+
+# E-mail
+Can be viewed as a store and forward method of sending, storing, retrieving electronic messages. Email messages are stored on server which the client must use to send and retrieve e-mailes mail servers communicated with each other to transport one e-mail from another.
+
+All the protocol relies on TCP
+
+## SMTP
+Send from host to the mail server of the client and from server to server. 
+
+Relies on port
+
+
+
+
+## POP/IMAP
+Use to transfer an e-mail from server to client  
+Port: 25
+
+### POP
+Download the e-mail from the server to the client  
+Port: 110
+
+### IMAP
+The client sees the messages comming from the server  
+Port 143
+
+# 01/03/19
+# Sockets
+A client server program is written by an application developper and includes client and server programs. So when the application is executed it results in a client and server process. 
+
+Sockets provide the interface between the application layer and the transport layer.
+
+A socket is a combination of IP and a Port number for example 192.168.1.5:1099 .
+
+There a two types of sockets that we can create UDP or TCP socket. 
+
+### Application Example:
+1. client reads a line of characters from its keyboard and sends data to server.
+2. Server receives the data and converts character to upper case
+3. Server sends modified data to client
+4. Client receives modified data and displays line on its screen.
+
+### UDP socket
+```python
+from socket import*
+def server():
+  severName = 'hostName'
+  serverSocket = socket(AF_INET,SOCK_DGRAM)
+
+def client():
+  clientSocket = socket(AF_INET, SOCK_DGRAM)
+```
+The port number of clients is usually done by the OS automatically what it needs to know is just the server port number.
+
+### TCP connection server client
+The server has a welcome socket as well to retrieve messages asking to connect the the server after that it will go onto the regular socket.
+
+TCP protocol requires the connection of the client with the server which means that we ask for connection first then we send messages we do this only once.
+
+#### Running client before the server
+
+
+# File Transport Protocol
+FTP requires two connections between the client and the server one for commands and replies and another connection for the actual file transfer.
+
+The first connection is established on port 21, then we use port 20 for the second connection to send data. The client can then download or pull data from the server.
+
+# 03/03/19
+# Wirless lan
+### Infrastructure Mode:
+Access points with wireless hosts. Today access points are quite advanced, today wireless router acts as switch and router.
+
+### Adhoc
+We do not have an infrastructure that connects things together here we have devices that communicate with each other directly. In these kind of networks we have bluetooth and futur car communication systems.
+
+## Protocols
+The protocol type changes based on the distance that we want to cover, there are also multiple potential protocols for the same distance.
+
+### Wireless LAN - IEEE 
+| | 802.11b | 802.11a | 802.11g | 802.11n | 802.11ac
+|---|---|---|---|---|---|
+|freq GHz| 2.4 | 5 | 2.4 | 2.4,5| 5|
+|Max data Mbps | 11 | 54 | 54 | 450 | 1300 |
+
+#### 2.4 Ghz
+Divided into more channels here 14. There are some overlaps between each channels however some channels can interfere with up to 5 other channels.
+
+This is why when we set access points we need to make sure that we configure them with channels that do not interfere with each other.
+
+#### 5 Ghz
+We have more channels than the 2.4
+
+### CSMA/CA
+Here we cannot dedtect the collision so we use collistion avoidance.
+
+#### 802.11 LAN associtation
+
+Passive scanning
+1. AP sends beacon frames containing its name (SSID) and MAC address.
+2. Host sends associaton request to AP (Including authentication)
+3. AP sends association response.
+
+Active Scaning:
+1. Host sends probe request frame in broadcast for known SSID
+2. AP send probe response frame
+3. Host sends association request to the selected AP
+4. AP sends association request.
+
+## Terminology
+- SSID Unique identifier of a wireless network
+- Password: required for the wireless client to authenticate to the AP
+- Network mode: Referes to the 802.11xx standards
+- Channel settings: Refer to the frequency bahds used to transmit wireless data.
+- Security mode: WEP, WPA, WPA2
+
+### CSMA / CA
+Signal strength atenuates with distance thus it is hard to detect collisions.
+
+1. First listen and see if the channel is free
+2. Wait for a random period before sending
+3. If the channel is still not busy send the message
+
+#### Hidden terminal problem
+Host A and B cannot here each other but there signals can still collide at the wireless router.
+
+This is where the request to send protocl quicks in RTS and Clear to send CTS handshake allow to handle that issue. 
+
+1. When a host A realizes that the medium is free it sends an RTS(A) message to the AP (Wireless router). 
+2. The AP sends a CTS(A) message to everybody in the network
+3. Then A sends the data
+4. When the data is received the AP sends an ACK(A) to acknowledge that it received all the data from A and is now ready to process more data.
+
+### Frame 802.11
+2 frame  
+2 duration  
+6 receiver MAC  
+6 sender MAC  
+6 Address of router interface to which AP is attached MAC  
+2 seq control   
+6 a 4th address only used in ADOC mode.
+0-2312 payload  
+4 CRC
+
+Will there be miss information?
+Explain better the concept of hidden network will a device be able to see both wireless lan?
+
+# 08/04/19
+Final exam 40 multiple choice questions. 5 exercises that we work on.
+
+# 10/04/19
+Reach a HTTP server that we do not know the IP to.
+First use DNS application layer protocol to convert "human" address to IP address thus uses UDP protoctol as it is a simple request protocol at the transport layer. The use HTTP protocol which uses TCP
+
